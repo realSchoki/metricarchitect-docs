@@ -1,0 +1,30 @@
+\documentclass{article}
+
+\usepackage{datagidx}
+
+\newgidx{glossary}{Glossary}
+\DTLgidxSetDefaultDB{glossary}
+
+\newterm[description={a collection of objects}]{set}
+\newterm[description={number of objects in a set}]{cardinality}
+
+\begin{document}
+
+% page 1:
+\gls{set}.
+
+\newpage
+% page 2:
+\gls{set}, \gls{cardinality}.
+
+\newpage
+% page 3:
+\gls{set}.
+
+\newpage
+% page 4:
+\gls{cardinality}.
+
+\printterms[columns=1,style=align]
+
+\end{document}

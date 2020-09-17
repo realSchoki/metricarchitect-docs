@@ -1,0 +1,33 @@
+% Copyright 2007 by Till Tantau
+%
+% This file may be distributed and/or modified
+%
+% 1. under the LaTeX Project Public License and/or
+% 2. under the GNU Public License.
+%
+% See the file doc/licenses/LICENSE for more details.
+
+\mode<presentation>
+
+\newif\ifbeamer@secheader
+\beamer@secheaderfalse
+
+\DeclareOptionBeamer{secheader}{\beamer@secheadertrue}
+\ProcessOptionsBeamer
+
+\usecolortheme{whale}
+\usecolortheme{orchid}
+\useinnertheme{rectangles}
+\useoutertheme{infolines}
+
+\definecolor{beamer@blendedblue}{RGB}{132,184,25}
+
+\setbeamercolor{structure}{fg=beamer@blendedblue}
+%\setbeamercolor{titlelike}{parent=structure}
+%\setbeamercolor{frametitle}{fg=black}
+%\setbeamercolor{title}{fg=black} \setbeamercolor{item}{fg=black}
+
+\ifbeamer@secheader\else\setbeamertemplate{headline}[default]\fi
+
+\mode
+<all>

@@ -1,0 +1,176 @@
+\documentclass[12pt, pdf, xcolor={table, dvipsnames}, paperheight=8cm,paperwidth=12cm]{beamer}
+\definecolor{tugreen}{RGB}{132,184,25}
+\usepackage{../assets/themes/beamerthemeTUDortmund}
+\usepackage{../assets/themes/beamercolorthemetudortmund}
+
+%\expandafter\def\csname ver@transparent.sty\endcsname{}
+%\usepackage[edges]{forest}
+%\usepackage{pgf-umlsd}
+%\usepackage{dsfont}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[style=german,babel]{csquotes}
+\usepackage{glossaries}
+\makeindex
+%\usepackage{amsmath}
+%\usepackage{graphicx}
+%\usepackage{pgfplots} 
+%\usepackage{fontawesome}
+%\usepackage{import}
+%\usepackage{listings}
+%\usepackage{titleref}
+%\usepackage{caption}
+%\usepackage{tikz}
+%\usepackage{../assets/tikz-uml}
+%\usepackage{biblatex}
+%\addbibresource{literatur.bib}
+%\usetikzlibrary{backgrounds,shapes.multipart}
+%\pgfdeclarelayer{myback}
+%\pgfsetlayers{background,main,myback}
+%\makeatletter
+%\newcommand*{\currentname}{\TR@currentTitle}
+%\newcommand*{\overlaynumber}{\number\beamer@slideinframe}
+%\makeatother
+%\usetikzlibrary{positioning,arrows,automata,shapes.multipart,calc, fit, decorations.shapes,shadows}
+%\tikzset{
+%  mylabel/.style = {font=\footnotesize, midway, fill=white, anchor=center},
+%  decorate sep/.style 2 args=
+%    {decorate,decoration={shape backgrounds,shape=circle,shape size=#1,shape sep=#2}},
+%  invisible/.style={opacity=0, text opacity=0},
+%  visible on/.style={alt={#1{}{invisible}}},
+%  alt/.code args={<#1>#2#3}{%
+%    \alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}} % \pgfkeysalso doesn't change the path
+%  },
+%  onslide/.code args={<#1>#2}{%
+%  \only<#1>{\pgfkeysalso{#2}} % \pgfkeysalso doesn't change the path
+%    }
+%}
+%\forestset{
+%  step/.style={
+%    /tikz/visible on={<+->},
+%    edge={/tikz/visible on={<+->}},
+%    for descendants={
+%        /tikz/visible on={<.->},
+%        edge={/tikz/visible on={<.->}}
+%    }
+%  },
+%  highlight/.style={
+%    for tree={
+%      /tikz/onslide=<.>{draw=red},
+%      edge+={/tikz/onslide=<.>{draw=red}}
+%    }
+%  }
+%}
+%
+\author{Dennis Ochocki}
+\title[]{Sensordatenverarbeitung durch metamodelierte best-of-breed Lösung}
+%\subtitle{Grafana, Prometheus und Docker}
+%\titlegraphic{
+%\includegraphics[width=0.35\textwidth]{../assets/themes/img/tud_logo_rgb}\hspace*{3.75cm}~%
+%   \includegraphics[width=0.25\textwidth]{../assets/themes/img/fakultaet.pdf}
+%}
+%\logo{}
+%\institute{}
+%\date{\today}
+%\subject{}
+%\setbeamertemplate{navigation symbols}{}
+%\setbeamertemplate{frametitle}{%
+%    \nointerlineskip%
+%    \begin{beamercolorbox}[wd=\paperwidth,ht=2.6ex,dp=1.6ex]{frametitle}
+%        \hspace*{1ex}\insertframetitle%
+%    \end{beamercolorbox}%
+%}
+%\setlength{\skip\footins}{0cm}
+%\addtobeamertemplate{frametitle}{}{%
+%\begin{tikzpicture}[remember picture,overlay]
+%\node[anchor=north east,yshift=0pt] at (current page.north east) {\includesvg[height=0.7cm]{../themes/img/fakultaet}};
+%\end{tikzpicture}}
+%
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=false,rounded=false]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+\import{abbr}
+
+\begin{document}
+	
+\maketitle
+
+\begin{frame}{Übersicht}
+	\tableofcontents
+\end{frame}
+
+\section{Motivation}
+\begin{frame}{Motivation}
+	Smart Home ist immer präsenter und dank \gls{iot} erst möglich. Immer mehr Geräte, sog. \enquote{Smart Devices}, kommen auf den Markt, die in solche Systeme integriert werden können. 
+	
+	\begin{block}{Was sind die Schwierigkeiten?}
+		\begin{itemize}
+			\item Bei vielen Smart Devices ist es schwer den Überblick zu behalten
+			\item Assoziationen von Geräte-IP zur physikalischer Position muss gemerkt werden
+			\item Eigenschaften des Sensors müssen manuell notiert werden
+			\item
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+
+\section{Grundlagen}
+\begin{frame}{Grundlagen}
+	\begin{block}{Was ist Smart Home:}
+		\begin{itemize}
+			\item Viele verschiedene Geräte in einem Netzwerk
+			\item Jedes Gerät ist Beobachter und/oder Akteur
+			\item Dient der Qualitätssteigerung der vernetzten Örtlichkeit
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+\begin{frame}{Senoren}
+\end{frame}
+
+\begin{frame}{Prometheus}
+	Prometheus is an open-source systems monitoring and alerting toolkit
+\end{frame}
+
+\begin{frame}{Grafana}
+\end{frame}
+
+\begin{frame}{Cinco}
+\end{frame}
+
+\section{Technologien}
+\begin{frame}{CNNM}
+\end{frame}
+
+
+% \section{Motivation}
+% \begin{frame}{\secname}
+% \begin{exampleblock}{Konzept}
+% \onslide<+->
+% \begin{itemize}[opacity=.2]
+% \item<+-> Haben reelle Situation aus dem Straßenverkehr
+% \item<+-> Wollen diese so einfach wie möglich textuel beschreiben
+% \item<+-> Gängige Formate wie z.B. OpenScenario sehr komplex
+% \item<+-> Hoher Grad von Abstraktion gewünscht
+% \item<+-> Geht das überhaupt ohne essentiellen Informationsverlust?
+% \end{itemize}
+% \end{exampleblock}
+% \end{frame}
+
+\begin{frame}[plain,allowframebreaks]{Verwandte Arbeiten}
+	%\nocite{*}
+	%\printbibliography[heading=none, keyword={related}]
+\end{frame}
+
+\begin{frame}[plain,allowframebreaks]{Mögliche Literatur}
+	%\printbibliography[heading=none, keyword={possible}]
+\end{frame}
+\end{document}
