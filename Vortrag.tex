@@ -12,6 +12,8 @@
 \usepackage[style=german,babel]{csquotes}
 \usepackage{glossaries}
 \makeindex
+\usepackage{tabularx}
+\usepackage{multirow}
 %\usepackage{amsmath}
 %\usepackage{graphicx}
 %\usepackage{pgfplots} 
@@ -134,18 +136,49 @@ Meist sind die Anwendungsfälle trivial und einfach zu realisieren, damit schöp
 
 
 \section{Grundlagen}
-\begin{frame}{Grundlagen}
+
+\begin{frame}{Senoren und Akteure}
+	Sensoren und Akteure sind die atomaren Bestandteile eines solchen Netzwerkes.
+	
+	\vspace{1em}
+	Sensoren liefern Daten/Metriken und Aktuere können auf das Umfeld einwirken um damit auf die erfassten Werte zu reagieren.
+	\begin{block}{Beispiel: Sensor}
+		\vspace{0.5em}
+		\begin{tabularx}{\linewidth}{lX}Thermometer: & Erfasst Temperatur, stellt Werte zur  Verfügung
+		\end{tabularx}
+	\end{block}
+	\begin{block}{Beispiel: Akteur}
+	\vspace{0.5em}
+	\begin{tabularx}{\linewidth}{lX}Thermostat: &Steuert Heizung, hat Einfluss auf die Temperatur
+	\end{tabularx}
+	\end{block}
+Ein Gerät kann ein Sensor und/oder ein Akteur sein.
 \end{frame}
 
-\begin{frame}{Senoren / Akteure}
-	
+\begin{frame}{Metrik}
+	Eine Metrik ist ein 
 \end{frame}
 
 \begin{frame}{Prometheus}
-	Prometheus is an open-source systems monitoring and alerting toolkit
+	\dots ist eine Systemüberwachungs- und Benachrichtigungssoftware
+	
+	Es greift nach Prometheusdefinition standartisierte Schnittstellen der Sensoren ab um darüber Messwerte/Metriken zu lesen und in der internen Time Series DB abzuspeichern.
+	
+	Über die \gls{pql} kann man auf diese Daten zugreifen.
+\end{frame}
+
+\begin{frame}{Prometheus - Sensor}
+	Sensoren können hier angebunden werden und liefern nach besagtem Standart folgende Ausgabe:
+	
+	
 \end{frame}
 
 \begin{frame}{Grafana}
+	\dots dient dem Darstellen und der Analyse der durch z.B. Prometheus gewonnenen Daten.
+	
+	Alternativ zu Prometheus können auch andere Datenquellen wie z.B. JSON, Cassandra, MySQL, ... angebunden werden.
+	
+	Es können verschiedene Darstellungen gewählt werden (Tabelle, Graph, Säulendiagramm)
 \end{frame}
 
 \begin{frame}{Cinco}
