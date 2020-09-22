@@ -116,11 +116,22 @@
 	
 	\begin{block}{Was ist Smart Home:}
 		\begin{itemize}
-			\item Viele verschiedene Geräte in einem Netzwerk
-			\item Jedes Gerät ist Beobachter und/oder Akteur
+			\item Viele verschiedene Smart Devices in einem Netzwerk
+			\item Jedes Gerät ist Sensor und/oder Akteur
 			\item Dient der Qualitätssteigerung der vernetzten Örtlichkeit
+			\item Eine zentrale Logikkomponente verarbeitet die Informationen
 		\end{itemize}
 	\end{block}
+\end{frame}
+
+\begin{frame}{Motivation}
+	Sei gegeben ein Raum mit einem Thermometer und einem Thermostat.
+	
+	\vspace{1em}
+	Das Thermometer (Sensor) misst regelmäßig die Raumtemperatur, eine zentrale Logik verarbeitet diese Werte und kann passend dazu das Thermostat (Akteur) steuern.
+	
+	\vspace{1em}
+	Solche und andere Automatismen dienen der Verbesserung situationsabhängiger Qualitäten.
 \end{frame}
 
 \begin{frame}{Motivation}
@@ -129,7 +140,7 @@ Meist sind die Anwendungsfälle trivial und einfach zu realisieren, damit schöp
 	\begin{itemize}
 		\item Bei vielen Smart Devices ist es schwer den Überblick zu behalten
 		\item Assoziationen von Geräte-IP zur physikalischer Position muss gemerkt werden
-		\item Muss nicht auf eine Wohnung begrenz sein, mehrere Örtlichkeiten, Häuser Städte möglich.
+		\item Muss nicht auf eine Wohnung begrenz sein, mehrere Örtlichkeiten, Häuser oder Städte möglich.
 	\end{itemize}
 \end{block}
 \end{frame}
@@ -141,7 +152,7 @@ Meist sind die Anwendungsfälle trivial und einfach zu realisieren, damit schöp
 	Sensoren und Akteure sind die atomaren Bestandteile eines solchen Netzwerkes.
 	
 	\vspace{1em}
-	Sensoren liefern Daten/Metriken und Aktuere können auf das Umfeld einwirken um damit auf die erfassten Werte zu reagieren.
+	Sensoren liefern Metriken und Aktuere können auf das Umfeld einwirken um damit auf die erfassten Werte zu reagieren.
 	\begin{block}{Beispiel: Sensor}
 		\vspace{0.5em}
 		\begin{tabularx}{\linewidth}{lX}Thermometer: & Erfasst Temperatur, stellt Werte zur  Verfügung
@@ -156,13 +167,26 @@ Ein Gerät kann ein Sensor und/oder ein Akteur sein.
 \end{frame}
 
 \begin{frame}{Metrik}
-	Eine Metrik ist ein 
+	Eine Metrik ist ein Merkmal welches vom Sensor erfasst wird.
+	
+	\vspace{1em}
+	Sei gegeben ein Smart Device, hier: Wetterstation.
+	
+	\vspace{1em}
+	\begin{block}{Metriken}
+		\vspace{.5em}
+		\begin{tabularx}{\linewidth}{lX}
+			Luftfeuchtigkeit & Wert in \%\\
+			Luftdruck & Wert in hPa\\
+			Temperatur & Wert in °C\\
+		\end{tabularx}
+	\end{block}
 \end{frame}
 
 \begin{frame}{Prometheus}
-	\dots ist eine Systemüberwachungs- und Benachrichtigungssoftware
+	Prometheus ist eine Systemüberwachungs- und Benachrichtigungssoftware
 	
-	Es greift nach Prometheusdefinition standartisierte Schnittstellen der Sensoren ab um darüber Messwerte/Metriken zu lesen und in der internen Time Series DB abzuspeichern.
+	Es greift selbstdefinierte Schnittstellen der Sensoren ab um darüber Metriken zu lesen und in der internen Time Series DB abzuspeichern.
 	
 	Über die \gls{pql} kann man auf diese Daten zugreifen.
 \end{frame}
@@ -174,11 +198,11 @@ Ein Gerät kann ein Sensor und/oder ein Akteur sein.
 \end{frame}
 
 \begin{frame}{Grafana}
-	\dots dient dem Darstellen und der Analyse der durch z.B. Prometheus gewonnenen Daten.
+	Grafana dient dem Darstellen und der Analyse der durch z.B. Prometheus gewonnenen Daten.
 	
-	Alternativ zu Prometheus können auch andere Datenquellen wie z.B. JSON, Cassandra, MySQL, ... angebunden werden.
+	Alternativ zu Prometheus können auch andere Datenquellen wie z.B. JSON, Cassandra, MySQL, \dots angebunden werden.
 	
-	Es können verschiedene Darstellungen gewählt werden (Tabelle, Graph, Säulendiagramm)
+	Es können verschiedene Darstellungen gewählt werden (Tabelle, Graph, Säulendiagramm, \dots)
 \end{frame}
 
 \begin{frame}{Cinco}
