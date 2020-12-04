@@ -269,7 +269,7 @@ Ein Gerät kann ein Sensor und/oder ein Akteur sein.
 	Sensoren können in der Konfigurationsdatei angebunden werden und liefern nach folgendem Standard folgende Ausgabe:
 	
 	\vspace{1em}
-	\url{http://sensor:3001/metrics}
+	\url{GET} \url{http://sensor:3001/metrics}
 		\begin{onlyenv}<1>
 			\begin{lstlisting}[firstnumber=1, label=glabels,xleftmargin=10pt, frame=single, gobble=12, tabsize=4, mathescape]
 			# HELP luftfeuchtigkeit in %
@@ -418,12 +418,15 @@ Ein Gerät kann ein Sensor und/oder ein Akteur sein.
 	\end{center}
 \end{frame}
 
+\section{Ausblick}
 \begin{frame}{Ausblick}
 	Features:
 	\begin{itemize}
 		\item Funktionsverschachtelung $sum(abs(x))$
-		\item Mehrere Standorte
+		\item Mehrere Standorte ordentlich abbildbar
 		\item Definierung der Kachelgrößen/Position in Grafana
+		\item Vollständige Abbildung der \gls{pql}
+		\item Verifizierung beim Modelieren
 		\item \dots
 	\end{itemize}
 \end{frame}

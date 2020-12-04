@@ -1,0 +1,34 @@
+% kapitel2.tex
+\chapter{Grundlagen}
+\label{chapter:grundlagen}
+\section{Smart Home}
+Im Zuge der Digitalisierung und Vereinfachung der Beschaffung von Sensorik im Alltag ist Smart Home als Konzept für den Verbraucher angekommen und bezahlbar. Dabei handelt es sich im allgemeinsten Fall um eine Basisstation mit beliebig vielen Akteuren und Sensoren. Jene Station dient dem verarbeiten und speichern der Daten aus den sensorischen Elementen des Verbundes und anhand von zum Beispiel Entscheidungstabellen werden dann die Akteure angesteuert. Als simples Szenario kann man sich hier eine Wohnzimmerlampe vorstellen, welche angeschaltet wird, wenn der draußen angebrachte Helligkeitssensor Dunkelheit signalisiert. Allerdings muss ein System nicht zwangsläufig Sensoren und Akteure haben. Ein Netzwerk aus Sensoren würde nur überwachen und eines aus Akteuren kann nur handeln. Beispiele hierfür wären eine zentrale Stromverbrauchüberwachung pro Steckdose oder eine Heizungssteuerung.
+Hierbei gibt es noch zu erwähnen, dass es auch Kombigeräte gibt. Ein Heizungsthermostat hat meist ein eingebautes Thermometer und ist somit Akteur und Sensor.\\
+
+\begin{figure}[!h]
+	\centering
+	\begin{tikzpicture}[every text node part/.style={align=center}]
+	\node[] (A) {\includegraphics[width=50px]{./assets/images/plug-solid}\\Sensor};
+	\node[right= 3cm of A] (B) {\includegraphics[width=50px]{./assets/images/chalkboard-solid}\\Basisstation};
+	\node[right= 3cm of B] (C) {\includegraphics[width=50px]{./assets/images/lightbulb-solid}\\Akteur};
+	\draw[-{Stealth[scale=1.3,angle'=90]},semithick] (B) -- node[above] {0..N} (A) ;
+	\draw[-{Stealth[scale=1.3,angle'=90]},semithick] (B) -- node[above] {0..M} (C) ;
+	\end{tikzpicture}
+\end{figure}
+ 
+\section{Prometheus}
+Bei Prometheus handelt es sich um eine Open Source Lösung die zur Überwachung von Metriken und der Alarmierung dient. Es gibt die Möglichkeit Daten aktiv zu übergeben oder alternativ Prometheus so zu konfigurieren und damit zu beauftragen, dass es sich die Daten von verschiedenen Datenquellen abholt. Für die letztere Variante muss das zu Überwachende System eine HTTP Schnittstelle zur Verfügung stellen auf der in einer Vordefinierten Art die Daten ausgeliefert werden. Um diesen Prozess zu vereinfachen gibt es bereits verschiedene Libraries für verschiedene Programmiersprachen die konfigurativ ein solches Format einhalten. Zum Zeitpunkt des Schreibens sind offiziel GO, Scala/Java, Python und Ruby unterstütz, allerdings gibt es für zahlreiche andere Sprachen unoffizielle Third Party Libraries welche auf der Internetseite von Prometheus beworben werden. Für den Fall, dass die gewählte Sprache nicht unterstütz wird ist es auch möglich die Ausgabe selber zu erstellen. Dafür ist die Definition des Ausgabeformat gut dokumentiert worden. 
+\subsection{Zählertypen}
+\subsubsection{Counter}
+Der Counter beschreibt eine Metrikart, welche nur hochgezählt und zurückgesetzt werden kann. Sie stellt eine monoton wachsende Funktion dar. 
+\subsubsection{Gauge}
+Dieser Typ symbolisiert eine Messuhr oder Tachometer. Die Werte können hoch und runter gehen. 
+
+\subsubsection{Histogram}
+\subsubsection{Summary}
+\subsubsection{Untyped}
+
+\subsection{Prometheus Query Language}
+Wie zuvor erwähnt werden die gesammelten Daten in einer internen Time Series Datenbank gespeichert welche durch die sogenannte \gls{promql} durchsucht werden kann.
+
+\section{Grafana}

@@ -1,0 +1,35 @@
+\include{preamble}
+
+\begin{document}
+	\selectlanguage{ngerman}
+	\include{kapitel/titelseite}
+	\blankpage
+	\pagenumbering{roman}
+	\tableofcontents
+	\cleardoublepage
+	\pagenumbering{arabic}
+	% Kapitel
+	\include{kapitel}
+	% Anhang
+	\appendix
+	\include{kapitel/anhang}
+	% Abbildungsverzeichnis
+	\listoffigures
+	\addcontentsline{toc}{chapter}{Abbildungsverzeichnis}
+	\cleardoublepage
+	% Algorithmenverzeichnis
+	\listofalgorithms
+	\addcontentsline{toc}{chapter}{Algorithmenverzeichnis}
+	\cleardoublepage
+	% Literaturverzeichnis
+	\bibliographystyle{gerplain}
+	\bibliography{literatur/diplom}
+	\addcontentsline{toc}{chapter}{\bibname}
+	% Erklaerung
+	\thispagestyle{myheadings}
+	\markboth{}{ERKLÄRUNG}
+	\addcontentsline{toc}{chapter}{Erklärung}
+	\include{kapitel/erklaerung}
+	\cleardoublepage
+\end{document}
+
