@@ -31,4 +31,152 @@ Dieser Typ symbolisiert eine Messuhr oder Tachometer. Die Werte können hoch und
 \subsection{Prometheus Query Language}
 Wie zuvor erwähnt werden die gesammelten Daten in einer internen Time Series Datenbank gespeichert welche durch die sogenannte \gls{promql} durchsucht werden kann.
 
+Hierfür gibt es vier verschiedene Subtypen:
+	<TimeUnit> ::= 'ms' | 's' | 'm' | 'h' | 'd' | 'w' | 'y'
+\begin{itemize}
+	\item Instant vector
+	Instant vector selectors allow the selection of a set of time series and a single sample value for each at a given timestamp (instant): in the simplest form, only a metric name is specified. This results in an instant vector containing elements for all time series that have this metric name.
+%	http_requests_total{job="prometheus",group="canary"}
+	
+	
+	=: Select labels that are exactly equal to the provided string.
+	!=: Select labels that are not equal to the provided string.
+	=~: Select labels that regex-match the provided string.
+	!~: Select labels that do not regex-match the provided string.
+	
+	
+	
+	\item Range vector
+%	http_requests_total{job="prometheus"}[5m]
+	
+	<TimeUnit> ::=
+	ms - milliseconds
+	s - seconds
+	m - minutes
+	h - hours
+	d - days - assuming a day has always 24h
+	w - weeks - assuming a week has always 7d
+	y - years - assuming a year has always 365d
+	
+%	sum(http_requests_total{method="GET"} offset 5m) // GOOD.
+	
+	\item Scalar
+	[-+]?(
+	[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?
+	| 0[xX][0-9a-fA-F]+
+	| [nN][aA][nN]
+	| [iI][nN][fF]
+	)
+	23
+	-2.43
+	3.4e-9
+	0x8f
+	-Inf
+	NaN
+	\item String
+	"text"
+	'test
+\end{itemize}
+
+\subsubsection{Arithmetik}
+
+Basistypen:
+
+\begin{bnf*}
+	\bnfprod{Scalar}{\bnfpn{Scalar}\bnfsp\bnfpn{BinOP}\bnfsp\bnfpn{Scalar}}\\
+	\bnfprod{InstantVector}{\bnfpn{Vector}\bnfsp\bnfpn{BinOP}\bnfsp\bnfpn{Scalar}\bnfor}\\
+	\bnfprod{RangeVector}{}\\
+	\bnfprod{Scalar}{\bnfpn{Scalar}\bnfsp\bnfpn{BinOP}\bnfsp\bnfpn{Scalar}}\\
+	\bnfprod{String}{\bnfpn{RawStringLIT}\bnfor{}\bnfpn{InterpretedStringLIT}}\\
+	\bnfprod{RawStringLIT}{\bnfts{'}\bnfsp\bnfpn{UnicodeChar}\bnfsp\bnfts{'}}\\
+	\bnfprod{InterpretedStringLIT}{\bnfts{\textquotedbl}\bnfsp\bnfpn{UnicodeValue}\bnfsp\bnfts{\textquotedbl}}
+\end{bnf*}
+\begin{bnf*}
+\bnfprod{BinOP}{\bnfts{+} \bnfor \bnfts{-} \bnfor \bnfts{*} \bnfor \bnfts{/} \bnfor \bnfts{\%} \bnfor \bnfts{\textasciicircum}}\\
+\bnfprod{BinCompOP}{\bnfts{==} \bnfor \bnfts{!=} \bnfor \bnfts{>} \bnfor \bnfts{<} \bnfor \bnfts{>=} \bnfor \bnfts{<=}}\\
+\bnfprod{SetOP}{\bnfts{and} \bnfor \bnfts{or} \bnfor \bnfts{unless}}
+\end{bnf*}
+
+Vector matching 
+One-to-one vector matches 
+vector1 <operator> vector2
+<vector expr> <bin-op> ignoring(<label list>) <vector expr>
+<vector expr> <bin-op> on(<label list>) <vector expr>
+
+Many-to-one and one-to-many vector matches 
+%<vector expr> <bin-op> ignoring(<label list>) group_left(<label list>) <vector expr>
+%<vector expr> <bin-op> ignoring(<label list>) group_right(<label list>) <vector expr>
+%<vector expr> <bin-op> on(<label list>) group_left(<label list>) <vector expr>
+%<vector expr> <bin-op> on(<label list>) group_right(<label list>) <vector expr>
+
+
+
+Aggregation operators 
+sum (calculate sum over dimensions)
+min (select minimum over dimensions)
+max (select maximum over dimensions)
+avg (calculate the average over dimensions)
+group (all values in the resulting vector are 1)
+stddev (calculate population standard deviation over dimensions)
+stdvar (calculate population standard variance over dimensions)
+count (count number of elements in the vector)
+%count_values (count number of elements with the same value)
+bottomk (smallest k elements by sample value)
+topk (largest k elements by sample value)
+%quantile (calculate φ-quantile (0 ≤ φ ≤ 1) over dimensions)
+
+<aggr-op> [without|by (<label list>)] ([parameter,] <vector expression>)
+<aggr-op>([parameter,] <vector expression>) [without|by (<label list>)]
+
+Binary operator precedence 
+%^
+*, /, %
++, -
+==, !=, <=, <, >=, >
+and, unless
+or
+
+\subsubsection{Funktionen}
+
+abs()
+absent()
+%absent_over_time()
+ceil()
+changes()
+%clamp_max()
+%clamp_min()
+%day_of_month()
+%day_of_week()
+%days_in_month()
+delta()
+deriv()
+exp()
+floor()
+%histogram_quantile()
+%holt_winters()
+hour()
+idelta()
+increase()
+irate()
+%label_join()
+%label_replace()
+ln()
+log2()
+log10()
+minute()
+month()
+%predict_linear()
+rate()
+resets()
+round()
+scalar()
+sort()
+%sort_desc()
+sqrt()
+time()
+timestamp()
+vector()
+year()
+%<aggregation>_over_time()
+
 \section{Grafana}
