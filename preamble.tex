@@ -3,10 +3,19 @@
 \documentclass[a4paper,11pt,twoside,ngerman,color]{book}
 \usepackage[a4paper,left=3.5cm,right=2.5cm,bottom=3.5cm,top=3cm]{geometry}
 
+
+% Korrekte Darstellung der Umlaute
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
 \usepackage[ngerman]{babel}
+\usepackage[autostyle]{csquotes}
+\usepackage[]{dirtytalk}
 
 \usepackage[pdftex]{graphicx,color}
-\usepackage{amsmath,amssymb,subfigure}
+\definecolor{LightGray}{RGB}{211, 211, 211}
+
+\usepackage{amsmath,amssymb,subcaption}%,subfigure
 
 \usepackage{calc}
 \usepackage{tikz}
@@ -14,24 +23,78 @@
 
 \usepackage[altpo, epsilon]{backnaur}
 \renewcommand{\bnfpn}[1]{\textbf{\textrm{#1}}}
+\renewcommand{\bnfsp}[0]{,}
+\renewcommand{\bnfts}[1]{\textquotedbl\texttt{#1}\textquotedbl}
+\newcommand{\bnfop}[1]{[ #1 ]}
+\newcommand{\bnfre}[1]{\{ #1 \}}
+%\renewcommand{\bnfpn}[1]{\textbf{\textrm{#1}}}
 %\renewcommand{\bnfts}[1]{\bnf@tsfont{#1}}
 
 % Theorem-Umgebungen
 \usepackage[amsmath,thmmarks]{ntheorem}
 
-% Korrekte Darstellung der Umlaute
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-
 % Algorithmen
 \usepackage[plain,chapter]{algorithm}
 \usepackage{algorithmic}
+
+% Listings
+\usepackage{minted}
+\usepackage{listings}
+\lstdefinestyle{customprometheus}{
+	belowcaptionskip=1\baselineskip,
+	breaklines=true,
+	frame=L,
+	numbers=left,
+	xleftmargin=\parindent,
+	language=C,
+	showstringspaces=false,
+	stepnumber=1,
+	basicstyle=\footnotesize\ttfamily,
+	keywordstyle=\bfseries\color{green!40!black},
+	commentstyle=\itshape\color{purple!40!black},
+	identifierstyle=\color{blue},
+	stringstyle=\color{orange},
+}
+
+\newmintinline[promcode]{text}{fontsize=\scriptsize, bgcolor=LightGray}
+
+
+\makeatletter
+\let\footnote@orig\footnote
+\def\footnote{%
+	\begingroup
+	\@makeother\#%
+	\footnote@i
+}
+\def\footnote@i#1{%
+	\endgroup
+	\footnote@orig{#1}%
+}
+\makeatother
+
 
 \usepackage{enumerate}
 
 
 % Bibtex deutsch
-\usepackage{bibgerm}
+%\usepackage{bibgerm}
+\usepackage[
+backend=biber,
+%style=authoryear-icomp,
+style=numeric-comp,
+sortlocale=de_DE,
+natbib=true,
+%url=false, 
+%doi=true,
+%eprint=false
+]{biblatex}
+\addbibresource{literatur/diplom.bib}
+
+\usepackage[]{hyperref}
+\hypersetup{
+	%colorlinks=true,
+	hidelinks
+}
 
 % URLs
 \usepackage{url}

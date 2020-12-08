@@ -22,17 +22,108 @@ Bei Prometheus handelt es sich um eine Open Source Lösung die zur Überwachung 
 \subsubsection{Counter}
 Der Counter beschreibt eine Metrikart, welche nur hochgezählt und zurückgesetzt werden kann. Sie stellt eine monoton wachsende Funktion dar. 
 \subsubsection{Gauge}
-Dieser Typ symbolisiert eine Messuhr oder Tachometer. Die Werte können hoch und runter gehen. 
-
+Dieser Typ symbolisiert eine Messuhr oder Tachometer. Die Werte können steigen und fallen.
 \subsubsection{Histogram}
+Bei einem Histogramm handelt es sich um ein Konzept bestehend aus sogenannten Buckets. Diese werden initial für eine Metrik festgelegt. Mit Hilfe dieser Definition werden dann Werte von $]-\infty,+\infty[$  in die besagten Buckets sortiert. Dabei enthält jeder nächst höhere Bucket auch die gemessenen Werte des niedriegeren Buckets. Es handelt sich also um eine Teilmengenbeziehung bei der die Teilmengen durch den gesetzten Grenzwert bestimmt werden. Das \promcode{le} im Index kann man als \say{Less Equal} verinnerlichen. Dieser Parameter wird auch im Export so notiert. 
+\begin{center}
+\begin{tikzpicture}
+	\draw (0,0) ellipse (2cm and .7cm);
+	\draw (2,0) ellipse (4cm and 1cm);
+	\draw (4,0) ellipse (6cm and 1.3cm);
+	\draw (6,0) ellipse (8cm and 1.5cm);
+	\path (0,0) -- (12,0)%
+		node[pos=0] {$B_{le=\textquotedbl0.1\textquotedbl}$}%
+		node[pos=0.33] {$B_{le=\textquotedbl0.5\textquotedbl}$}%
+		node[pos=0.66] {$B_{le=\textquotedbl1\textquotedbl}$}%
+		node[pos=1] {$B_{le=\textquotedbl+Inf\textquotedbl}$};
+\end{tikzpicture}
+\end{center}
+Ein Histogramm stellt zusätzlich zu den Buckets noch eine Gesamtanzahl der gemessenen Werte, was einem Bucket mit \promcode{le="+Inf"} gleicht, und einer Summ
+\begin{listing}[h]
+	\begin{minted}[mathescape,
+	linenos,
+	numbersep=5pt,
+	gobble=0,
+	frame=lines,
+	linenos,
+	tabsize=4,
+	breaklines,
+	framesep=2mm]{text}
+	# TYPE <basename> histogram
+	<basename>_bucket{le="<upper inclusive bound>"} <value>
+	<basename>_sum <value>
+	<basename>_count <value>
+	\end{minted}
+	\caption{Teilbeispiel aus der offiziellen Prometheus Dokumentation~\cite{PrometheusExpositionFormatBeispiel}}
+\end{listing}
 \subsubsection{Summary}
 \subsubsection{Untyped}
+
+\clearpage
+\subsection{Exportformat}
+\begin{listing}[h]
+\begin{minted}[mathescape,
+linenos,
+numbersep=5pt,
+gobble=0,
+frame=lines,
+linenos,
+tabsize=4,
+breaklines,
+framesep=2mm]{text}
+# HELP http_requests_total The total number of HTTP requests.
+# TYPE http_requests_total counter
+http_requests_total{method="post",code="200"} 1027 1395066363000
+http_requests_total{method="post",code="400"}    3 1395066363000
+
+# Minimalistic line:
+metric_without_timestamp_and_labels 12.47
+
+# HELP http_request_duration_seconds A histogram of the request duration
+# TYPE http_request_duration_seconds histogram
+http_request_duration_seconds_bucket{le="0.05"} 24054
+http_request_duration_seconds_bucket{le="0.2"} 100392
+http_request_duration_seconds_bucket{le="1"} 133988
+http_request_duration_seconds_bucket{le="+Inf"} 144320
+http_request_duration_seconds_sum 53423
+http_request_duration_seconds_count 144320
+\end{minted}
+\caption{Teilbeispiel aus der offiziellen Prometheus Dokumentation~\cite{PrometheusExpositionFormatBeispiel}}
+\end{listing}
+
+Zwischen Zeile 1-4 finden wir die erste exportierte Metrik in diesem Beispiel. Die erste Zeile beinhaltet nach dem Token \promcode{# HELP <Name der Metrik>} eine kurze Beschreibung, welche Optional ist. In der nächsten Zeile ist der Typ mit\linebreak \promcode{# TYPE <Name der Metrik> <Typ der Metrik>} angegeben. Die Auswahlmöglichkeiten bezüglich des Typen deckt sich mit den bereits Beschriebenen Metrikarten: \promcode{counter}, \promcode{gauge}, \promcode{histogramm}, \promcode{summary}, \promcode{untyped}.
+
+Bei allen Zeilen, welche mit \promcode{#} anfangen aber weder mit \promcode{TYPE} oder \promcode{HELP} weitergeführt werden, handelt es sich um Kommentarzeilen und somit welche nicht interpretiert werden.
+
+Zeile 3-4 zeigt die gemessenen Werte aufgeschlüsselt nach den möglichen Gruppierungen. Zeilen jene die Messwrte symbolisieren bestehen aus drei Spalte. Die erste im Format \promcode{<Name der Metrik>} gefolgt von Optionalen Key-Value-Paaren in geschwungenen Klammern. Damit ist es möglich gleichnamige Metriken aus potentiell mehreren Systemen zu unterscheiden. Das Beispiel hier schlüsselt alle HTTP-Requests nach Methode und HTTP-Rückgabewert auf. In der nächsten Spalte findet sich der gemessene Wert zu der Metrik unter Anbetracht der optional vorhandenen Gruppierung. Die letzte Spalte ist wieder nicht verpflichtend und enthält den Timestamp, an dem der Wert gemessen wurde. Die EBNF zu dieser Art der Zeile ist wie folgt:
+\begin{listing}[ht]
+\begin{samepage}
+\begin{minted}[mathescape,
+	linenos,
+	numbersep=5pt,
+	gobble=1,
+	frame=lines,
+	linenos,
+	tabsize=4,
+	breaklines,
+	framesep=2mm]{ebnf}
+	metric = metric_name [ 
+			"{" 
+				label_name "=" '"' label_value '"' 
+				{ "," label_name "=" '"' label_value '"' } [ "," ] 
+			"}" 
+		]  value  [ timestamp ]
+\end{minted}
+\caption{EBNF nach ISO/IEC 14977 einer Metrik}
+\end{samepage}
+\end{listing}
+
+Ergänzend haben wir in Zeile 7 ein Minimalbeispiel. Auf Grund der fehlenden Typenangabe ist der Typ \promcode{untyped}. In Zeile 9-16 ist ein komplexeres Beispiel zu sehene. Es handelt sich hierbei um ein Histogramm. Dabei werden die intern im Exporter gemessenen Werte auf sogenannte Buckets aufgeteilt. Zu erkennen sind die vier vorkonfigurierten Buckets mit den Grenzwerten \promcode{0.05}, \promcode{0.2}, \promcode{1} und \promcode{+Inf}. 
 
 \subsection{Prometheus Query Language}
 Wie zuvor erwähnt werden die gesammelten Daten in einer internen Time Series Datenbank gespeichert welche durch die sogenannte \gls{promql} durchsucht werden kann.
 
 Hierfür gibt es vier verschiedene Subtypen:
-	<TimeUnit> ::= 'ms' | 's' | 'm' | 'h' | 'd' | 'w' | 'y'
 \begin{itemize}
 	\item Instant vector
 	Instant vector selectors allow the selection of a set of time series and a single sample value for each at a given timestamp (instant): in the simplest form, only a metric name is specified. This results in an instant vector containing elements for all time series that have this metric name.
@@ -83,18 +174,23 @@ Hierfür gibt es vier verschiedene Subtypen:
 Basistypen:
 
 \begin{bnf*}
-	\bnfprod{Scalar}{\bnfpn{Scalar}\bnfsp\bnfpn{BinOP}\bnfsp\bnfpn{Scalar}}\\
-	\bnfprod{InstantVector}{\bnfpn{Vector}\bnfsp\bnfpn{BinOP}\bnfsp\bnfpn{Scalar}\bnfor}\\
+	\bnfprod{String}{\bnfts{\textquotedbl...\textquotedbl}\bnfor{}\bnfts{\textquotesingle...\textquotesingle}\bnfor{}\bnfts{`...`}}\\
+	\bnfprod{Scalar}{\bnfpn{float}\bnfor\bnfts{nan}\bnfor\bnfts{inf}}\\
+	\bnfmore{\bnfor\bnfpn{Scalar}\bnfsp\bnfpn{BinOP}\bnfsp\bnfpn{Scalar}}\\
+	\bnfprod{InstantVector}{\bnfpn{identifier}}\\
+	\bnfmore{\bnfor\bnfpn{identifier}\bnfsp\bnfts{\{}\bnfsp\bnfpn{InstantVectorProp}\bnfsp\bnfts{\}}}\\
+	\bnfmore{\bnfor\bnfpn{InstantVector}\bnfsp\bnfpn{BinOP}\bnfsp\bnfpn{Scalar}}\\
+	\bnfprod{InstantVectorProp}{\bnfpn{key}\bnfsp\bnfts{=}\bnfsp\bnfpn{String}}\\
+	\bnfmore{\bnfor\bnfpn{key}\bnfsp\bnfts{=}\bnfsp\bnfpn{String}\bnfsp\bnfts{,}\bnfsp\bnfpn{InstantVectorProp}}\\
 	\bnfprod{RangeVector}{}\\
 	\bnfprod{Scalar}{\bnfpn{Scalar}\bnfsp\bnfpn{BinOP}\bnfsp\bnfpn{Scalar}}\\
-	\bnfprod{String}{\bnfpn{RawStringLIT}\bnfor{}\bnfpn{InterpretedStringLIT}}\\
-	\bnfprod{RawStringLIT}{\bnfts{'}\bnfsp\bnfpn{UnicodeChar}\bnfsp\bnfts{'}}\\
-	\bnfprod{InterpretedStringLIT}{\bnfts{\textquotedbl}\bnfsp\bnfpn{UnicodeValue}\bnfsp\bnfts{\textquotedbl}}
+	\bnfprod{TimeUnit}{\bnfts{ms}\bnfor\bnfts{s}\bnfor\bnfts{m}\bnfor\bnfts{h}\bnfor\bnfts{d}\bnfor\bnfts{w}\bnfor\bnfts{y}}\\
 \end{bnf*}
 \begin{bnf*}
 \bnfprod{BinOP}{\bnfts{+} \bnfor \bnfts{-} \bnfor \bnfts{*} \bnfor \bnfts{/} \bnfor \bnfts{\%} \bnfor \bnfts{\textasciicircum}}\\
 \bnfprod{BinCompOP}{\bnfts{==} \bnfor \bnfts{!=} \bnfor \bnfts{>} \bnfor \bnfts{<} \bnfor \bnfts{>=} \bnfor \bnfts{<=}}\\
-\bnfprod{SetOP}{\bnfts{and} \bnfor \bnfts{or} \bnfor \bnfts{unless}}
+\bnfprod{SetOP}{\bnfts{and} \bnfor \bnfts{or} \bnfor \bnfts{unless}}\\
+\bnfprod{InstantVectorPropOP}{\bnfts{=} \bnfor \bnfts{!=} \bnfor \bnfts{=~} \bnfor \bnfts{!~}}
 \end{bnf*}
 
 Vector matching 
@@ -180,3 +276,45 @@ year()
 %<aggregation>_over_time()
 
 \section{Grafana}
+Für die Visualisierung von den durch Prometheus gesammelten Daten kann Grafana~\citep{GrafanaHomepage} verwendet werden. Es ist ein vielseitiges und erweiterbares System um Daten aus den verschiedensten Datenquellen darzustellen wie z.B. Datenbanken wie Cassandra, MariaDB oder PostgreSQL aber auch regelmäßige HTTP-Requests gegen externe Schnittstellen oder statische JSON Objekte sind möglich~\cite{GrafanaDataSources}. Des weiteren liefert Grafana auch verschiedene Arten von Diagrammen.
+
+\begin{figure}[ht]
+	\begin{subfigure}{.25\textwidth}
+		\centering
+		\includegraphics[width=.8\linewidth]{assets/screenshots/Screenshot_2020-12-08 1 - New Features in v7 0 - Grafana.png}
+		\captionsetup{justification=centering}
+		\caption{Single Metric\\with Graph}
+		\label{fig:sfig1}
+	\end{subfigure}%
+	\begin{subfigure}{.25\textwidth}
+		\centering
+		\includegraphics[width=.8\linewidth]{assets/screenshots/Screenshot_2020-12-08 Website trends - Grafana.png}
+		\captionsetup{justification=centering}
+		\caption{Single Metric\\as Gauge}
+		\label{fig:sfig2}
+	\end{subfigure}%
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.8\linewidth]{assets/screenshots/Screenshot_2020-12-08 Grafana Play Home - Grafana(2).png}
+		\captionsetup{justification=centering}
+		\caption{Multimetric plot}
+		\label{fig:sfig2}
+	\end{subfigure}
+	\caption{Beispielhafte Diagrammarten}
+	\label{fig:fig}
+\end{figure}
+Ergänzend gibt es ein simples Tabellenformat, Wabenmuster, Balkendiagramme und viele mehr. Diese sind, wie die Datenquellen, durch Plugins erweiterbar. Dank der Quellcode Offenheit des Projektes können, sofern Bedarf besteht, auch eigene Plugins geschrieben werden.
+
+Um die Diagramme mit Daten aus, in unserem Fall, Prometheus zu befüllen muss in jedem Diagramm eine \gls{promql} Query hinterlegt werden, welche regelmäßig ausgeführt wird. Ein solches Diagramm ist Teil eines sogenannten Panels. Das heißt, ein Panel hat genau ein Diagramm und vice-versa. Diese werden nun in Dashboards zusammengefasst, welche dann eine Übersicht bieten. Hier kann man eine Menge an Panels definieren um diese dann gleichzeitig anzeigen zu lassen.
+
+Es soll noch gesagt sein, dass es höhere Ordnungsstrukturen wie Organisationen gibt oder man Dashboards auch wieder in Playlists und/oder Gruppen zusammen fassen kann. Diese Features werden in dieser Arbeit aber nicht näher betrachtet.
+
+\subsection{Panels}
+Da Panels viele Einstellungen haben und damit viele Individualisierungen erlauben werden dieser hier kurz näher erläutert.
+
+Jedes Panel besitzt in erster Linie einen Namen, Beschreibung, Diagrammart, Einstellungen für das Layout und Wertebezug \gls{bzgl} kumulierender Funktionen und verhalten mit null-Werten. In Abhängigkeit zur ausgewählten Diagrammart sind verschiedene Konfigurationen möglich. Achsenbeschriftung, Legende, Grenzwerte für symbolische Kolorierung und andere spezifische Einstellungen.
+
+Alternativ zur durch Keywords möglichen Gruppierung der Metriken ist es durch die Angabe mehrerer \gls{promql} Queries möglich mehrere Metriken in einem Diagramm darzustellen.
+
+
+
