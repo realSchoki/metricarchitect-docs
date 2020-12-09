@@ -1,83 +1,80 @@
  
 % header.tex
-\documentclass[a4paper,11pt,twoside,ngerman,color]{book}
+\documentclass[a4paper,11pt,twoside,ngerman]{book}
 \usepackage[a4paper,left=3.5cm,right=2.5cm,bottom=3.5cm,top=3cm]{geometry}
 
 
-% Korrekte Darstellung der Umlaute
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
+\usepackage{polyglossia}
+\setdefaultlanguage[spelling=new, babelshorthands=true]{german}
 
-\usepackage[ngerman]{babel}
+\usepackage{fontspec}
+\usepackage{unicode-math}
+\usepackage{luacode}
+
+%\setromanfont{Cambria}
+%\setsansfont{Calibri}
+%\setmonofont{Consolas}
+\setmonofont{CMU Typewriter Text}
+%\setmathfont{Cambria Math}
+
 \usepackage[autostyle]{csquotes}
-\usepackage[]{dirtytalk}
-
-\usepackage[pdftex]{graphicx,color}
+%\usepackage[]{dirtytalk}
+%
+\usepackage{graphicx}
+\usepackage{color}
 \definecolor{LightGray}{RGB}{211, 211, 211}
-
-\usepackage{amsmath,amssymb,subcaption}%,subfigure
-
+%
+%\usepackage{amsmath,amssymb,subcaption}%,subfigure
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{needspace}
+%
 \usepackage{calc}
 \usepackage{tikz}
 \usetikzlibrary{positioning,calc,arrows,shapes.multipart,arrows.meta}
-
+%
 \usepackage[altpo, epsilon]{backnaur}
 \renewcommand{\bnfpn}[1]{\textbf{\textrm{#1}}}
 \renewcommand{\bnfsp}[0]{,}
 \renewcommand{\bnfts}[1]{\textquotedbl\texttt{#1}\textquotedbl}
 \newcommand{\bnfop}[1]{[ #1 ]}
 \newcommand{\bnfre}[1]{\{ #1 \}}
-%\renewcommand{\bnfpn}[1]{\textbf{\textrm{#1}}}
-%\renewcommand{\bnfts}[1]{\bnf@tsfont{#1}}
+%%\renewcommand{\bnfpn}[1]{\textbf{\textrm{#1}}}
+%%\renewcommand{\bnfts}[1]{\bnf@tsfont{#1}}
 
-% Theorem-Umgebungen
+%% Theorem-Umgebungen
 \usepackage[amsmath,thmmarks]{ntheorem}
-
-% Algorithmen
+%\usepackage{mdframed}
+%
+%% Algorithmen
 \usepackage[plain,chapter]{algorithm}
 \usepackage{algorithmic}
-
-% Listings
+%
+%% Listings
 \usepackage{minted}
-\usepackage{listings}
-\lstdefinestyle{customprometheus}{
-	belowcaptionskip=1\baselineskip,
-	breaklines=true,
-	frame=L,
-	numbers=left,
-	xleftmargin=\parindent,
-	language=C,
-	showstringspaces=false,
-	stepnumber=1,
-	basicstyle=\footnotesize\ttfamily,
-	keywordstyle=\bfseries\color{green!40!black},
-	commentstyle=\itshape\color{purple!40!black},
-	identifierstyle=\color{blue},
-	stringstyle=\color{orange},
-}
-
+%\usepackage{listings}
+%
 \newmintinline[promcode]{text}{fontsize=\scriptsize, bgcolor=LightGray}
-
-
-\makeatletter
-\let\footnote@orig\footnote
-\def\footnote{%
-	\begingroup
-	\@makeother\#%
-	\footnote@i
-}
-\def\footnote@i#1{%
-	\endgroup
-	\footnote@orig{#1}%
-}
-\makeatother
-
-
-\usepackage{enumerate}
-
-
-% Bibtex deutsch
-%\usepackage{bibgerm}
+%
+%
+%\makeatletter
+%\let\footnote@orig\footnote
+%\def\footnote{%
+%	\begingroup
+%	\@makeother\#%
+%	\footnote@i
+%}
+%\def\footnote@i#1{%
+%	\endgroup
+%	\footnote@orig{#1}%
+%}
+%\makeatother
+%
+%
+%\usepackage{enumerate}
+%
+%
+%% Bibtex deutsch
 \usepackage[
 backend=biber,
 %style=authoryear-icomp,
@@ -89,73 +86,72 @@ natbib=true,
 %eprint=false
 ]{biblatex}
 \addbibresource{literatur/diplom.bib}
-
+%
 \usepackage[]{hyperref}
 \hypersetup{
 	%colorlinks=true,
 	hidelinks
 }
-
-% URLs
-\usepackage{url}
-
-% Abbr
+%
+%% URLs
+%\usepackage{url}
+%
+%% Abbr
 \usepackage{glossaries}
 \makeindex
 \input{abbr}
-
-% Caption Packet
-\usepackage[margin=0pt,font=small,labelfont=bf]{caption}
-% Gliederung einstellen
-%\setcounter{secnumdepth}{5}
-%\setcounter{tocdepth}{5}
+%
+%% Caption Packet
+%\usepackage[margin=0pt,font=small,labelfont=bf]{caption}
+%% Gliederung einstellen
+%%\setcounter{secnumdepth}{5}
+%%\setcounter{tocdepth}{5}
 
 % Theorem-Optionen %
-\theoremseparator{.}
-\theoremstyle{change}
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{satz}[theorem]{Satz}
-\newtheorem{lemma}[theorem]{Lemma}
-\newtheorem{korollar}[theorem]{Korollar}
-\newtheorem{proposition}[theorem]{Proposition}
+%\theoremseparator{.}
+%\theoremstyle{change}
+\newtheorem{Definition}{Definition}
+\newtheorem{Beispiel}{Beispiel}
+%\newtheorem{theorem}{Theorem}[section]
+%\newtheorem{satz}[theorem]{Satz}
+%\newtheorem{lemma}[theorem]{Lemma}
+%\newtheorem{korollar}[theorem]{Korollar}
+%\newtheorem{proposition}[theorem]{Proposition}
 % Ohne Numerierung
-\theoremstyle{nonumberplain}
-\renewtheorem{theorem*}{Theorem}
-\renewtheorem{satz*}{Satz}
-\renewtheorem{lemma*}{Lemma}
-\renewtheorem{korollar*}{Korollar}
-\renewtheorem{proposition*}{Proposition}
-% Definitionen mit \upshape
-\theorembodyfont{\upshape}
-\theoremstyle{change}
-\newtheorem{definition}[theorem]{Definition}
-\theoremstyle{nonumberplain}
-\renewtheorem{definition*}{Definition}
-% Kursive Schrift
+%\theoremstyle{nonumberplain}
+%\renewtheorem{theorem*}{Theorem}
+%\renewtheorem{satz*}{Satz}
+%\renewtheorem{lemma*}{Lemma}
+%\renewtheorem{korollar*}{Korollar}
+%\renewtheorem{proposition*}{Proposition}
+%% Definitionen mit \upshape
+%\theorembodyfont{\upshape}
+%\newtheorem{definition}[theorem]{Definition}
+%%\theoremstyle{nonumberplain}
+%\renewtheorem{definition*}{Definition}
+%% Kursive Schrift
 \theoremheaderfont{\itshape}
-\newtheorem{notation}{Notation}
-\newtheorem{konvention}{Konvention}
-\newtheorem{bezeichnung}{Bezeichnung}
-\theoremsymbol{\ensuremath{\Box}}
-\newtheorem{beweis}{Beweis}
-\theoremsymbol{}
-\theoremstyle{change}
-\theoremheaderfont{\bfseries}
-\newtheorem{bemerkung}[theorem]{Bemerkung}
-\newtheorem{beobachtung}[theorem]{Beobachtung}
-\newtheorem{beispiel}[theorem]{Beispiel}
-\newtheorem{problem}{Problem}
-\theoremstyle{nonumberplain}
-\renewtheorem{bemerkung*}{Bemerkung}
-\renewtheorem{beispiel*}{Beispiel}
-\renewtheorem{problem*}{Problem}
+%\newtheorem{notation}{Notation}
+%\newtheorem{konvention}{Konvention}
+%\newtheorem{bezeichnung}{Bezeichnung}
+%\newtheorem{beweis}{Beweis}
+%\theoremsymbol{}
+%\theoremheaderfont{\bfseries}
+%\newtheorem{bemerkung}[theorem]{Bemerkung}
+%\newtheorem{beobachtung}[theorem]{Beobachtung}
+%\newtheorem{beispiel}[theorem]{Beispiel}
+%\newtheorem{problem}{Problem}
+%%\theoremstyle{nonumberplain}
+%\renewtheorem{bemerkung*}{Bemerkung}
+%\renewtheorem{beispiel*}{Beispiel}
+%\renewtheorem{problem*}{Problem}
 
-% Algorithmen anpassen %
-\renewcommand{\algorithmicrequire}{\textit{Eingabe:}}
-\renewcommand{\algorithmicensure}{\textit{Ausgabe:}}
-\floatname{algorithm}{Algorithmus}
-\renewcommand{\listalgorithmname}{Algorithmenverzeichnis}
-\renewcommand{\algorithmiccomment}[1]{\color{grau}{// #1}}
+%% Algorithmen anpassen %
+%\renewcommand{\algorithmicrequire}{\textit{Eingabe:}}
+%\renewcommand{\algorithmicensure}{\textit{Ausgabe:}}
+%\floatname{algorithm}{Algorithmus}
+%\renewcommand{\listalgorithmname}{Algorithmenverzeichnis}
+%\renewcommand{\algorithmiccomment}[1]{\color{grau}{// #1}}
 
 % Zeilenabstand einstellen %
 \renewcommand{\baselinestretch}{1.25}
@@ -191,4 +187,3 @@ natbib=true,
 % Keine einzelnen Zeilen am Ende eines Abschnitts (Hurenkinder)
 \widowpenalty = 10000 \displaywidowpenalty = 10000
 % EOF
-
