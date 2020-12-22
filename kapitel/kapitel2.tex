@@ -1,9 +1,9 @@
 % kapitel2.tex
-\chapter{Grundlagen}
+\chapter{Basics}
 \label{chapter:grundlagen}
 \section{Smart Home}
-Im Zuge der Digitalisierung und Vereinfachung der Beschaffung von Sensorik im Alltag ist Smart Home als Konzept für den Verbraucher angekommen und bezahlbar. Dabei handelt es sich im allgemeinsten Fall um eine Basisstation mit beliebig vielen Akteuren und Sensoren. Jene Station dient dem verarbeiten und speichern der Daten aus den sensorischen Elementen des Verbundes und anhand von zum Beispiel Entscheidungstabellen werden dann die Akteure angesteuert. Als simples Szenario kann man sich hier eine Wohnzimmerlampe vorstellen, welche angeschaltet wird, wenn der draußen angebrachte Helligkeitssensor Dunkelheit signalisiert. Allerdings muss ein System nicht zwangsläufig Sensoren und Akteure haben. Ein Netzwerk aus Sensoren würde nur überwachen und eines aus Akteuren kann nur handeln. Beispiele hierfür wären eine zentrale Stromverbrauchüberwachung pro Steckdose oder eine Heizungssteuerung.
-Hierbei gibt es noch zu erwähnen, dass es auch Kombigeräte gibt. Ein Heizungsthermostat hat meist ein eingebautes Thermometer und ist somit Akteur und Sensor.\\
+In the course of digitalization and simplification of the procurement of sensor technology in everyday life, smart home has arrived as a concept for the consumer and is affordable. In the most general case, it is a base station with any number of actors and sensors. This station is used to process and store the data from the sensory elements of the network and the actors are then controlled on the basis of decision tables, for example. As a simple scenario, one can imagine a living room lamp that is switched on when the brightness sensor outside signals darkness. However, a system does not necessarily have to have sensors and actors. A network of sensors would only monitor and one of actors can only act. Examples would be a central power consumption monitoring per socket or a heating control.
+Here it is worth mentioning that there are also combination devices. A heating thermostat usually has a built-in thermometer and is thus both actor and sensor.\\
 
 \begin{figure}[!h]
 	\centering
@@ -15,35 +15,35 @@ Hierbei gibt es noch zu erwähnen, dass es auch Kombigeräte gibt. Ein Heizungst
 	\draw[-{Stealth[scale=1.3,angle'=90]},semithick] (B) -- node[above] {0..M} (C) ;
 	\end{tikzpicture}
 \end{figure}
-\section{Grundbegriffe}
-Im Kontext von Prometheus und dieser Arbeit sind ein paar potentiell mehrdeutiger Begriffe genauer zu spezifizieren.
-\subsection{Metriken}
-Eine Eigenschaft welche beobachtet und gemessen wird.
+\section{Basic Terms}
+In the context of Prometheus and this thesis, a few potentially ambiguous terms need to be specified more precisely.
+\subsection{Metric}
+A property which is observed and measured.
 \begin{Beispiel}
-	Temperatur, Regenmenge, Helligkeit, Transferrate, gedruckte Dokumente
+	Temperature, rain amount, brightness, transfer rate, amount of printed documents
 \end{Beispiel}
 \begin{Definition}
-	Eine Metrik ist eine einzige, zu messende Eigenschaft.
+	A metric is a single property to be measured.
 \end{Definition}
 \subsection{Sensor}
-Ein Sensor ist ein reelles Gerät, eine Einheit welche in der echten Welt eingesetzt wird. Dieses kann mehrere Metriken erfassen und sie dann über eine Schnittstelle zur Verfügung stellen.
+A sensor is a real device, a unit which is used in the real world. This can capture multiple metrics and then make them available via an interface.
 \begin{Beispiel}
-	Wetterstation, Netzwerkswitch, Heizungsthermostat
+	Weather station, network switch, heating thermostat
 \end{Beispiel}
 \begin{Definition}
-	Eine Metrik ist eine einzige zu messende Eigenschaft.
+	A metric is a single property to be measured.
 \end{Definition}
 
 \section{Prometheus}
-Bei Prometheus handelt es sich um eine Open Source Lösung die zur Überwachung von Metriken und der Alarmierung dient. Es gibt die Möglichkeit Daten aktiv zu übergeben oder alternativ Prometheus so zu konfigurieren und damit zu beauftragen, dass es sich die Daten von verschiedenen Datenquellen abholt. Für die letztere Variante muss das zu Überwachende System eine HTTP Schnittstelle zur Verfügung stellen auf der in einer Vordefinierten Art die Daten ausgeliefert werden. Um diesen Prozess zu vereinfachen gibt es bereits verschiedene Libraries für verschiedene Programmiersprachen die konfigurativ ein solches Format einhalten. Zum Zeitpunkt des Schreibens sind offiziel GO, Scala/Java, Python und Ruby unterstützt, allerdings gibt es für zahlreiche andere Sprachen unoffizielle Third Party Libraries welche auf der Internetseite von Prometheus beworben werden. Für den Fall, dass die gewählte Sprache nicht unterstützt wird ist es auch möglich die Ausgabe selber zu erstellen. Dafür ist die Definition des Ausgabeformat gut dokumentiert worden. 
-\subsection{Zählertypen}
+Prometheus is an open source solution that is used for metrics monitoring and alerting. There is the possibility to pass data actively or alternatively to configure Prometheus to fetch data from different data sources. For the latter variant, the system to be monitored must provide an HTTP interface on which the data is delivered in a predefined manner. To simplify this process, there are already several libraries for different programming languages that are configurable to such a format. At the time of writing GO, Scala/Java, Python and Ruby are officially supported, but for many other languages there are unofficial third party libraries which are advertised on the Prometheus website. In case the selected language is not supported, it is also possible to create the output yourself. For this, the definition of the output format has been well documented.
+\subsection{Metric Types}
 Prometheus unterscheidet bei Metriken zwischen verschiedenen Typen. Nachfolgen werden alle Möglichkeiten kurz Erläutern. Im \autoref{subsec:Exportformat}  für das Verständnis ein paar Beispiele aufgelistet und erklärt.
 \subsubsection{Counter}
-Der Counter beschreibt eine Metrikart, welche nur hochgezählt und zurückgesetzt werden kann. Sie stellt eine monoton wachsende Funktion dar. 
+The counter describes a metric type which can only be incremented and reset. It represents a monotonically growing function. 
 \subsubsection{Gauge}
-Dieser Typ symbolisiert eine Messuhr oder Tachometer. Die Werte können steigen und fallen.
+This type symbolizes a dial gauge or tachometer. The values can rise and fall.
 \subsubsection{Histogram}
-Bei einem Histogramm handelt es sich um ein Konzept bestehend aus sogenannten Buckets. Diese werden initial für eine Metrik festgelegt. Mit Hilfe dieser Definition werden dann Werte von $]-\infty,+\infty[$  in die besagten Buckets sortiert. Dabei enthält jeder nächst höhere Bucket auch die gemessenen Werte des niedriegeren Buckets. Es handelt sich also um eine Teilmengenbeziehung bei der die Teilmengen durch den gesetzten Grenzwert bestimmt werden. Das \promcode{le} im Index kann man als \textquote{Less Equal} verinnerlichen. Dieser Parameter wird auch im Export so notiert. 
+A histogram is a concept consisting of so-called buckets. These are initially defined for a metric. With the help of this definition, values of $]-\infty,+\infty[$ are sorted into the said buckets. Each next higher bucket also contains the measured values of the lower bucket. So it is a subset relation where the subsets are determined by the set limit. The \promcode{le} in the index can be interpreted as \textquote{Less Equal}. This parameter is also noted like this in the export.
 \begin{center}
 	\begin{tikzpicture}
 	\draw (0,0) ellipse (2cm and .7cm);
@@ -57,7 +57,7 @@ Bei einem Histogramm handelt es sich um ein Konzept bestehend aus sogenannten Bu
 	node[pos=1] {$B_{le=\textquotedbl+Inf\textquotedbl}$};
 	\end{tikzpicture}
 \end{center}
-Ein Histogramm stellt zusätzlich zu den Buckets noch eine Gesamtanzahl der gemessenen Werte, was einem Bucket mit \promcode{le="+Inf"} gleicht und einem Wert für die Summe aller Werte.
+A histogram represents, in addition to the buckets, a total number of measured values, which is like a bucket with \promcode{le="+Inf"} and a value for the sum of all values.
 \begin{figure}[hbt!]
 	\begin{minted}[mathescape,
 	linenos,
@@ -73,11 +73,12 @@ Ein Histogramm stellt zusätzlich zu den Buckets noch eine Gesamtanzahl der geme
 	<basename>_sum <value>
 	<basename>_count <value>
 	\end{minted}
-	\caption{Allgemeines Konzept vom Histogrammexport}
+	\caption{General concept of histogram export}
 \end{figure}
+Line 2 can be multiple as long as each entry has its own limit value. Lines 3 and 4 are the additional values as already mentioned.
 Zeile 2 kann mehrfach vorhanden sein sofern jeder Eintrag einen eigenen Grenzwert besitzt. Die Zeile 3 und 4 sind wie bereits erwähnt die zusätzlichen Werte.
 \subsubsection{Summary}
-Eine Summary ist ähnlich wie ein Histogramm aufgebaut, jedoch werden hier nicht Buckets durch den Wert der Messung befüllt sondern die gemessenen Werte werden in $\varphi$-Quantile ($0 \le \varphi \le 1)$ aufgeteilt und dazu den Maximalwert des Quantils.
+A summary is similar to a histogram, but here buckets are not filled by the value of the measurement but the measured values are divided into $\varphi$-quantiles ($0 \le \varphi \le 1)$ and the maximum value of the quantile.
 \begin{figure}[hbt!]
 	\begin{minted}[mathescape,
 	linenos,
@@ -93,21 +94,21 @@ Eine Summary ist ähnlich wie ein Histogramm aufgebaut, jedoch werden hier nicht
 	<basename>_sum <value>
 	<basename>_count <value>
 	\end{minted}
-	\caption{Allgemeines Konzept vom Summaryexport}
+	\caption{General concept of summary export}
 \end{figure}
 \subsubsection{Untyped}
-Hier wird der Metrik ein Wert zugewiesen ohne spezielle Regeln zu beachten. Es handelt sich hierbei um eine sichere Standarteinstellung und ist zwangsläufig nicht davon abzusehen diesen Typen zu benutzen.
+In this case a value is assigned to the metric without following any special rules. This is a safe default setting and it is inevitable not to use this type.
 \Needspace{9\baselineskip}
 \subsection{Labels}
-Mit Labels kann man gleichnamige Metriken verschieden Ursprung differenziert aufschlüsseln. 
+Labels can be used to break down metrics with the same name into different origins. 
 \begin{figure}[!ht]
 	\begin{minted}[mathescape,linenos,numbersep=5pt,gobble=1,frame=lines,tabsize=4,breaklines,framesep=2mm]{text}
 	<basename>{key="<value>",key2="<value2>",...} <value>
 	\end{minted}
-	\caption{Allgemeines Konzept von Labels}
+	\caption{General concept of labels}
 \end{figure}
 \subsection{Exportformat}
-Anhand eines Beispiels lässt sich das Exportformat von Prometheus gut beschreiben. Wir ziehen hierzu einen Teil aus der offiziellen Dokumentation~\cite{PrometheusExpositionFormatBeispiel} hinzu.\\
+The export format of Prometheus can be described well by means of an example. For this purpose, we draw a part from the official documentation~\cite{PrometheusExpositionFormatBeispiel}.\\
 \par
 \label{subsec:Exportformat}
 \begin{listing}[H]
@@ -120,14 +121,14 @@ Anhand eines Beispiels lässt sich das Exportformat von Prometheus gut beschreib
 	# Minimalistic line:
 	metric_without_timestamp_and_labels 12.47
 	\end{minted}
-	\caption{Teilbeispiel aus der offiziellen Prometheus Dokumentation~\cite{PrometheusExpositionFormatBeispiel}}
+	\caption{Partial example from the official Prometheus documentation~\cite{PrometheusExpositionFormatBeispiel}}
 \end{listing}
-Zwischen Zeile 1-4 finden wir die erste exportierte Metrik in diesem Beispiel. Die erste Zeile beinhaltet nach dem Token \promcode{# HELP <Name der Metrik>} eine kurze Beschreibung, welche Optional ist. In der nächsten Zeile ist der Typ mit\linebreak \promcode{# TYPE <Name der Metrik> <Typ der Metrik>} angegeben. Die Auswahlmöglichkeiten bezüglich des Typen deckt sich mit den bereits Beschriebenen Metrikarten: \promcode{counter}, \promcode{gauge}, \promcode{histogramm}, \promcode{summary}, \promcode{untyped}.
+Between lines 1-4 we find the first exported metric in this example. The first line contains after the token \promcode{# HELP <name of metric>} a short description which is Optional. The next line specifies the type with \linebreak \promcode{# TYPE <name of metric> <type of metric>}. The choices regarding the type coincide with the metric types already described: \promcode{counter}, \promcode{gauge}, \promcode{histogram}, \promcode{summary}, \promcode{untyped}.
 
-Bei allen Zeilen, welche mit \promcode{#} anfangen aber weder mit \promcode{TYPE} oder \promcode{HELP} weitergeführt werden, handelt es sich um Kommentarzeilen und somit welche nicht interpretiert werden.
+All lines starting with \promcode{#} but not continued with \promcode{TYPE} or \promcode{HELP} are comment lines and therefore not interpreted.
 
-Zeile 3-4 zeigt die gemessenen Werte aufgeschlüsselt nach ihren Labels. Zeilen jene die Messwerte symbolisieren bestehen aus drei Spalte. Die erste im Format \promcode{<Name der Metrik>} gefolgt von optionalen Labels in geschwungenen Klammern. Das Beispiel hier schlüsselt alle HTTP-Requests nach Methode und HTTP-Rückgabewert auf. In der nächsten Spalte findet sich der gemessene Wert zu der Metrik unter Anbetracht der optional vorhandenen Gruppierung. Die letzte Spalte ist wieder nicht verpflichtend und enthält den Timestamp, an dem der Wert gemessen wurde. 
-Ergänzend haben wir in Zeile 7 ein Minimalbeispiel. Auf Grund der fehlenden Typenangabe ist der Typ \promcode{untyped}. Die EBNF zu dieser Art der Zeile ist wie folgt:
+Lines 3-4 show the measured values broken down by their labels. Lines that symbolize the measured values consist of three columns. The first in the format \promcode{<name of metric>} followed by optional labels in curly brackets. The example here breaks down all HTTP requests by method and HTTP return value. The next column contains the measured value for the metric, taking into account the optional grouping available. The last column is again non-mandatory and contains the timestamp at which the value was measured. 
+In addition, we have a minimal example in line 7. Due to the lack of type specification, the type is \promcode{untyped}. The EBNF to this type of line is as follows:
 \begin{listing}[H]
 	\begin{samepage}
 		\begin{minted}[mathescape,
@@ -146,11 +147,11 @@ Ergänzend haben wir in Zeile 7 ein Minimalbeispiel. Auf Grund der fehlenden Typ
 		"}" 
 		]  value  [ timestamp ]
 		\end{minted}
-		\caption{EBNF nach ISO/IEC 14977 einer Metrik}
+		\caption{EBNF following ISO/IEC 14977 of a Metric}
 	\end{samepage}
 \end{listing}
 
-In den nachfolgenden Zeilen ist ein komplexeres Beispiel zu sehen. Es handelt sich hierbei um ein Histogramm. Dabei werden die intern im Exporter gemessenen Werte auf sogenannte Buckets aufgeteilt. Zu erkennen sind die vier vorkonfigurierten Buckets mit den Grenzwerten \promcode{0.05}, \promcode{0.2}, \promcode{1} und \promcode{+Inf}. 
+In the following lines you can see a more complex example. This is a histogram. The values measured internally in the exporter are divided into so-called buckets. You can see the four preconfigured buckets with the limits \promcode{0.05}, \promcode{0.2}, \promcode{1} and \promcode{+Inf}. 
 \begin{listing}[H]
 	\begin{minted}[mathescape,linenos,numbersep=5pt,gobble=1,frame=lines,tabsize=4,breaklines,framesep=2mm]{text}
 	# HELP http_request_duration_seconds A histogram of the request duration
@@ -162,13 +163,13 @@ In den nachfolgenden Zeilen ist ein komplexeres Beispiel zu sehen. Es handelt si
 	http_request_duration_seconds_sum 53423
 	http_request_duration_seconds_count 144320
 	\end{minted}
-	\caption{Histogramexportbeispiel aus der offiziellen Prometheus Dokumentation~\cite{PrometheusExpositionFormatBeispiel}}
+	\caption{Histogram export example from the official Prometheus documentation~\cite{PrometheusExpositionFormatBeispiel}}
 \end{listing}
 
 \subsection{Prometheus Query Language}
-Wie zuvor erwähnt werden die gesammelten Daten in einer internen Time Series Datenbank gespeichert welche durch die sogenannte \gls{promql} durchsucht werden kann.
+As mentioned before, the collected data is stored in an internal Time Series database which can be searched by the so-called \gls{promql}.
 
-Hierfür gibt es vier verschiedene Subtypen:
+There are four different subtypes for this:
 \begin{itemize}
 	\item Instant vector
 	Instant vector selectors allow the selection of a set of time series and a single sample value for each at a given timestamp (instant): in the simplest form, only a metric name is specified. This results in an instant vector containing elements for all time series that have this metric name.
@@ -321,7 +322,7 @@ year()
 %<aggregation>_over_time()
 
 \section{Grafana}
-Für die Visualisierung von den durch Prometheus gesammelten Daten kann Grafana~\citep{GrafanaHomepage} verwendet werden. Es ist ein vielseitiges und erweiterbares System um Daten aus den verschiedensten Datenquellen darzustellen wie z.B. Datenbanken wie Cassandra, MariaDB oder PostgreSQL aber auch regelmäßige HTTP-Requests gegen externe Schnittstellen oder statische JSON Objekte sind möglich~\cite{GrafanaDataSources}. Des weiteren liefert Grafana auch verschiedene Arten von Diagrammen.
+For the visualization of the data collected by Prometheus, Grafana~\citep{GrafanaHomepage} can be used. It is a versatile and extensible system to display data from various data sources like databases like Cassandra, MariaDB or PostgreSQL but also regular HTTP requests against external interfaces or static JSON objects are possible~\cite{GrafanaDataSources}. Furthermore, Grafana also provides different types of diagrams.
 
 \begin{figure}[ht]
 	\begin{subfigure}{.25\textwidth}
@@ -345,21 +346,20 @@ Für die Visualisierung von den durch Prometheus gesammelten Daten kann Grafana~
 		\caption{Multimetric plot}
 		\label{fig:sfig2}
 	\end{subfigure}
-	\caption{Beispielhafte Diagrammarten}
+	\caption{Example diagram types}
 	\label{fig:fig}
 \end{figure}
-Ergänzend gibt es ein simples Tabellenformat, Wabenmuster, Balkendiagramme und viele mehr. Diese sind, wie die Datenquellen, durch Plugins erweiterbar. Dank der Quellcode Offenheit des Projektes können, sofern Bedarf besteht, auch eigene Plugins geschrieben werden.
+Supplementary there is a simple table format, honeycomb patterns, bar charts and many more. These, like the data sources, are extensible through plugins. Thanks to the source code openness of the project, custom plugins can be written if needed.
 
-Um die Diagramme mit Daten aus, in unserem Fall, Prometheus zu befüllen muss in jedem Diagramm eine \gls{promql} Query hinterlegt werden, welche regelmäßig ausgeführt wird. Ein solches Diagramm ist Teil eines sogenannten Panels. Das heißt, ein Panel hat genau ein Diagramm und vice-versa. Diese werden nun in Dashboards zusammengefasst, welche dann eine Übersicht bieten. Hier kann man eine Menge an Panels definieren um diese dann gleichzeitig anzeigen zu lassen.
+To fill the diagrams with data from, in our case, Prometheus, a \gls{promql} query must be stored in each diagram, which is executed regularly. Such a diagram is part of a so-called panel. That means, a panel has exactly one diagram and vice-versa. These are now combined into dashboards, which then provide an overview. Here you can define a lot of panels to display them at the same time.
 
-Es soll noch gesagt sein, dass es höhere Ordnungsstrukturen wie Organisationen gibt oder man Dashboards auch wieder in Playlists und/oder Gruppen zusammen fassen kann. Diese Features werden in dieser Arbeit aber nicht näher betrachtet.
+It should also be said that there are higher order structures such as organizations or you can summarize dashboards again in playlists and / or groups. These features are not considered in this work however more near.
 
 \subsection{Panels}
-Da Panels viele Einstellungen haben und damit viele Individualisierungen erlauben werden dieser hier kurz näher erläutert.
+Since panels have many settings and thus allow many individualizations, these are briefly explained here.
 
-Jedes Panel besitzt in erster Linie einen Namen, Beschreibung, Diagrammart, Einstellungen für das Layout und Wertebezug \gls{bzgl} kumulierender Funktionen und verhalten mit null-Werten. In Abhängigkeit zur ausgewählten Diagrammart sind verschiedene Konfigurationen möglich. Achsenbeschriftung, Legende, Grenzwerte für symbolische Kolorierung und andere spezifische Einstellungen.
+Each panel has primarily a name, description, diagram type, settings for the layout and value reference of cumulative functions and behavior with zero values. Depending on the selected chart type, different configurations are possible. Axis labeling, legend, limits for symbolic coloring and other specific settings.
 
-Alternativ zur durch Keywords möglichen Gruppierung der Metriken ist es durch die Angabe mehrerer \gls{promql} Queries möglich mehrere Metriken in einem Diagramm darzustellen.
-
+Alternatively to the grouping of metrics possible by keywords, it is possible to display several metrics in one diagram by specifying several \gls{promql} queries.
 
 
