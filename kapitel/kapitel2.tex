@@ -140,12 +140,12 @@ In addition, we have a minimal example in line 7. Due to the lack of type specif
 		tabsize=4,
 		breaklines,
 		framesep=2mm]{ebnf}
-		metric = metric_name [ 
-		"{" 
-		label_name "=" '"' label_value '"' 
-		{ "," label_name "=" '"' label_value '"' } [ "," ] 
-		"}" 
-		]  value  [ timestamp ]
+		metric = metric_name, [ 
+		"{",
+		label_name, "=", '"', label_value, '"',
+		{ ",", label_name, "=", '"', label_value, '"' }, [ "," ], 
+		"}",
+		],  value,  [ timestamp ];
 		\end{minted}
 		\caption{EBNF following ISO/IEC 14977 of a Metric}
 	\end{samepage}
