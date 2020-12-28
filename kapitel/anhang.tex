@@ -1,7 +1,88 @@
 % anhang.tex
 \chapter{More information}
 \section{PromQL EBNF}
+\subsection{Basics}
+\subsubsection{String}
+\begin{listing}[H]
+	\begin{samepage}
+		\begin{minted}[mathescape, linenos, numbersep=5pt, gobble=3, frame=lines, tabsize=4, breaklines, framesep=2mm]{ebnf}
+			string = raw_string_lit | interpreted_string_lit;
+			raw_string_lit = "'", { unicode_char | newline }, "'";
+			interpreted_string_lit = '"', { unicode_value | byte_value }, '"';
+			newline = ? the Unicode code point U+000A ?;
+			unicode_char = ? an arbitrary Unicode code point except newline ?;
+			unicode_value = unicode_char | little_u_value | big_u_value | escaped_char;
+			byte_value       = octal_byte_value | hex_byte_value;
+			octal_byte_value = '\' octal_digit octal_digit octal_digit;
+			hex_byte_value   = '\' "x" hex_digit hex_digit;
+			little_u_value   = '\' "u" hex_digit hex_digit hex_digit hex_digit;
+			big_u_value      = '\' "U" hex_digit hex_digit hex_digit hex_digit
+			                           hex_digit hex_digit hex_digit hex_digit;
+			escaped_char     = '\' ( "a" | "b" | "f" | "n" 
+			                       | "r" | "t" | "v" | '\' | "'" | '"' );
+			octal_digit   = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7";
+			hex_digit     = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+					      | "A" | "B" | "C" | "D" | "E" | "F"
+					      | "a" | "b" | "c" | "d" | "e" | "f";
+		\end{minted}
+		\caption{EBNF following ISO/IEC 14977 of a Metric}
+	\end{samepage}
+\end{listing}
 
+\subsubsection{Float}
+\begin{listing}[H]
+	\begin{samepage}
+		\begin{minted}[mathescape, linenos, numbersep=5pt, gobble=3, frame=lines, tabsize=4, breaklines, framesep=2mm]{ebnf}
+			float = [ "+", "-" ], { digit }, [ "." ], digit, { digit }, [ ( "e" | "E" ), [ "-" | "+" ], digit, { digit }
+				| "0", ( "x" | "X" ), hex_digit, { hex_digit }
+				| ( "n" | "N" ), ( "a" | "A" ), ( "n" | "N" )
+				| ( "i" | "I" ), ( "n" | "N" ), ( "f" | "F" );
+			digit     = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+			hex_digit = digit
+				| "A" | "B" | "C" | "D" | "E" | "F"
+				| "a" | "b" | "c" | "d" | "e" | "f";
+		\end{minted}
+		\caption{EBNF following ISO/IEC 14977 of a Metric}
+	\end{samepage}
+\end{listing}
+
+\subsubsection{Instant and Range Vector}
+\begin{listing}[H]
+\begin{samepage}
+\begin{minted}[mathescape, linenos, numbersep=5pt, gobble=1, frame=lines, tabsize=4, breaklines, framesep=2mm]{ebnf}
+	vector = label, [ "{", [ param, { ",", param } ], "}" ]
+	       | "{", [ param-not-empty, { ",", param } ], "}"
+	instant-vector = vector, [ " ", "offset", " ", duration ];
+	range-vector = vector, "[", duration, "]", " ", "offset", " ",
+	duration;
+	subquery = instant-vector, "[", range, ":", [ resolution ] "]" [ "offset", duration ]
+	param = label, ( "=" | "!=" ), '"', string, '"'
+	      | label, ( "=~" | "!~" ), '"', regex , '"';
+	param = label, ( "=" | "!=" ), '"', string, '"'
+	      | label, ( "=~" | "!~" ), '"', regex , '"';
+	string = ? basic type ?
+	regex = ? RegEx RE2 syntax - https://github.com/google/re2/wiki/Syntax ?
+	range = duration;
+	resolution = duration;
+	duration = [ int, "y" ], [ int, "w" ], [ int, "d" ], [ int, "h" ], 
+		       [ int, "m" ], [ int, "s" ], [ int, "ms" ];
+	int = digit, { digit };
+	digit = ? 0 ... 9 ?
+\end{minted}
+\caption{EBNF following ISO/IEC 14977 of a Metric}
+\end{samepage}
+\end{listing}
+
+%
+%[-+]?
+%(
+%	[0-9]*\.?[0-9]+
+%	
+%	([eE][-+]?[0-9]+)?
+%	| 0[xX][0-9a-fA-F]+
+%	| [nN][aA][nN]
+%	| [iI][nN][fF]
+%)
 %https://prometheus.io/docs/prometheus/latest/querying/operators/
 %https://github.com/prometheus/prometheus/blob/master/promql/parser/ast.go
 \begin{listing}[H]
