@@ -58,8 +58,6 @@
 	subquery = instant-vector, "[", range, ":", [ resolution ] "]" [ "offset", duration ]
 	param = label, ( "=" | "!=" ), '"', string, '"'
 	      | label, ( "=~" | "!~" ), '"', regex , '"';
-	param = label, ( "=" | "!=" ), '"', string, '"'
-	      | label, ( "=~" | "!~" ), '"', regex , '"';
 	string = ? basic type ?
 	regex = ? RegEx RE2 syntax - https://github.com/google/re2/wiki/Syntax ?
 	range = duration;
@@ -85,25 +83,46 @@
 %)
 %https://prometheus.io/docs/prometheus/latest/querying/operators/
 %https://github.com/prometheus/prometheus/blob/master/promql/parser/ast.go
+
+\subsection{Operators}
+
 \begin{listing}[H]
 	\begin{samepage}
-		\begin{minted}[mathescape,
-		linenos,
-		numbersep=5pt,
-		gobble=1,
-		frame=lines,
-		linenos,
-		tabsize=4,
-		breaklines,
-		framesep=2mm]{ebnf}
-		ar-op = "*" | "-" | "*" | "/" | "%" | "^";
-		bin-op = "==" | "!=" | ">" | "<" | ">=" | "<=";
-		set-op = "and" | "or" | "unless";
-		oto-vector = 
-			vector-expr, bin-op, vector-expr
-			| vector-expr, bin-op, "ignoring(", label-list, ")", vector-expr
-			| vector-expr, bin-op, "on(", label-list, ")", vector-expr;
+		\begin{minted}[mathescape, linenos, numbersep=5pt, gobble=3, frame=lines, tabsize=4, breaklines, framesep=2mm]{ebnf}
+			arithmetic-op = "*" | "-" | "*" | "/" | "%" | "^";
+			
+			float = float, arithmetic-op, float
+			instant-vector = float, arithmetic-op, instant-vector
+			               | instant-vector, arithmetic-op, float
+			               | instant-vector, arithmetic-op, instant-vector
+			
+			binary-op = "==" | "!=" | ">" | "<" | ">=" | "<=";
+			boolean = float, " ", binary-op, " ", "bool", " ", float;
+			instant-vector = instant-vector, " ", binary-op, 
+			                     [ " ", "bool" ], " ", float
+			               | float, " ", binary-op, [ " ", "bool" ]
+			                     , " ", instant-vector
+			               | instant-vector, " ", binary-op
+			                     , [ " ", "bool" ], " ", instant-vector;
+			
+			set-op = "and" | "or" | "unless";
+			instant-vector = instant-vector, " ", set-op, " ", instant-vector
 		\end{minted}
 		\caption{EBNF following ISO/IEC 14977 of a Metric}
 	\end{samepage}
 \end{listing}
+
+
+\subsection{Vector Matching}
+
+\begin{listing}[H]
+	\begin{samepage}
+		\begin{minted}[mathescape, linenos, numbersep=5pt, gobble=3, frame=lines, tabsize=4, breaklines, framesep=2mm]{ebnf}
+			instant-vector = instant-vector, " ", set-op, " ", "ignoring(", label-list} ")", instant-vector
+			label-list = label, { ",", label };
+		\end{minted}
+		\caption{EBNF following ISO/IEC 14977 of a Metric}
+	\end{samepage}
+\end{listing}
+
+\todo{do the rest of the ebnf for promql}

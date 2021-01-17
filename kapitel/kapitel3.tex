@@ -1,6 +1,113 @@
 % kapitel3.tex
 \chapter{Inventory and objective}
 \label{chapter:bestandsaufnahme}
+To start a proper analysis and abstraction of the problem a starting example is needed. It's important to qualify the rules which describe how the system is build and realize the dependencies. Furthermore, because of the importance of \gls{promql} in this project it will be a big part of the analysis and model.
 \section{Examples}
+Because it is already known which software to use this section will be split into smaller sections for the sake of clarity. 
+
+\subsection{Real World Situation}
+In this section the properties of the system that are observable in the real world are considered closer. Sensors come in different shapes and varieties. For example single metric sensors, like thermometer, brightness sensors or power consumption. 
+
+Additionally there are also more complex ones. Multi metric sensors for example are digital weather stations, network components like a switch or router, server metrics and so on. A specific property, which only real world sensors can have, is a location. They can be in the living room or an office building. If the whole sensor network is between multiple cities with multiple building where on each floor in every room is a humidity sensor it will get pretty big.
+
+Summarized it is a real world gadget which provide at least one metric and is somehow bound to a location.
+
+\subsection{Digital World}
+Because the sensors are more intelligent devices in this context they have to be accessible through network via \gls{IPv4} or \gls{IPv6} and expose the metrics in a predefined syntax ( see section \ref{subsec:Exportformat}, page \pageref{subsec:Exportformat} ). 
+
+This is the bridge to the consuming parts of the system. The next step is that Prometheus is configured to pull actively in a predefined frequency the exposed metrics of the sensors. There is the possibility, that the sensors push their metrics to Prometheus but it would cause that the sensors have to be configured knowing  Prometheus \gls{ip-address}. The way of pushing the data into Prometheus won't be examined further.
+
+Since Prometheus only acts as the database, Grafana is used as a visualization toolkit. Grafana connects directly to Prometheus and uses \gls{promql} to gather information from the database storage. The possibilities mentioned in \ref{sec:grafana} on page \pageref{sec:grafana} are configurable. 
+
+Both settings for Prometheus and Grafana can be delivered with a simple configuration file, meaning there is no need to go through the setup process. 
+In addition a Dockerfile will take care of the correct packaging and runtime accessibility of all needed files. Therefore this whole structure makes it possible to get a single output which is capable of running Prometheus and Grafana, configured in the predefined way and already knowing the set up sensor devices.
+
+\begin{figure}
+	\centering
+	\begin{tikzpicture}[n/.style={draw,thick,circle,inner sep=0pt,minimum width=1cm}]
+		\node [n, label=humidity] (M1) {$M_1$};
+		\node [n, below = 1cm of M1, label=temperature] (M2) {$M_2$};
+		\node [n, below = 1cm of M2, label=air pressure] (M3) {$M_3$};
+		\node [n, right = 2cm of M1, label=weather station] (S1) {$S_1$};
+		\draw [->] (M1) -- (S1) (M2) -| ($ (M2) !.5! (S1) $) |- (S1) (M3) -| ($ (M3) !.5! (S1) $) |- (S1);
+		\node [n, below = 1cm of S1] (S2) {$S_2$};
+		\node [n, below = 1cm of S2] (S3) {$S_3$};
+		\node [n, right = 3cm of S2, label=Prometheus] (P) {$P$};
+		\draw [->] (S1) -- (P);
+		\draw [->](S2) -- (P);
+		\draw [->] (S3) -- (P);
+		\node [n, right = 2cm of P, label=Grafana] (G) {$G$};
+		\draw [->] (P) -- (G);
+	\end{tikzpicture}
+	\caption{example of a small monitoring system}
+	\label{fig:system}
+\end{figure}
+
+\begin{samepage}
 \section{Abstraction}
-\subsection{Requirements}
+\label{sec:abstraction}
+In the abstraction layer the same approach can be used. First the real world situation has to be modeled and then the digital components.
+
+\subsection{real world abstraction}
+
+As already told a sensor can be anything and it is a physical device which measures all kind of metrics. A simple model can be visualized in the following way:
+
+
+\todo{Figure auswählen}
+\begin{figure}[h!]
+	\centering
+%	\begin{tikzpicture}[n/.style={draw,thick,circle,inner sep=0pt,minimum width=1cm}]
+%		\node [n, label={left:Metric 1}] (M1) {$M_1$};
+%		\node [n, below = 1cm of M1, label={left:Metric 2}] (M2) {$M_2$};
+%		\node [n, below = 1cm of M2, label={left:Metric 3}] (M3) {$M_3$};
+%		\node [n, below = 1cm of M3, label={left:Metric N}] (M4) {$M_N$};
+%		\node [n, right = 4cm of M2, label={right:Sensor 1}] (S1) {$S_1$};
+%		\node [n, right = 4cm of M3, label={right:Sensor N}] (S2) {$S_N$};
+%		\draw [->] (M1) edge (S1) (M3) edge (S1);
+%		\draw [->] (M2) edge[dashed] (S2) (M3) edge[dashed] (S2) (M4) edge[dashed] (S2);
+%		\draw [] ([yshift=-0.5em]M3.south) edge[dotted,line width=0.5mm] ([yshift=0.5em]M4.north);
+%		\draw [] ([yshift=-0.5em]S1.south) edge[dotted,line width=0.5mm] ([yshift=0.5em]S2.north);
+%	\end{tikzpicture}
+	\begin{tikzpicture}[n/.style={draw,thick,circle,inner sep=0pt,minimum width=1cm}]
+		\node [n,inner sep=1mm] (M1) {$Metric$};
+		\node [n,inner sep=1mm, left = 4cm of M1] (S1) {$Sensor$};
+		\path [->] (S1) edge[above, pos=0.85] node {1..n} (M1);
+	\end{tikzpicture}
+	\caption{abstract model of a sensor(device)}
+\end{figure}
+\end{samepage}
+\noindent
+As shown a sensor can have 1\dots n metrics.
+
+\subsection{digital world abstraction}
+
+The transition of the digital situation into a abstract model is very linear and simple. Like in image \ref{fig:system} Grafana knows Prometheus which crawls the data of the sensors.
+
+\begin{samepage}
+\begin{figure}[h!]
+	\centering
+	\begin{tikzpicture}[n/.style={draw,thick,circle,inner sep=0pt,minimum width=1cm}]
+		\node [n,inner sep=1mm] (S1) {$Sensor$};
+		\node [n,inner sep=1mm, left = 3cm of S1] (P1) {$Prometheus$};
+		\node [n,inner sep=1mm, left = 3cm of P1] (G1) {$Grafana$};
+		\path [->] 
+			(G1) edge[above, pos=0.85] node {1} (P1)
+			(P1) edge[above, pos=0.85] node {0..n} (S1)
+			;
+	\end{tikzpicture}
+	\caption{abstract model of the digital components}
+\end{figure}
+\end{samepage}
+
+The simple abstraction above shows the technical dependency and the data flow but it does not consider every property which is configurable in Prometheus and Grafana. Furthermore it forgets about meta information coming from the real world setting.
+
+\subsubsection{Specification}
+
+The abstraction in \ref{sec:abstraction} on page \pageref{sec:abstraction} is a very basic an fundamental one. Because there are more variables to take care of the model has to be extended. 
+
+\subsection{location}
+\subsection{grouping of sensors}
+\subsection{grouping of sensors}
+
+
+\todo{soll das hier hin oder zu sec. 4?}

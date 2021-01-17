@@ -1,6 +1,6 @@
  
 % header.tex
-\documentclass[a4paper,11pt,twoside,ngerman]{book}
+\documentclass[a4paper,11pt,twoside,english]{book}
 \usepackage[a4paper,left=3.5cm,right=2.5cm,bottom=3.5cm,top=3cm]{geometry}
 
 
@@ -52,7 +52,11 @@
 %
 %% Listings
 \usepackage{minted}
-%\usepackage{listings}
+
+%% TODOs
+\setlength{\marginparwidth}{2cm}
+\usepackage[textwidth=1.8cm,textsize=tiny]{todonotes}
+%\setuptodonotes{fancyline}
 %
 \newmintinline[promcode]{text}{fontsize=\scriptsize, bgcolor=LightGray}
 %
@@ -87,6 +91,7 @@ natbib=true,
 ]{biblatex}
 \addbibresource{literatur/diplom.bib}
 %
+\usepackage[english]{fancyref}
 \usepackage[]{hyperref}
 \hypersetup{
 	%colorlinks=true,
