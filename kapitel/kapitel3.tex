@@ -71,7 +71,8 @@ As already told a sensor can be anything and it is a physical device which measu
 	\begin{tikzpicture}[n/.style={draw,thick,circle,inner sep=0pt,minimum width=1cm}]
 		\node [n,inner sep=1mm] (M1) {$Metric$};
 		\node [n,inner sep=1mm, left = 4cm of M1] (S1) {$Sensor$};
-		\path [->] (S1) edge[above, pos=0.85] node {1..n} (M1);
+		\path [->] 
+		(S1) edge node[above, pos=0.85] {1..n} node[above, pos=0.15] {1..n} (M1);
 	\end{tikzpicture}
 	\caption{abstract model of a sensor(device)}
 \end{figure}
@@ -91,8 +92,8 @@ The transition of the digital situation into a abstract model is very linear and
 		\node [n,inner sep=1mm, left = 3cm of S1] (P1) {$Prometheus$};
 		\node [n,inner sep=1mm, left = 3cm of P1] (G1) {$Grafana$};
 		\path [->] 
-			(G1) edge[above, pos=0.85] node {1} (P1)
-			(P1) edge[above, pos=0.85] node {0..n} (S1)
+			(G1) edge node[above, pos=0.85] {1} node[above, pos=0.15] {1} (P1)
+			(P1) edge node[above, pos=0.85] {1..n} node[above, pos=0.15] {1} (S1)
 			;
 	\end{tikzpicture}
 	\caption{abstract model of the digital components}
@@ -101,13 +102,45 @@ The transition of the digital situation into a abstract model is very linear and
 
 The simple abstraction above shows the technical dependency and the data flow but it does not consider every property which is configurable in Prometheus and Grafana. Furthermore it forgets about meta information coming from the real world setting.
 
-\subsubsection{Specification}
-
-The abstraction in \ref{sec:abstraction} on page \pageref{sec:abstraction} is a very basic an fundamental one. Because there are more variables to take care of the model has to be extended. 
-
-\subsection{location}
-\subsection{grouping of sensors}
-\subsection{grouping of sensors}
-
-
+\subsection{Specification}
 \todo{soll das hier hin oder zu sec. 4?}
+The abstraction in \ref{sec:abstraction} on page \pageref{sec:abstraction} is a very basic an fundamental one. Because there are more variables to take care of the model has to be extended. Due to the variety of the sensors and no option of a central management all additional configurations are done in Prometheus or Grafana.
+
+\subsubsection{Location}
+A location information is missing. Technically it can be added in each entry of the sensor in the Prometheus configuration as a additional label which will we then added as a keyword in the exported metrics. 
+
+\begin{listing}[H]
+	\begin{minted}[mathescape,linenos,numbersep=5pt,gobble=0,frame=lines,tabsize=4,breaklines,framesep=2mm]{yaml}
+- job_name: '«sensor.name»'
+  static_configs:
+  - targets: ['«sensor.url»']
+    labels:
+      location: '«sensor.location»'
+	\end{minted}
+	\caption{Generic sensor configuration for Prometheus~\cite{PrometheusExpositionFormatBeispiel}}
+\end{listing}
+
+\subsubsection{Grouping of sensors}
+To have a better management experience a grouping for the sensors should be introduced. It would be possible to group them via labels or metric name but this could lead to a not fully understandable networking. 
+
+\begin{samepage}
+	\begin{figure}[h!]
+		\centering
+		\begin{tikzpicture}[n/.style={draw,thick,circle,inner sep=0pt,minimum width=1cm}]
+			\node [n,inner sep=1mm] (S1) {$sensor$};
+			\node [n,inner sep=1mm, left = 3cm of S1] (P1) {$sensor group$};
+			\path [->] 
+			(P1) edge node[above, pos=0.85] {1..n} node[above, pos=0.15] {1..n} (S1)
+			;
+		\end{tikzpicture}
+		\caption{abstract model of the digital components}
+	\end{figure}
+\end{samepage}
+
+
+\subsubsection{\gls{promql}}
+Because a goal of this thesis is to create an abstract model of all needed configurations in Prometheus and Grafana \gls{promql} is one big thing to be considered. Modeling a \gls{promql} query should also be possible. Vector aggregation, set operations and so on are features to be covered. 
+
+\subsubsection{title}
+
+
