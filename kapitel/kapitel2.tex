@@ -1,5 +1,5 @@
 % kapitel2.tex
-\chapter{Basics}
+\chapter{Preliminaries}
 \label{chapter:grundlagen}
 \section{Smart Home}
 In the course of digitalization and simplification of the procurement of sensor technology in everyday life, smart home has arrived as a concept for the consumer and is affordable. In the most general case, it is a base station with any number of actuators and sensors. This station is used to process and store the data from the sensory elements of the network and the actuators act on the basis of decision tables, for example. As a simple scenario, one can imagine a living room lamp that is switched on when the brightness sensor outside signals darkness. However, a system does not necessarily has to have sensors and actuators. A network of sensors would only monitor and one of actuators can only act. Examples would be a central power consumption monitoring per socket or a remote light control.
@@ -178,7 +178,7 @@ As mentioned before, the collected data is stored in an internal Time Series dat
 
 There are four different subtypes for this:
 \subsubsection{Instant vector}
-Instant vector selectors allow the selection of a set of time series and a single sample value for each at a given timestamp (instant): in the simplest form, only a metric name is specified. This results in an instant vector containing elements for all time series that have this metric name. \todo{semantik der typen beschreiben}
+Instant vector selectors allow the selection of a set of time series and a single sample value for each at a given timestamp (instant). In the simplest form, only a metric name is specified. This results in an instant vector containing elements for all time series that have this metric name. \todo{semantik der typen beschreiben}
 
 \section{Grafana}
 \label{sec:grafana}
@@ -216,10 +216,15 @@ To fill the diagrams with data from, in our case, Prometheus, a \gls{promql} que
 It should also be said that there are higher order structures such as organizations or you can summarize dashboards again in playlists and / or groups. These features are not considered in this work however more near.
 
 \subsection{Panels}
-Since panels have many settings and thus allow many individualizations, these are briefly explained here.
+Since panels have many settings and thus allow many individualization, these are briefly explained here.
 
 Each panel has primarily a name, description, diagram type, settings for the layout and value reference of cumulative functions and behavior with zero values. Depending on the selected chart type, different configurations are possible. Axis labeling, legend, limits for symbolic coloring and other specific settings.
 
 Alternatively to the grouping of metrics, which is possible by keywords, it is a option to display several metrics in one diagram by specifying multiple \gls{promql} queries.
+
+\section{Cinco}
+Everything above is a necessary base technology where on top of it the model-driven solution, the domain specific language is build. For this task the meta modeling tool Cinco~\cite{CincoHomepage} will be used. The full name is \say{CINCO SCCE Meta Tooling Framework} and it utilizes the Eclipse Modeling Framework and Graphiti Graphical Tooling Infrastructure. It is in active development of the chair for programming systems of the \gls{tudortmund}.
+
+The \gls{mgl} allows the user to design a custom \gls{dsl} and generate a working \gls{ide} with features like auto complete, visual editing or code generation. 
 
 

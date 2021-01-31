@@ -1,5 +1,5 @@
 % kapitel3.tex
-\chapter{Inventory and objective}
+\chapter{Challenge and Approach}
 \label{chapter:bestandsaufnahme}
 To start a proper analysis and abstraction of the problem a starting example is needed. It's important to qualify the rules which describe how the system is build and realize the dependencies. Furthermore, because of the importance of \gls{promql} in this project it will be a big part of the analysis and model.
 \section{Examples}
@@ -48,30 +48,16 @@ In addition a Dockerfile will take care of the correct packaging and runtime acc
 \label{sec:abstraction}
 In the abstraction layer the same approach can be used. First the real world situation has to be modeled and then the digital components.
 
-\subsection{real world abstraction}
+\subsection{Real World Abstraction}
 
 As already told a sensor can be anything and it is a physical device which measures all kind of metrics. A simple model can be visualized in the following way:
 
-
-\todo{Figure auswählen}
 \begin{figure}[h!]
 	\centering
-%	\begin{tikzpicture}[n/.style={draw,thick,circle,inner sep=0pt,minimum width=1cm}]
-%		\node [n, label={left:Metric 1}] (M1) {$M_1$};
-%		\node [n, below = 1cm of M1, label={left:Metric 2}] (M2) {$M_2$};
-%		\node [n, below = 1cm of M2, label={left:Metric 3}] (M3) {$M_3$};
-%		\node [n, below = 1cm of M3, label={left:Metric N}] (M4) {$M_N$};
-%		\node [n, right = 4cm of M2, label={right:Sensor 1}] (S1) {$S_1$};
-%		\node [n, right = 4cm of M3, label={right:Sensor N}] (S2) {$S_N$};
-%		\draw [->] (M1) edge (S1) (M3) edge (S1);
-%		\draw [->] (M2) edge[dashed] (S2) (M3) edge[dashed] (S2) (M4) edge[dashed] (S2);
-%		\draw [] ([yshift=-0.5em]M3.south) edge[dotted,line width=0.5mm] ([yshift=0.5em]M4.north);
-%		\draw [] ([yshift=-0.5em]S1.south) edge[dotted,line width=0.5mm] ([yshift=0.5em]S2.north);
-%	\end{tikzpicture}
 	\begin{tikzpicture}[n/.style={draw,thick,circle,inner sep=0pt,minimum width=1cm}]
 		\node [n,inner sep=1mm] (M1) {$Metric$};
 		\node [n,inner sep=1mm, left = 4cm of M1] (S1) {$Sensor$};
-		\path [->] 
+		\path [] 
 		(S1) edge node[above, pos=0.85] {1..n} node[above, pos=0.15] {1..n} (M1);
 	\end{tikzpicture}
 	\caption{abstract model of a sensor(device)}
@@ -80,7 +66,7 @@ As already told a sensor can be anything and it is a physical device which measu
 \noindent
 As shown a sensor can have 1\dots n metrics.
 
-\subsection{digital world abstraction}
+\subsection{Digital World Abstraction}
 
 The transition of the digital situation into a abstract model is very linear and simple. Like in image \ref{fig:system} Grafana knows Prometheus which crawls the data of the sensors.
 
@@ -91,7 +77,7 @@ The transition of the digital situation into a abstract model is very linear and
 		\node [n,inner sep=1mm] (S1) {$Sensor$};
 		\node [n,inner sep=1mm, left = 3cm of S1] (P1) {$Prometheus$};
 		\node [n,inner sep=1mm, left = 3cm of P1] (G1) {$Grafana$};
-		\path [->] 
+		\path [] 
 			(G1) edge node[above, pos=0.85] {1} node[above, pos=0.15] {1} (P1)
 			(P1) edge node[above, pos=0.85] {1..n} node[above, pos=0.15] {1} (S1)
 			;
@@ -103,7 +89,6 @@ The transition of the digital situation into a abstract model is very linear and
 The simple abstraction above shows the technical dependency and the data flow but it does not consider every property which is configurable in Prometheus and Grafana. Furthermore it forgets about meta information coming from the real world setting.
 
 \subsection{Specification}
-\todo{soll das hier hin oder zu sec. 4?}
 The abstraction in \ref{sec:abstraction} on page \pageref{sec:abstraction} is a very basic an fundamental one. Because there are more variables to take care of the model has to be extended. Due to the variety of the sensors and no option of a central management all additional configurations are done in Prometheus or Grafana.
 
 \subsubsection{Location}
@@ -129,7 +114,7 @@ To have a better management experience a grouping for the sensors should be intr
 		\begin{tikzpicture}[n/.style={draw,thick,circle,inner sep=0pt,minimum width=1cm}]
 			\node [n,inner sep=1mm] (S1) {$sensor$};
 			\node [n,inner sep=1mm, left = 3cm of S1] (P1) {$sensor group$};
-			\path [->] 
+			\path [] 
 			(P1) edge node[above, pos=0.85] {1..n} node[above, pos=0.15] {1..n} (S1)
 			;
 		\end{tikzpicture}
@@ -138,9 +123,72 @@ To have a better management experience a grouping for the sensors should be intr
 \end{samepage}
 
 
-\subsubsection{\gls{promql}}
+\subsubsection{Prometheus Query Language}
 Because a goal of this thesis is to create an abstract model of all needed configurations in Prometheus and Grafana \gls{promql} is one big thing to be considered. Modeling a \gls{promql} query should also be possible. Vector aggregation, set operations and so on are features to be covered. 
 
-\subsubsection{title}
+
+\section{Model}
+
+Building a \gls{dsl} on top of the previous considerations leads to a well designed model. The explanation start bottom-up which equals the development process for the user of the created \gls{dsl}. For a better overview a separation of all informational layers is needed.
+
+The elemental components are the measurable metrics. They have a simple name and a optional unit like \gls{w}, \gls{degreeC} or \gls{percent}. A subset of the defined metrics are part of a sensor.
+
+In the next layer the sensors are now instantiated, connected with a location and combined with a handful of properties. A name and a \gls{url} of the sensor is essential. This information is needed for the configuration generation for the Prometheus service allowing it to pull the sensor date frequently and save it in the internal database. On top, allowing an easier management SensorGroups are introduced, combining multiple sensors into one node. This layer therefore serves the spatial allocation. 
+
+After modeling the real world situation the next layer models the Grafana service. The available sensors and sensor groups can now be used in a \gls{promql} GraphQuery node. This node form the base data set for additional query selections. Technically \gls{promql} allows us a high variety of different queries but for the sake of less complexity a single application of a aggregation function is allowed. 
+
+The defined queries can now be bundled in different Grafana panels allowing to share these queries between panel. A panel has a visualization type and matching settings for example for highest value of an axis, linear or logarithmic grid, colors or special rules for single values. No matter the type every panel has a width, height, x- and y- position based on the Grafana \gls{ui} system. This information allows to manage the panels inside a dashboard, which is the last node type of the Grafana layer. It consists of a name and a unique short string identifier which is needed for Grafana. 
+
+Last but not least the project layer is more of the business and controlling view. The only node existing here is the project node. It can contain different meta variables welding useful information for further execution of the project like address, company name, deployment type or important \glspl{IP} addresses. 
+
+In retrospective the model is mostly linear, leaving a straight forward way of working with a \gls{dsl} implementing that model. 
+
+\begin{figure}[!tb]
+	\centering
+	\begin{tikzpicture}[ state/.style={draw,minimum height=\ht\strutbox+\dp\strutbox, inner ysep=0pt}, label/.style={minimum height=\ht\strutbox+\dp\strutbox, inner ysep=0pt}]
+		
+		\node[] (bb1) {$\textbf{Layers:}$};
+		\node[below=of bb1] (bb2) {$\textbf{Submodel:}$};
+		\node[label, right=of bb1] (b1) {Sensor};
+		\node[label, right=2cm of b1] (b2) {Floor};
+		\node[label, right=2cm of b2] (b3) {Grafana};
+		\node[label, right=2cm of b3] (b4) {Project};
+		%\path[] (b1) edge (b2) (b2) edge (b3) (b3) edge (b4);
+		
+		\node[state, below=of b1] (a1) {Metrics};
+		\node[state, below=of a1] (a2) {Sensor};
+		\node[state, below=of b2] (aa3) {Location};
+		\node[state, below=of aa3] (a3) {SensorInstance};
+		\node[state, below=of a3] (a4) {SensorGroup};
+		\node[state, below=of b3] (a5) {GraphQuery};
+		\node[state, below=of a5] (a6) {QueryParameters};
+		\node[state, below=of a6] (a7) {Panel};
+		\node[state, below=of a7] (a8) {Dashboard};
+		\node[state, below=of b4] (a9) {Project};
+		\path[] 
+			(a1) edge (a2)
+			(a2) edge (a3)
+			(aa3) edge (a3)
+			(a3) edge (a4)
+			(a3) edge (a5)
+			(a4) edge (a5)
+			(a5) edge (a6)
+			(a6) edge (a7)
+			(a7) edge (a8)
+			(a8) edge (a9)
+			;
+		\coordinate (c1) at ($(b1) ! .5 ! (a1)$);
+		\coordinate (c2) at ($(b4) ! .5 ! (a9)$);
+		\path (c1) ++(-1,0) coordinate (c3);
+		\path (c2) ++(1,0) coordinate (c4);
+		\path (c3) edge (c4);
+		\path ($(b1)!.5!(b2)$) ++(0,0.5) coordinate (c5) edge[gray] ++(0,-8);
+		\path ($(b2)!.5!(b3)$) ++(0,0.5) coordinate (c6) edge[gray] ++(0,-8);
+		\path ($(b3)!.5!(b4)$) ++(0,0.5) coordinate (c7) edge[gray] ++(0,-8);
+	\end{tikzpicture}
+	\caption{Dependency of Model Layers}
+\end{figure}
 
 
+
+\subsection{Model Validation}
