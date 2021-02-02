@@ -135,13 +135,13 @@ The elemental components are the measurable metrics. They have a simple name and
 
 In the next layer the sensors are now instantiated, connected with a location and combined with a handful of properties. A name and a \gls{url} of the sensor is essential. This information is needed for the configuration generation for the Prometheus service allowing it to pull the sensor date frequently and save it in the internal database. On top, allowing an easier management SensorGroups are introduced, combining multiple sensors into one node. This layer therefore serves the spatial allocation. 
 
-After modeling the real world situation the next layer models the Grafana service. The available sensors and sensor groups can now be used in a \gls{promql} GraphQuery node. This node form the base data set for additional query selections. Technically \gls{promql} allows us a high variety of different queries but for the sake of less complexity a single application of a aggregation function is allowed. 
+After modeling the real world situation the next layer models the Grafana service. The available sensors and sensor groups can now be used in a \gls{promql} GraphQuery node. This node form the base data set for additional query selections. Technically \gls{promql} allows us a high variety of different queries but for the sake of less complexity a single application of a aggregation function is allowed. Additionally other \gls{promql} feature informations for features like resolution, time window or offset. 
 
 The defined queries can now be bundled in different Grafana panels allowing to share these queries between panel. A panel has a visualization type and matching settings for example for highest value of an axis, linear or logarithmic grid, colors or special rules for single values. No matter the type every panel has a width, height, x- and y- position based on the Grafana \gls{ui} system. This information allows to manage the panels inside a dashboard, which is the last node type of the Grafana layer. It consists of a name and a unique short string identifier which is needed for Grafana. 
 
 Last but not least the project layer is more of the business and controlling view. The only node existing here is the project node. It can contain different meta variables welding useful information for further execution of the project like address, company name, deployment type or important \glspl{IP} addresses. 
 
-In retrospective the model is mostly linear, leaving a straight forward way of working with a \gls{dsl} implementing that model. 
+In retrospective the model is mostly linear, leaving a straight forward way of working with the \gls{dsl} implementing this model. The separation into the four layers help the developer or engineer to think in well defined domains. They symbolize the steps of defining the used sensors, placing and grouping them in the real world and setting up the visualization for grafana. Like already said the last layer is only used for meta data concerning the project itself.
 
 \begin{figure}[!tb]
 	\centering
@@ -188,7 +188,20 @@ In retrospective the model is mostly linear, leaving a straight forward way of w
 	\end{tikzpicture}
 	\caption{Dependency of Model Layers}
 \end{figure}
-
-
+\todo{add cardinalities in fig.}
 
 \subsection{Model Validation}
+For the replenishment of the model some constraints has to be added separately. Many of them are already fulfilled under regard of the annotated cardinality in the model. Iterating through layers and nodes the needed conditions will be explained. 
+
+The first constraint is that a sensor can only have a bunch of metrics where they have unique names in the connected subset, because otherwise data collected for that metric label can not be allocated unambiguous therefor leading to incorrect and unusable data. 
+
+Furthermore SensorGroups have the restriction of containing only SensorInstance based on the same Sensor. This will ensure that all data summarized in this node is still consistent and delivering the same information in a plot.
+
+A similar restriction is also needed in the QueryParameters. As it get multiple GraphQuery nodes the same constraint for type uniformity has to be fulfilled.
+
+Panels combine the preceding queries where each query is one function drawn in the panels plot. Here it is necessary to ensure that the unit of measure is the same in all queries. Because this constraint can not enforce to use coherent data, for example, not mixing up temperature from casual living rooms with the that of an oven the plausibility has to be maintained by the person designing a sensor network.
+
+As a organizing part a dashboard contains different panel. This model allows to share panels between dashboard which is not possible using the out of the box functionality of Grafana. The constraints here rely on the layout. The panels are not allowed to overlap or being not in the visible space of the dashboard. Additionally another constrained has to be respected. Every Dashboard has to own a unique identifier. Grafana uses them for internal purposes and multiple dashboards sharing the same id are not functional.
+
+
+
