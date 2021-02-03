@@ -1,6 +1,8 @@
 % kapitel2.tex
 \chapter{Preliminaries}
 \label{chapter:grundlagen}
+Because the thesis covers many different systems each of them has to be introduces at least at a decent level. Modern and best of breed solution are being used here. Grafana and Prometheus are software products as a optional additional setup in cluster systems like kubernetes to monitor their technical values. As a little bonus and for easier developing process docker and docker compose will be used but in a very simple way. That technologies form the target of the \gls{dsl} designed in this thesis. For the realization of the \gls{dsl} and compiler Cinco, a meta modeling tool will be used.
+ 
 \section{Smart Home}
 In the course of digitalization and simplification of the procurement of sensor technology in everyday life, smart home has arrived as a concept for the consumer and is affordable. In the most general case, it is a base station with any number of actuators and sensors. This station is used to process and store the data from the sensory elements of the network and the actuators act on the basis of decision tables, for example. As a simple scenario, one can imagine a living room lamp that is switched on when the brightness sensor outside signals darkness. However, a system does not necessarily has to have sensors and actuators. A network of sensors would only monitor and one of actuators can only act. Examples would be a central power consumption monitoring per socket or a remote light control.
 Here it is worth mentioning that there are also crossover devices. A heating thermostat usually has a built-in thermometer and is thus both actuator and sensor.\todo{add 1-2 par}\\
@@ -206,7 +208,7 @@ For the visualization of the data collected by Prometheus, Grafana~\citep{Grafan
 		\caption{Multimetric plot}
 		\label{fig:sfig2}
 	\end{subfigure}
-	\caption{Example diagram types}
+	\caption{Example Diagram Types in Grafana}
 	\label{fig:fig}
 \end{figure}
 Supplementary there is a simple table format, honeycomb patterns, bar charts and many more. These, like the data sources, are extensible through plugins. Thanks to the source code openness of the project, custom plugins can be written if needed.
@@ -222,9 +224,36 @@ Each panel has primarily a name, description, diagram type, settings for the lay
 
 Alternatively to the grouping of metrics, which is possible by keywords, it is a option to display several metrics in one diagram by specifying multiple \gls{promql} queries.
 
+\section{Model Driven Development}
+
+
 \section{Cinco}
-Everything above is a necessary base technology where on top of it the model-driven solution, the domain specific language is build. For this task the meta modeling tool Cinco~\cite{CincoHomepage} will be used. The full name is \say{CINCO SCCE Meta Tooling Framework} and it utilizes the Eclipse Modeling Framework and Graphiti Graphical Tooling Infrastructure. It is in active development of the chair for programming systems of the \gls{tudortmund}.
+Everything above is a necessary base technology where on top of it the model-driven solution, the domain specific language is build. For this task the meta modeling tool Cinco~\cite{CincoHomepage} will be used. The full name is \say{CINCO SCCE Meta Tooling Framework} and it utilizes the \gls{emf} and Graphiti Graphical Tooling Infrastructure. It is in active development of the chair for programming systems of the \gls{tudortmund}.
 
-The \gls{mgl} allows the user to design a custom \gls{dsl} and generate a working \gls{ide} with features like auto complete, visual editing or code generation. 
+The \gls{mgl} allows the user to design a custom \gls{dsl} and generate a working \gls{ide} with features like auto complete, visual editing or code generation.
+
+\todo{fig. from paper}
+
+\subsection{Meta Graph Language}
+Cinco uses four different elements for modeling a \gls{dsl} inside of it. The \gls{mgl}, which is used for that modeling task, defines nodes, edges, container and type elements. Having the ability of being enhanced with fields or dependencies between them they give the developer the opportunity designing a very powerful language. Basically the \gls{mgl} is like a graph with nodes and edges expanded with optional containers where a subset of the nodes and edges elements can be stored. The type node adds the ability of defining other needed types. In general there is also the feature of extending already defined types, so little adaptions can be done a a bigger level of abstraction can be implemented.
+
+\subsubsection{Node}
+
+A node is an unit which can have incoming and outgoing edges. It also can have different attributes and a so-called prime reference. A prime reference is a pointer to any other node, edge or container. This allows for example to make connections between different models in different files. Because Cinco is based on the \gls{emf} it is also possible to reference any other object defined in external sources. To declare a node the first token to use is \promcode{node} preceded by optional annotations and a optional \promcode{abstract} keyword. Followed by the name of the node and a declaring body wrapped in curly brackets. The body can contain definitions of attributes the node has to have, declaration of which edge types are incoming and which outgoing with optional constraints like quantities, a style option for correct visualization and a already described prime reference. An attribute starts with the keyword \promcode{attr}, like before there are other prefixes like final and unique. A type and a name are appended, optional minimal and maximal values and a default value. For the edges \promcode{incomingEdges} or \promcode{outgoingEdges} can be used with the possibility restricting the allowed edges and adding a cardinality to this declaration. Styles can be applied to the node by using the \promcode{style} keyword with a style id.
+Further the last token \promecode{prime} is used for adding a prime reference to the node. It needs the referencing type and a name to be set up correctly.
+
+\subsubsection{Edge}
+Simpler constructs are edges. They are introduced using \promcode{edge} and can only contain attributes and a style. Like in the node definition annotations, abstraction flag or inheritance can be used without making cuts.
+
+\subsubsection{Container}
+Container heavily rely on the possibilities of a node. It is capable of all features of a node but being extended by the keyword \promcode{containableElements}. This makes it possible to allow specific object to be embedded inside of this container.
+
+\subsubsection{Type}
+Attributes can have different types. Cinco has therefor the following build-in datatypes:
+
+\begin{center}
+	EString | EChar | EFloat | EBoolean | EDouble | EInt | ELong | EBigInteger | EBigDecimal | EByte | EShort | EDate
+\end{center}
 
 
+The custom datatypes can either be enumerations or user defined types which are groups of attributes. Optional inheritance is also possible. Enums are defined by \promcode{enum} followed by a name and all possible literals. The user defined type uses the keyword \promcode{type}, a name and the list of attributes written down the same way like in the node definition.
