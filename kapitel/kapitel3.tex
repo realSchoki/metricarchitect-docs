@@ -39,7 +39,7 @@ In addition a Dockerfile will take care of the correct packaging and runtime acc
 		\node [n, right = 2cm of P, label=Grafana] (G) {$G$};
 		\draw [->] (P) -- (G);
 	\end{tikzpicture}
-	\caption{example of a small monitoring system}
+	\caption{Example of a Small Monitoring System}
 	\label{fig:system}
 \end{figure}
 
@@ -60,7 +60,7 @@ As already told a sensor can be anything and it is a physical device which measu
 		\path [] 
 		(S1) edge node[above, pos=0.85] {1..n} node[above, pos=0.15] {1..n} (M1);
 	\end{tikzpicture}
-	\caption{abstract model of a sensor(device)}
+	\caption{Abstract Model of a Sensordevice}
 \end{figure}
 \end{samepage}
 \noindent
@@ -82,7 +82,7 @@ The transition of the digital situation into a abstract model is very linear and
 			(P1) edge node[above, pos=0.85] {1..n} node[above, pos=0.15] {1} (S1)
 			;
 	\end{tikzpicture}
-	\caption{abstract model of the digital components}
+	\caption{Abstract Model of the Digital Components}
 \end{figure}
 \end{samepage}
 
@@ -102,7 +102,7 @@ A location information is missing. Technically it can be added in each entry of 
     labels:
       location: '«sensor.location»'
 	\end{minted}
-	\caption{Generic sensor configuration for Prometheus~\cite{PrometheusExpositionFormatBeispiel}}
+	\caption{Generic Sensor Configuration for Prometheus~\cite{PrometheusExpositionFormatBeispiel}}
 \end{listing}
 
 \subsubsection{Grouping of sensors}
@@ -118,7 +118,7 @@ To have a better management experience a grouping for the sensors should be intr
 			(P1) edge node[above, pos=0.85] {1..n} node[above, pos=0.15] {1..n} (S1)
 			;
 		\end{tikzpicture}
-		\caption{abstract model of the digital components}
+		\caption{Abstract Model of Sensor Grouping}
 	\end{figure}
 \end{samepage}
 

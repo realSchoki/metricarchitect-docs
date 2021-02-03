@@ -16,7 +16,7 @@ Here it is worth mentioning that there are also crossover devices. A heating the
 	\draw[-{Stealth[scale=1.3,angle'=90]},semithick] (B) -- node[above] {0..N} (A) ;
 	\draw[-{Stealth[scale=1.3,angle'=90]},semithick] (B) -- node[above] {0..M} (C) ;
 	\end{tikzpicture}
-	\caption{abstract smart home network}
+	\caption{Abstract Smart Home Network}
 \end{figure}
 \todo{add source of images}
 \section{Basic Terms}
@@ -64,7 +64,7 @@ A histogram is a concept consisting of so-called buckets. These are initially de
 	node[pos=0.66] {$B_{le=``1''}$}%
 	node[pos=1] {$B_{le=``+Inf''}$};
 	\end{tikzpicture}
-	\caption{relation of bucket in a histogram}
+	\caption{Relation of Bucket in a Histogram}
 \end{figure}
 A histogram represents, in addition to the buckets, a total number of measured values, which is like a bucket with \promcode{le="+Inf"} and a value for the sum of all values.
 \begin{figure}[hbt!]
@@ -82,7 +82,7 @@ A histogram represents, in addition to the buckets, a total number of measured v
 	<basename>_sum <value>
 	<basename>_count <value>
 	\end{minted}
-	\caption{General concept of histogram export}
+	\caption{General Concept of a Histogram Export}
 \end{figure}
 Line 2 can occur multiple times as each entry hat its own limit value. Lines 3 and 4 are the additional values as already mentioned.
 \subsubsection{Summary}
@@ -101,7 +101,7 @@ Line 2 can occur multiple times as each entry hat its own limit value. Lines 3 a
 		<basename>_sum <value>
 		<basename>_count <value>
 	\end{minted}
-	\caption{General concept of summary export}
+	\caption{General Concept of a Summary Export}
 \end{figure}
 A summary is similar to a histogram, but here buckets are not filled by the value of the measurement but the measured values are divided into $\varphi$-quantiles ($0 \le \varphi \le 1)$ and the maximum value of the quantile.
 \subsubsection{Untyped}
@@ -113,7 +113,7 @@ Labels can be used to break down metrics with the same name into different origi
 	\begin{minted}[mathescape,linenos,numbersep=5pt,gobble=1,frame=lines,tabsize=4,breaklines,framesep=2mm]{text}
 	<basename>{key="<value>",key2="<value2>",...} <value>
 	\end{minted}
-	\caption{General concept of labels}
+	\caption{General Concept of Labels}
 \end{figure}
 \subsection{Exportformat}
 \label{subsec:Exportformat}
@@ -129,7 +129,7 @@ The export format of Prometheus can be described well by means of an example. Fo
 	# Minimalistic line:
 	metric_without_timestamp_and_labels 12.47
 	\end{minted}
-	\caption{Partial example from the official Prometheus documentation~\cite{PrometheusExpositionFormatBeispiel}}
+	\caption{Partial Example from the Official Prometheus Documentation~\cite{PrometheusExpositionFormatBeispiel}}
 \end{listing}
 Between lines 1-4 we find the first exported metric in this example. The first line contains after the token \promcode{# HELP <name of metric>} a short description which is Optional. The next line specifies the type with \linebreak \promcode{# TYPE <name of metric> <type of metric>}. The choices regarding the type coincide with the metric types already described: \promcode{counter}, \promcode{gauge}, \promcode{histogram}, \promcode{summary}, \promcode{untyped}.
 
@@ -171,7 +171,7 @@ In the following lines you can see a more complex example. This is a histogram. 
 	http_request_duration_seconds_sum 53423
 	http_request_duration_seconds_count 144320
 	\end{minted}
-	\caption{Histogram export example from the official Prometheus documentation~\cite{PrometheusExpositionFormatBeispiel}}
+	\caption{Histogram Export Example from the Official Prometheus Documentation~\cite{PrometheusExpositionFormatBeispiel}}
 \end{listing}
 \todo{mention summary?}
 
@@ -234,13 +234,15 @@ The \gls{mgl} allows the user to design a custom \gls{dsl} and generate a workin
 
 \todo{fig. from paper}
 
+\todo{tell style language}
+
 \subsection{Meta Graph Language}
 Cinco uses four different elements for modeling a \gls{dsl} inside of it. The \gls{mgl}, which is used for that modeling task, defines nodes, edges, container and type elements. Having the ability of being enhanced with fields or dependencies between them they give the developer the opportunity designing a very powerful language. Basically the \gls{mgl} is like a graph with nodes and edges expanded with optional containers where a subset of the nodes and edges elements can be stored. The type node adds the ability of defining other needed types. In general there is also the feature of extending already defined types, so little adaptions can be done a a bigger level of abstraction can be implemented.
 
 \subsubsection{Node}
 
 A node is an unit which can have incoming and outgoing edges. It also can have different attributes and a so-called prime reference. A prime reference is a pointer to any other node, edge or container. This allows for example to make connections between different models in different files. Because Cinco is based on the \gls{emf} it is also possible to reference any other object defined in external sources. To declare a node the first token to use is \promcode{node} preceded by optional annotations and a optional \promcode{abstract} keyword. Followed by the name of the node and a declaring body wrapped in curly brackets. The body can contain definitions of attributes the node has to have, declaration of which edge types are incoming and which outgoing with optional constraints like quantities, a style option for correct visualization and a already described prime reference. An attribute starts with the keyword \promcode{attr}, like before there are other prefixes like final and unique. A type and a name are appended, optional minimal and maximal values and a default value. For the edges \promcode{incomingEdges} or \promcode{outgoingEdges} can be used with the possibility restricting the allowed edges and adding a cardinality to this declaration. Styles can be applied to the node by using the \promcode{style} keyword with a style id.
-Further the last token \promecode{prime} is used for adding a prime reference to the node. It needs the referencing type and a name to be set up correctly.
+Further the last token \promcode{prime} is used for adding a prime reference to the node. It needs the referencing type and a name to be set up correctly.
 
 \subsubsection{Edge}
 Simpler constructs are edges. They are introduced using \promcode{edge} and can only contain attributes and a style. Like in the node definition annotations, abstraction flag or inheritance can be used without making cuts.
