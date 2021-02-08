@@ -232,7 +232,48 @@ Everything above is a necessary base technology where on top of it the model-dri
 
 The \gls{mgl} allows the user to design a custom \gls{dsl} and generate a working \gls{ide} with features like auto complete, visual editing or code generation.
 
-\todo{fig. from paper}
+\begin{figure}
+	\begin{tikzpicture}
+		\path (0,0) node (eclipse) [anchor=north west,minimum width=2cm,align=center, minimum height=1.2cm, inner sep=0] {\shortstack{Eclipse\\Devs}};
+		\path (0,-1.4) node (cinco) [anchor=north west,minimum width=2cm,align=center, minimum height=1.2cm] {\shortstack{Cinco\\Devs}};
+		\path (0,-2.8) node (cp) [anchor=north west,minimum width=2cm,align=center, minimum height=2.4cm] {\shortstack{CP\\Devs}};
+		\path (0,-5.2) node (user) [anchor=north west,minimum width=2cm,align=center, minimum height=1.2cm] {\shortstack{CP\\User}};
+		\path (2,0)    node [anchor=north west,fill=blue!20,rounded corners,minimum width=\textwidth-2cm, minimum height= 1.2cm, inner sep=0] {};
+		\path (2,-1.4) node [anchor=north west,fill=blue!20,rounded corners,minimum width=\textwidth-2cm, minimum height= 1.2cm, inner sep=0] {};
+		\path (2,-2.8) node [anchor=north west,fill=blue!20,rounded corners,minimum width=\textwidth-2cm, minimum height= 2.2cm, inner sep=0] {};
+		\path (2,-5.2) node [anchor=north west,fill=blue!20,rounded corners,minimum width=\textwidth-2cm, minimum height= 1.2cm, inner sep=0] {};
+		\path (3.25,-.3) node (ecore) [anchor=north west,draw, rounded corners, minimum width=3cm, minimum height=.6cm, align=center, inner sep=0] {Ecore.ecore};
+		\path (2.5,-1.7) node (cincod1) [anchor=north west,draw, rounded corners, minimum width=2.2cm, minimum height=.6cm,  align=center, inner sep=0] {MSL.ecore};
+		\path (4.8,-1.7) node (cincod2) [anchor=north west,draw, rounded corners, minimum width=2.2cm, minimum height=.6cm, align=center, inner sep=0] {MGL.ecore};
+		\path (8.5,-1.5) node (l) [anchor=north,draw, rounded corners, minimum width=2.5cm, minimum height=1cm, align=center, inner sep=0] {\footnotesize\shortstack{Cinco Code\\Generator}};
+		\path (2.5,-2.9) node [anchor=north west,draw, rounded corners, minimum width=4.5cm, minimum height=2cm, align=center, inner sep=1mm,text height=1.6cm,] {\footnotesize High-Tool Level Specification};
+		
+		\path (2.75,-3.2) node (devs1) [anchor=north west,draw, rounded corners, minimum width=1.5cm, minimum height=.8cm, align=center, inner sep=1mm] {\footnotesize Sensor.mgl};
+		
+		\path (5.05,-3.2) node (devs2) [anchor=north west,draw, rounded corners, minimum width=1.5cm, minimum height=.8cm, align=center, inner sep=1mm] {\footnotesize Sensor.msl};
+		
+		\path (10,-2.9) node [anchor=north west,draw, rounded corners, minimum width=4.5cm, minimum height=2cm, align=center, inner sep=0mm,text depth=1cm,] {\footnotesize\shortstack{Tool Realization\\(Cinco Product)}};
+		
+		\path (12.25,-3.8) node (tool) [anchor=north,draw, rounded corners, minimum width=1.5cm, minimum height=.8cm, align=center, inner sep=1mm] {\footnotesize Sensor.ecore};
+		
+		\path (10,-5.5) node (user1) [anchor=north west,draw, rounded corners, minimum width=2cm, align=center, inner sep=0,minimum height=.6cm] {a.sensor};
+		\path (12.5,-5.5) node (user2) [anchor=north west,draw, rounded corners, minimum width=2cm, align=center, inner sep=0,minimum height=.6cm] {b.sensor};
+		
+		
+		\draw[-{Triangle[width=18pt,length=8pt]}, line width=10pt, color=orange!20](7.1,-3.9) -- (9.9,-3.9);
+		\path (8.5,-3.9) node {\Huge\color{black}\faCog};
+		\path (8.5,-3.9) node (cog) {\huge\color{white}\faCog};
+		\draw [dashed] (cog.west) -- (l.south west);
+		\draw [dashed] (cog.east) -- (l.south east);
+		\draw [-{Triangle}] (user1.north) -- (tool);
+		\draw [-{Triangle}] (user2.north) -- (tool);
+		\draw [-{Triangle}] (devs1.north) -- (cincod1);
+		\draw [-{Triangle}] (devs2.north) -- (cincod2);
+		\draw [-{Triangle}] (cincod1.north) -- (ecore);
+		\draw [-{Triangle}] (cincod2.north) -- (ecore);
+	\end{tikzpicture}
+	\caption{Generation of an automaton modeling tool by an abstract tool specification with theCinco framework~\cite{cincoimage}}
+\end{figure}
 
 \todo{tell style language}
 
