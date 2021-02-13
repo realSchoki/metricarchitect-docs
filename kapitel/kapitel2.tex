@@ -211,7 +211,7 @@ For the visualization of the data collected by Prometheus, Grafana~\citep{Grafan
 	\caption{Example Diagram Types in Grafana}
 	\label{fig:fig}
 \end{figure}
-Supplementary there is a simple table format, honeycomb patterns, bar charts and many more. These, like the data sources, are extensible through plugins. Thanks to the source code openness of the project, custom plugins can be written if needed.
+Supplementary there is a simple table format, honeycomb patterns, bar charts and many more. These, like the data sources, are extensible through plug-ins. Thanks to the source code openness of the project, custom plug-ins can be written if needed.
 
 To fill the diagrams with data from, in our case, Prometheus, a \gls{promql} query must be stored in each diagram, which is executed regularly. Such a diagram is part of a so-called panel. That means, a panel has exactly one diagram and vice-versa. These are now combined into dashboards, which then provide an overview. Here you can define a lot of panels to display them at the same time.
 
@@ -220,15 +220,17 @@ It should also be said that there are higher order structures such as organizati
 \subsection{Panels}
 Since panels have many settings and thus allow many individualization, these are briefly explained here.
 
-Each panel has primarily a name, description, diagram type, settings for the layout and value reference of cumulative functions and behavior with zero values. Depending on the selected chart type, different configurations are possible. Axis labeling, legend, limits for symbolic coloring and other specific settings.
+Each panel has primarily a name, description, diagram type, settings for the layout and value reference of cumulative functions and behaviour with zero values. Depending on the selected chart type, different configurations are possible. Axis labelling, legend, limits for symbolic colouring and other specific settings.
 
 Alternatively to the grouping of metrics, which is possible by keywords, it is a option to display several metrics in one diagram by specifying multiple \gls{promql} queries. More can be found in chapter 6: Visualization Panels In Grafana of~\cite{Salituro2020}.
 
 \section{Model Driven Development}
 
+The most software development methodologies base on some structural defining work. 
+
 
 \section{Cinco}
-Everything above is a necessary base technology where on top of it the model-driven solution, the domain specific language is build. For this task the meta modeling tool Cinco~\cite{CincoHomepage} will be used. The full name is \say{CINCO SCCE Meta Tooling Framework} and it utilizes the \gls{emf} and Graphiti Graphical Tooling Infrastructure. It is in active development of the chair for programming systems of the \gls{tudortmund}.
+Everything above is a necessary base technology where on top of it the model-driven solution, the domain specific language is build. For this task the meta modelling tool Cinco~\cite{CincoHomepage} will be used. The full name is \say{CINCO SCCE Meta Tooling Framework} and it utilizes the \gls{emf} and Graphiti Graphical Tooling Infrastructure. It is in active development of the chair for programming systems of the \gls{tudortmund}.
 
 The \gls{mgl} allows the user to design a custom \gls{dsl} and generate a working \gls{ide} with features like auto complete, visual editing or code generation.
 
@@ -272,7 +274,8 @@ The \gls{mgl} allows the user to design a custom \gls{dsl} and generate a workin
 		\draw [-{Triangle}] (cincod1.north) -- (ecore);
 		\draw [-{Triangle}] (cincod2.north) -- (ecore);
 	\end{tikzpicture}
-	\caption{Generation of an automaton modeling tool by an abstract tool specification with theCinco framework~\cite{cincoimage}}
+	\caption{Generation of an automaton modeling tool by an abstract tool specification with the
+Cinco framework~\cite{cincoimage}}
 \end{figure}
 
 \todo{tell style language}
