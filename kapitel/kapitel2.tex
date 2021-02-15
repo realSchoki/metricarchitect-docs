@@ -220,19 +220,27 @@ It should also be said that there are higher order structures such as organizati
 \subsection{Panels}
 Since panels have many settings and thus allow many individualization, these are briefly explained here.
 
-Each panel has primarily a name, description, diagram type, settings for the layout and value reference of cumulative functions and behaviour with zero values. Depending on the selected chart type, different configurations are possible. Axis labelling, legend, limits for symbolic colouring and other specific settings.
+Each panel has primarily a name, description, diagram type, settings for the layout and value reference of cumulative functions and behavior with zero values. Depending on the selected chart type, different configurations are possible. Axis labeling, legend, limits for symbolic coloring and other specific settings.
 
 Alternatively to the grouping of metrics, which is possible by keywords, it is a option to display several metrics in one diagram by specifying multiple \gls{promql} queries. More can be found in chapter 6: Visualization Panels In Grafana of~\cite{Salituro2020}.
 
-\section{Model Driven Development}
+\section{Model-driven development}
 
-The most software development methodologies base on some structural defining work. 
+Generalization, classification and aggregation forms the most common form called abstraction~\cite{Brambilla_2017}. Software development cannot exist without it, as it gives the developer the ability to ignore not important properties of a real world situation. Therefore this helps breaking down the observed scene into essential parts leading to a simpler description of the given situation. As a synonym often modeling instead of abstraction is used. Based on this model, which is acquired by abstraction, a developer can now realize and implement a software which fulfills all needs and constraints expressed by the model. 
+
+In today complex world abstraction is indispensable and helps to create models in everyday life. It is a tool to eradicate unnecessary information or properties which can not be understood today. A good example for a well known abstraction is playing billiard. Bank shots can be for example abstracted with the rule, that the angle of incidence equals the angle of reflection. This can be true for most of the shots, but taking the spin of the white ball under consideration the abstraction will not longer work. The next physical property which could be included into the model would be the elasticity of the cushions or traction on the bed. Every time information is ignored a abstraction layer is created.
+
+Abstraction is the fundamental technique of model-driven development. Additionally it utilizes different tools and standards for visualization, notation and the development process. A very common and popular notation is the \gls{uml}~\cite{Cook2017}. Powerful tooling and development assist can be found with \gls{emf}. This framework give the ability to model in a well defined way using the meta model Ecore. It is meta as it allows to describe other models~\cite[section 2.3.1]{steinberg2008emf}. The focus is on creating a perfect model, defining all constraints and dependencies. From here the implementation is just following the abstract model, since the work of discussing and committing to a mutual objective is already done.
+
+\gls{emf} not only contains the Ecore model, but also a generator for example for code, custom files or an customized Eclipse \gls{ide} providing support for the model.
 
 
 \section{Cinco}
-Everything above is a necessary base technology where on top of it the model-driven solution, the domain specific language is build. For this task the meta modelling tool Cinco~\cite{CincoHomepage} will be used. The full name is \say{CINCO SCCE Meta Tooling Framework} and it utilizes the \gls{emf} and Graphiti Graphical Tooling Infrastructure. It is in active development of the chair for programming systems of the \gls{tudortmund}.
+Everything above is a necessary base technology where on top of it the model-driven solution, the domain specific language is build. For this task the meta modeling tool Cinco~\cite{CincoHomepage} will be used. The full name is \say{CINCO SCCE Meta Tooling Framework} and it utilizes the \gls{emf} and Graphiti Graphical Tooling Infrastructure. It is in active development of the chair for programming systems of the \gls{tudortmund}.
 
-The \gls{mgl} allows the user to design a custom \gls{dsl} and generate a working \gls{ide} with features like auto complete, visual editing or code generation.
+The \gls{mgl} allows the user, like \gls{emf} already does, to design a custom \gls{dsl} and generate a working \gls{ide} with features like auto complete or code generation and additionally visual editing in the generated \gls{ide}. This is a very interesting point, because modeling a \gls{dsl} which can be used in a visual editor reduces the amount of work needed to get started with using this \gls{dsl} for non computer scientists essentially. 
+
+Because Cinco is a meta modeling tool generating graphical \glspl{ide} it is also needed to somehow influence the visual appearance and exactly describe the style of the elements defined in the \gls{mgl} files. 
 
 \begin{figure}
 	\begin{tikzpicture}
@@ -275,10 +283,8 @@ The \gls{mgl} allows the user to design a custom \gls{dsl} and generate a workin
 		\draw [-{Triangle}] (cincod2.north) -- (ecore);
 	\end{tikzpicture}
 	\caption{Generation of an automaton modeling tool by an abstract tool specification with the
-Cinco framework~\cite{cincoimage}}
+Cinco framework~\cite[figure 4]{cincoimage}}
 \end{figure}
-
-\todo{tell style language}
 
 \subsection{Meta Graph Language}
 Cinco uses four different elements for modeling a \gls{dsl} inside of it. The \gls{mgl}, which is used for that modeling task, defines nodes, edges, container and type elements. Having the ability of being enhanced with fields or dependencies between them they give the developer the opportunity designing a very powerful language. Basically the \gls{mgl} is like a graph with nodes and edges expanded with optional containers where a subset of the nodes and edges elements can be stored. The type node adds the ability of defining other needed types. In general there is also the feature of extending already defined types, so little adaptions can be done a a bigger level of abstraction can be implemented.
@@ -303,3 +309,5 @@ Attributes can have different types. Cinco has therefor the following build-in d
 
 
 The custom datatypes can either be enumerations or user defined types which are groups of attributes. Optional inheritance is also possible. Enums are defined by \promcode{enum} followed by a name and all possible literals. The user defined type uses the keyword \promcode{type}, a name and the list of attributes written down the same way like in the node definition.
+
+\subsection{Meta Style Language}
