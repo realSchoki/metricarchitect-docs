@@ -240,7 +240,7 @@ Everything above is a necessary base technology where on top of it the model-dri
 
 The \gls{mgl} allows the user, like \gls{emf} already does, to design a custom \gls{dsl} and generate a working \gls{ide} with features like auto complete or code generation and additionally visual editing in the generated \gls{ide}. This is a very interesting point, because modeling a \gls{dsl} which can be used in a visual editor reduces the amount of work needed to get started with using this \gls{dsl} for non computer scientists essentially. 
 
-Because Cinco is a meta modeling tool generating graphical \glspl{ide} it is also needed to somehow influence the visual appearance and exactly describe the style of the elements defined in the \gls{mgl} files. 
+Because Cinco is a meta modeling tool generating graphical \glspl{ide} it is also needed to somehow influence the visual appearance and exactly describe the style of the elements defined in the \gls{mgl} files. For this use case it is possible to utilize the \gls{msl}.
 
 \begin{figure}
 	\begin{tikzpicture}
@@ -311,3 +311,5 @@ Attributes can have different types. Cinco has therefor the following build-in d
 The custom datatypes can either be enumerations or user defined types which are groups of attributes. Optional inheritance is also possible. Enums are defined by \promcode{enum} followed by a name and all possible literals. The user defined type uses the keyword \promcode{type}, a name and the list of attributes written down the same way like in the node definition.
 
 \subsection{Meta Style Language}
+
+The three of the four introduced possible elements of the \gls{mgl} are usable in the visual editor of the generated eclipse \gls{ide}. To give the model a better optical appearance it is necessary to specify the look of the components. The \gls{msl} allows to do exactly this. There are many different options of manipulating the representation of nodes, edges and containers in the editor. The default appearance is very minimal an just show a ... for node, ... for edges and containers are displayed ... \todo{}. Further more it is possible to set text to show, show values from properties, polygons or other geometrical shapes. To get better in touch with this settings it is recommended to take a look on the xtext definition of the \gls{msl} to understand the syntax of this language. Using images as a static resource or altering the colors of text and shapes is also possible without any great deal of fuss.
