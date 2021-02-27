@@ -53,7 +53,20 @@
 \usepackage{algorithmic}
 %
 %% Listings
+\newenvironment{longlisting}{\captionsetup{type=listing}}{}
 \usepackage{minted}
+\setminted{
+	linenos=true,
+	autogobble,
+	frame=lines,
+	tabsize=4,
+	breaklines,
+	mathescape,
+	numbersep=5pt,
+	framesep=2mm
+}
+
+
 \usepackage{dirtytalk}
 %% TODOs
 \setlength{\marginparwidth}{2cm}
@@ -61,6 +74,7 @@
 %\setuptodonotes{fancyline}
 %
 \newmintinline[promcode]{text}{fontsize=\scriptsize, bgcolor=LightGray}
+\def\mgllexer{mgl.py:MGLLexer -x}
 %
 %
 %\makeatletter

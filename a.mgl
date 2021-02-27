@@ -1,0 +1,8 @@
+@style(sensorDevice, "${name}")
+@palette("SensorDevices")
+node SensorDevice {
+	incomingEdges (ContainedBy)
+	attr EString as name := ""
+	@possibleValuesProvider("dev.schoki.metricarchitect.provider.SensorIconValueProvider")
+	attr EString as icon
+}	

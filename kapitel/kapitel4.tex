@@ -1,5 +1,149 @@
 % kapitel4.tex
 \chapter{Implementation}
 \label{chapter:realisierung}
-\section{MGL/MSL}
+As now a basic abstract model is designed a implementation in cinco can be done. Like in figure \ref{fig:ModelLayers} shown a separation of the layers will result in four different mgl files, resulting in four different models and combined with the feature already introduced called prime references. For each of them a example will be appended to clarify the proper handling and to understand the meaning of each modeling step.
+\section{MGL}
+Through the style definitions using \gls{msl} are very minimal in this use case the focus is set on the model \gls{mgl} files.
+First of all the sensor layer should be described as the rest of the model bases on this step.
+\subsection{Sensor}
+The one and only node without any child nodes is called metric and describes a metric like introduced in chapter \ref{chapter:grundlagen}. 
+\begin{listing}[H]
+	\begin{minted}{\mgllexer}
+		@style(sensorMetric, "${label}")
+		@icon("src/main/resources/icons/file-export-solid.16.png")
+		node Metric {
+			outgoingEdges (ContainedBy)
+			attr EString as label := ""
+		}
+	\end{minted}
+	\caption{Impl. of Metric Node}
+	\label{lst:nodeMetric}
+\end{listing}
+As shown a metric has a label describing its function like power or humidity. It has to represent the names of the metrics which are exported through the prometheus interface. A metric can have multiple connections to different sensors but not more than one connection to a sensor.
+
+Senors combine these metrics (line 4, figure \ref{fig:CodeSensorDevice}) into a group of exportable data. This step is done and needed for modeling real world sensor devices. This devices can be reused everywhere in the project because it is an abstract and not a concrete instance of the device holding configuration or being used. 
+
+Attributes like a name and a specific icon  can also be edited. The name for the sensor to keep them apart and for a better \gls{ui} experience it is possible to select a symbol from a preselected set of icons to show up in the node. This should make it easier to get a better and faster coordination in bigger networks. This feature gets enabled by the $SensorIconValueProvider$ class linked with the $@possibleValuesProvider$ annotation (listing \ref{lst:classSensorIconValueProvider}).
+\begin{listing}[H]
+	\begin{minted}{\mgllexer}
+	@style(sensorDevice, "${name}")
+	@palette("DeviceDefinition")
+	node DeviceDefinition {
+		incomingEdges (ContainedBy)
+		attr EString as name := ""
+		@possibleValuesProvider("dev.schoki.metricarchitect.provider .SensorIconValueProvider")
+		attr EString as icon
+	}	
+	\end{minted}
+	\caption{Impl. of SensorDevice Node}
+	\label{fig:CodeSensorDevice}
+\end{listing}
+For a faster and easier access to the tooling some presets are implemented setting a predefined icon.
+\subsection{Floor}
+The modeled sensor using the previous \gls{mgl} definition can now be instantiated and configured. This can be achieved using the node $Device$. Via prime reference a link to a $DeviceDefinition$ is created (lines 4-6, \ref{fig:CodeSensorDeviceInstance}). Because we are now talking about a specific real world device a symbolic name and a \gls{url} has to be set. The name is only used for better readability and the \gls{url} is essential. It will be generated into the prometheus configuration for the deployment. Every node of this type corespondents to a device observed by prometheus. 
+
+To create a better overview a simple grouping is also implemented. This can be done by using the $Filter$ edges from the $SensorDeviceInstance$ to a $DeviceGroup$. For example it is possible to combine all power sockets or lights to one node to make them better accessible in the later steps. 
+
+\begin{listing}[H]
+	\begin{minted}{\mgllexer}
+	@style(sensorInFloorModel, "${name}")
+	@icon('src/main/resources/icons/bolt-solid.16.png')
+	node Device {
+		@pvLabel (name)
+		@pvFileExtension ("sensor")
+		prime SensorModel::DeviceDefinition as sensor
+		outgoingEdges (GroupBy)
+		attr EString as name := "DeviceName"
+		attr EString as url := "localhost:8080"
+	}	
+	\end{minted}
+	\caption{Impl. of SensorDevice Node}
+	\label{fig:CodeSensorDeviceInstance}
+\end{listing}
+
+The generators for the needed configurations will follow later.
+
+\subsection{Grafana}
+
+Using the previous devices and device groups it is no possible to model the grafana configuration. Starting by creating a new node via prime reference which is than embedded into a $GraphQueryForGroup$ or for non groups $GraphQueryForDevice$ node. Both wield the same information but it is necessary to distinguish between them because the generators act differently while processing these nodes. As of this node only works as a connection to the floor \gls{mgl} it does not contain more information. 
+
+\begin{listing}[H]
+	\begin{minted}{\mgllexer}
+		@style(graphQueryForGroup, "${deviceGroup.name}")
+		@icon('src/main/resources/icons/chart-line-solid.16.png')
+		node GraphQueryForGroup {
+			@pvLabel (name)
+			@pvFileExtension ("floor")
+			prime FloorModel::DeviceGroup as deviceGroup
+			outgoingEdges (GraphQueryToPanel)
+		}
+	\end{minted}
+\end{listing}
+
+Since this layer covers the grafana configuration \gls{promql} queries are an essential part of it. The outgoing edge $GraphQueryToPanel$ covers a rich set of possible queries but not the overall features. It is the part of the model which describes the derived \gls{promql} query the most. Like already mentioned in subsection \ref{subsec:promql} there are different parameters to set. Because the values for the variables are simple string it is necessary to keep up to the right syntax. The fields $timespan$, $timeresolution$ and $offset$ (line 6-8, listing \ref{lst:GraphQueryToPanel}) has to follow the roles for duration notation (page \pageref{lst:promql_vector}, figure \ref{lst:promql_vector}). All connected devices either connected via device groups or directly can have many different metrics. Since it does not make sense to show not compatible metrics in the same graph like for example power and humidity a value provider filters all common metrics of the devices. 
+
+\begin{listing}[H]
+	\begin{minted}{\mgllexer}
+@style(simpleArrow)
+edge GraphQueryToPanel {
+	@possibleValuesProvider("dev.schoki.metricarchitect.provider .FilterValueProvider")
+	attr EString as filter
+	attr Aggregation as function := "none"
+	attr EString as offset
+	attr EString as timespan
+	attr EString as timeresolution
+	attr EString as label
+}
+	\end{minted}
+	\caption{Impl. of the Edge connecting GraphQueryByGroup/GraphQueryByDevice to a Panel symbolizing a PromQL Query}
+	\label{lst:GraphQueryToPanel}
+\end{listing}
+
+The $FilterValueProvider$ class (page \pageref{lst:classFilterValueProvider}, listing \ref{lst:classFilterValueProvider}) has to take into consideration, that there are $GraphQueryByGroup$ and $GraphQueryByGroup$. This is done by a simple type checking in runtime with the java $instanceof$ keyword. Using this way a drop down menu will only allow valid metrics to be used.
+
+Last but not least an aggregation function has to be selected. The default is $none$. This is not a function implemented by \gls{promql} but it is used as a keyword in this project for doing nothing, meaning there will not be a function around the generated query. The original \gls{promql} has many different functions and as already said, for this project there are only some of them implemented. 
+
+\begin{center}
+	none | sum | min | max | avg | group | stddev | stdvar | count | count\_values | bottomk | topk  | quantile
+\end{center}
+
+It can be easily expanded but for a simple proof of concept the set is sufficient. These edges can than be merged to a $Panel$ node. At this state it does not has specific attributes but technically it can have all needed properties which can be used for setting up a grafana panel. This could be width and height, position in x and y coordinates, graph style and so on.
+
+With the non specific edge $PanelToDashboard$ a connection to the last node in this \gls{mgl} file can be established. The final node is the $Dashboard$ node. It is not very interesting but it has a name which is used by grafana as the shown identifier. Additionally a unique id has to be set to ensure the correct functionality of grafana. This is done by using the $@postCreate$ annotation (line 3, listing \ref{lst:nodeDashboard}) and a proper class for it. The class $DashboardPostCreateSetUniqueId$ creates a random string which will be set as $internal\_id$. This value is nothing the developer has to take care of and plays only an important role for the generator.
+
+\begin{listing}
+	\begin{minted}{\mgllexer}
+	@style(dashboard, "${name}")
+	@icon('src/main/resources/icons/list-alt-regular.16.png')
+	@postCreate('dev.schoki.metricarchitect.hooks.grafanamodel.DashboardPostCreateSetUniqueId')
+	node Dashboard {
+		incomingEdges (PanelToDashboard)
+		attr EString as name := ""
+		final unique attr EString as internal_id := " " 
+	}
+	\end{minted}
+	\caption{Impl. of Dashboard Node}
+	\label{lst:nodeDashboard}
+\end{listing}
+\subsection{Project}
+To have a better overview of the project this layer was added. It can contain different information which could be possibly needed for better management. Extensions like adding options for the docker deployment or specific settings for grafana and prometheus could be added here in future work. Furthermore it is used as an entrypoint for the generators. 
+
+The one and only node in this layer is the $GrafanaModel$ node which has a prime reference to a whole grafana layer model file. It is possible to add multiple nodes.
+
+Like already mentioned, this layer is the beginning for the generation process. A generator is appended with a $@generatable$ annotation. The class $ProjectGenerator$ therefor does all necessary steps. 
+
+\begin{listing}
+	\begin{minted}{\mgllexer}
+	
+	@style("model/General.style")
+	@primeviewer
+	@generatable("dev.schoki.metricarchitect.codegen.ProjectGenerator","/src-gen/")
+	graphModel ProjectModel {
+		...
+	}
+	\end{minted}
+	\caption{Impl. of ProjectModel Graph Model}
+	\label{lst:modelProjectModel}
+\end{listing}
+
 \section{Example}

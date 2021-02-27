@@ -86,7 +86,8 @@ A histogram represents, in addition to the buckets, a total number of measured v
 \end{figure}
 Line 2 can occur multiple times as each entry hat its own limit value. Lines 3 and 4 are the additional values as already mentioned.
 \subsubsection{Summary}
-\begin{figure}[h!]
+A summary is similar to a histogram, but here buckets are not filled by the value of the measurement but the measured values are divided into $\varphi$-quantiles ($0 \le \varphi \le 1)$ and the maximum value of the quantile.
+\begin{figure}[H]
 	\begin{minted}[mathescape,
 		linenos,
 		numbersep=5pt,
@@ -103,7 +104,6 @@ Line 2 can occur multiple times as each entry hat its own limit value. Lines 3 a
 	\end{minted}
 	\caption{General Concept of a Summary Export}
 \end{figure}
-A summary is similar to a histogram, but here buckets are not filled by the value of the measurement but the measured values are divided into $\varphi$-quantiles ($0 \le \varphi \le 1)$ and the maximum value of the quantile.
 \subsubsection{Untyped}
 In this case a value is assigned to the metric without following any special rules. This is a safe default setting and it is inevitable not to use this type.
 \Needspace{9\baselineskip}
@@ -176,12 +176,13 @@ In the following lines you can see a more complex example. This is a histogram. 
 \todo{mention summary?}
 
 \subsection{Prometheus Query Language}
+\label{subsec:promql}
 As mentioned before, the collected data is stored in an internal Time Series database \todo{never mentioned} which can be searched by the so-called \gls{promql}.
 
 There are four different subtypes for this:
 \subsubsection{Instant vector}
 Instant vector selectors allow the selection of a set of time series and a single sample value for each at a given timestamp (instant). In the simplest form, only a metric name is specified. This results in an instant vector containing elements for all time series that have this metric name. \todo{semantik der typen beschreiben}
-
+\todo{all mising}
 \section{Grafana}
 \label{sec:grafana}
 For the visualization of the data collected by Prometheus, Grafana~\citep{GrafanaHomepage} can be used. It is a versatile and extensible system to display data from various data sources like databases like Cassandra, MariaDB or PostgreSQL but also regular \gls{http} requests against external interfaces or static \gls{json} objects are possible~\cite{GrafanaDataSources}. Furthermore, Grafana also provides different types of diagrams.
@@ -284,7 +285,10 @@ Because Cinco is a meta modeling tool generating graphical \glspl{ide} it is als
 	\end{tikzpicture}
 	\caption{Generation of an automaton modeling tool by an abstract tool specification with the
 Cinco framework~\cite[figure 4]{cincoimage}}
+	\label{layeringCinco}
 \end{figure}
+
+It is apparent from figure \ref{layeringCinco} that there is a clearly separated layering between different models in Cinco. The \gls{emf} as a framework for eclipse serves as the foundation for cinco. It allows to build via a \gls{dsl} named xtext to define other model. This is the point were cinco starts. The \gls{msl} and \gls{mgl} are two of many definitions taking advantage of \gls{emf} to implement the needed features in Cinco. With this information a Ecore modal can be generated which is needed for cinco to work. As a cinco developer now it es possible to define a meta-model, in this case a sensor definition problem is used as a example. From here as a user of the generated \gls{ide} for this sensor development the developer can model the real world problems.
 
 \subsection{Meta Graph Language}
 Cinco uses four different elements for modeling a \gls{dsl} inside of it. The \gls{mgl}, which is used for that modeling task, defines nodes, edges, container and type elements. Having the ability of being enhanced with fields or dependencies between them they give the developer the opportunity designing a very powerful language. Basically the \gls{mgl} is like a graph with nodes and edges expanded with optional containers where a subset of the nodes and edges elements can be stored. The type node adds the ability of defining other needed types. In general there is also the feature of extending already defined types, so little adaptions can be done a a bigger level of abstraction can be implemented.
@@ -312,4 +316,4 @@ The custom datatypes can either be enumerations or user defined types which are 
 
 \subsection{Meta Style Language}
 
-The three of the four introduced possible elements of the \gls{mgl} are usable in the visual editor of the generated eclipse \gls{ide}. To give the model a better optical appearance it is necessary to specify the look of the components. The \gls{msl} allows to do exactly this. There are many different options of manipulating the representation of nodes, edges and containers in the editor. The default appearance is very minimal an just show a ... for node, ... for edges and containers are displayed ... \todo{}. Further more it is possible to set text to show, show values from properties, polygons or other geometrical shapes. To get better in touch with this settings it is recommended to take a look on the xtext definition of the \gls{msl} to understand the syntax of this language. Using images as a static resource or altering the colors of text and shapes is also possible without any great deal of fuss.
+The three of the four introduced possible elements of the \gls{mgl} are usable in the visual editor of the generated eclipse \gls{ide}. To give the model a better optical appearance it is necessary to specify the look of the components. The \gls{msl} allows to do exactly this. There are many different options of manipulating the representation of nodes, edges and containers in the editor. There is no default appearance, therefor it is necessary to set up at least a very basic style definition for the used elements. Further more it is possible to set text to show, show values from properties, polygons or other geometrical shapes. To get better in touch with this settings it is recommended to take a look on the xtext definition of the \gls{msl} to understand the syntax of this language. Using images as a static resource or altering the colors of text and shapes is also possible without any great deal of fuss.

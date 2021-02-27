@@ -5,7 +5,7 @@
 \subsubsection{String}
 \begin{listing}[H]
 	\begin{samepage}
-		\begin{minted}[mathescape, linenos, numbersep=5pt, gobble=3, frame=lines, tabsize=4, breaklines, framesep=2mm]{ebnf}
+		\begin{minted}{ebnf}
 			string = raw_string_lit | interpreted_string_lit;
 			raw_string_lit = "'", { unicode_char | newline }, "'";
 			interpreted_string_lit = '"', { unicode_value | byte_value }, '"';
@@ -32,7 +32,7 @@
 \subsubsection{Float}
 \begin{listing}[H]
 	\begin{samepage}
-		\begin{minted}[mathescape, linenos, numbersep=5pt, gobble=3, frame=lines, tabsize=4, breaklines, framesep=2mm]{ebnf}
+		\begin{minted}{ebnf}
 			float = [ "+", "-" ], { digit }, [ "." ], digit, { digit }, [ ( "e" | "E" ), [ "-" | "+" ], digit, { digit }
 				| "0", ( "x" | "X" ), hex_digit, { hex_digit }
 				| ( "n" | "N" ), ( "a" | "A" ), ( "n" | "N" )
@@ -49,7 +49,7 @@
 \subsubsection{Instant and Range Vector}
 \begin{listing}[H]
 \begin{samepage}
-\begin{minted}[mathescape, linenos, numbersep=5pt, gobble=1, frame=lines, tabsize=4, breaklines, framesep=2mm]{ebnf}
+\begin{minted}{ebnf}
 	vector = label, [ "{", [ param, { ",", param } ], "}" ]
 	       | "{", [ param-not-empty, { ",", param } ], "}"
 	instant-vector = vector, [ " ", "offset", " ", duration ];
@@ -68,6 +68,7 @@
 	digit = ? 0 ... 9 ?
 \end{minted}
 \caption{EBNF following ISO/IEC 14977 of a Metric}
+\label{lst:promql_vector}
 \end{samepage}
 \end{listing}
 
@@ -88,7 +89,7 @@
 
 \begin{listing}[H]
 	\begin{samepage}
-		\begin{minted}[mathescape, linenos, numbersep=5pt, gobble=3, frame=lines, tabsize=4, breaklines, framesep=2mm]{ebnf}
+		\begin{minted}{ebnf}
 			arithmetic-op = "*" | "-" | "*" | "/" | "%" | "^";
 			
 			float = float, arithmetic-op, float
@@ -117,7 +118,7 @@
 
 \begin{listing}[H]
 	\begin{samepage}
-		\begin{minted}[mathescape, linenos, numbersep=5pt, gobble=3, frame=lines, tabsize=4, breaklines, framesep=2mm]{ebnf}
+		\begin{minted}{ebnf}
 			instant-vector = instant-vector, " ", set-op, " ", "ignoring(", label-list} ")", instant-vector
 			label-list = label, { ",", label };
 		\end{minted}
@@ -126,3 +127,131 @@
 \end{listing}
 
 \todo{do the rest of the ebnf for promql}
+
+\clearpage
+\section{Implementation}
+\subsection{SensorIconValueProvider}
+\begin{longlisting}
+	\begin{minted}{java}
+		package dev.schoki.metricarchitect.provider;
+		
+		import java.util.Arrays;
+		import java.util.HashMap;
+		import java.util.Map;
+		import java.util.stream.Collectors;
+		
+		import de.jabc.cinco.meta.runtime.provider.CincoValuesProvider;
+		import dev.schoki.metricarchitect.model.sensor.sensormodel.Bolt;
+		import dev.schoki.metricarchitect.model.sensor.sensormodel.Broadcast;
+		import dev.schoki.metricarchitect.model.sensor.sensormodel.DeviceDefinition;
+		import dev.schoki.metricarchitect.model.sensor.sensormodel.Fan;
+		import dev.schoki.metricarchitect.model.sensor.sensormodel.Faucet;
+		import dev.schoki.metricarchitect.model.sensor.sensormodel.Light;
+		import dev.schoki.metricarchitect.model.sensor.sensormodel.Plug;
+		import dev.schoki.metricarchitect.model.sensor.sensormodel.Wind;
+		
+		public class SensorIconValueProvider extends CincoValuesProvider<DeviceDefinition, String> {
+			
+			public static enum Icon {
+				Bolt("src/main/resources/icons/bolt-solid.png"),
+				Broadcast("src/main/resources/icons/broadcast-tower-solid.png"),
+				Fan("src/main/resources/icons/fan-solid.png"),
+				Faucet("src/main/resources/icons/faucet-solid.png"),
+				Light("src/main/resources/icons/lightbulb-solid.png"),
+				Plug("src/main/resources/icons/plug-solid.png"),
+				Wind("src/main/resources/icons/wind-solid.png");
+				
+				public final String path;
+				
+				public String getPath() {
+					return path;
+				}
+				
+				private Icon(String path) {
+					this.path = path;
+				}
+			}
+			
+			private static Map<String, String> icons = new HashMap<String, String>();
+			
+			static {
+				Arrays.asList(Icon.values()).forEach( x -> icons.put(x.path, x.name()));
+			}
+			
+			@Override
+			public Map<String, String> getPossibleValues(DeviceDefinition sensor) {
+				
+				if (sensor instanceof Plug) {
+					return Arrays.asList(Icon.Plug).stream().collect(Collectors .toMap(Icon::getPath, Icon::name));
+				} else if (sensor instanceof Bolt) { 
+					return Arrays.asList(Icon.Bolt).stream().collect(Collectors .toMap(Icon::getPath, Icon::name));
+				} else if (sensor instanceof Broadcast) { 
+					return Arrays.asList(Icon.Broadcast).stream().collect(Collectors .toMap(Icon::getPath, Icon::name));
+				} else if (sensor instanceof Fan) { 
+					return Arrays.asList(Icon.Fan).stream().collect(Collectors .toMap(Icon::getPath, Icon::name));
+				} else if (sensor instanceof Faucet) { 
+					return Arrays.asList(Icon.Faucet).stream().collect(Collectors .toMap(Icon::getPath, Icon::name));
+				} else if (sensor instanceof Light) { 
+					return Arrays.asList(Icon.Light).stream().collect(Collectors .toMap(Icon::getPath, Icon::name));
+				} else if (sensor instanceof Wind) { 
+					return Arrays.asList(Icon.Wind).stream().collect(Collectors .toMap(Icon::getPath, Icon::name));
+					//return icons;
+				} else {
+					return icons;
+				}
+			}
+		}
+	\end{minted}
+	\caption{Code of SensorIconValueProvider Class}
+	\label{lst:classSensorIconValueProvider}
+\end{longlisting}
+
+\subsection{FilterValueProvider}
+\begin{longlisting}
+	\begin{minted}{java}
+		package dev.schoki.metricarchitect.provider;
+		
+		import java.util.Map;
+		import java.util.stream.Collectors;
+		
+		import org.eclipse.emf.common.util.ECollections;
+		import org.eclipse.emf.common.util.EList;
+		
+		import com.google.common.base.Functions;
+		
+		import de.jabc.cinco.meta.runtime.provider.CincoValuesProvider;
+		import dev.schoki.metricarchitect.model.floor.floormodel.Device;
+		import dev.schoki.metricarchitect.model.grafana.grafanamodel .GraphQueryForDevice;
+		import dev.schoki.metricarchitect.model.grafana.grafanamodel .GraphQueryForGroup;
+		import dev.schoki.metricarchitect.model.grafana.grafanamodel .GraphQueryToPanel;
+		import dev.schoki.metricarchitect.model.sensor.sensormodel.Metric;
+		
+		public class FilterValueProvider extends CincoValuesProvider<GraphQueryToPanel, String> {
+			
+			@Override
+			public Map<String, String> getPossibleValues(GraphQueryToPanel arg0) {
+				EList<Device> f = ECollections.emptyEList();
+				if(arg0.getSourceElement() instanceof GraphQueryForGroup) {
+					f = ((GraphQueryForGroup) arg0.getSourceElement()) .getDeviceGroup().getDevicePredecessors();
+				} else if ( arg0.getSourceElement() instanceof GraphQueryForDevice) {
+					f = ECollections.asEList(((GraphQueryForDevice) arg0.getSourceElement()).getDevice());
+				} else {
+					throw new RuntimeException("Unknown node type: " + arg0.getSourceElement().getClass().toString());
+				}
+				
+				return f.stream()
+					.flatMap( d -> d
+					.getSensor()
+					.getMetricPredecessors()
+					.stream()
+					.map(Metric::getLabel)
+				)
+				.distinct()
+				.collect(Collectors.toMap(Functions.identity(), Functions.identity()));
+			}
+		}
+	\end{minted}
+	\caption{Code of FilterValueProvider Class}
+	\label{lst:classFilterValueProvider}
+\end{longlisting}
+
