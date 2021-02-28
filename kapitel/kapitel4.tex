@@ -61,7 +61,7 @@ To create a better overview a simple grouping is also implemented. This can be d
 	\label{fig:CodeSensorDeviceInstance}
 \end{listing}
 
-The generators for the needed configurations will follow later.
+The generators for the needed configurations will follow later. For a better understanding where the devices are in the real world it is possible to use the $FloorImage$ node. It has only one variable which can be set to a image inside the project relative to the root of it and a floor plan is intended to be used. With this creating device instances without forgetting which node matches with which real world device can be easily achieved.
 
 \subsection{Grafana}
 
@@ -92,7 +92,6 @@ edge GraphQueryToPanel {
 	attr EString as offset
 	attr EString as timespan
 	attr EString as timeresolution
-	attr EString as label
 }
 	\end{minted}
 	\caption{Impl. of the Edge connecting GraphQueryByGroup/GraphQueryByDevice to a Panel symbolizing a PromQL Query}
@@ -132,7 +131,7 @@ The one and only node in this layer is the $GrafanaModel$ node which has a prime
 
 Like already mentioned, this layer is the beginning for the generation process. A generator is appended with a $@generatable$ annotation. The class $ProjectGenerator$ therefor does all necessary steps. 
 
-\begin{listing}
+\begin{listing}[H]
 	\begin{minted}{\mgllexer}
 	
 	@style("model/General.style")
@@ -147,3 +146,76 @@ Like already mentioned, this layer is the beginning for the generation process. 
 \end{listing}
 
 \section{Example}
+To wrap everything up and show how the different layers work with each other an example project will be set up. Multiple smart power sockets were used for this. In this case the Gosund SP1 will be used with a flashed firmware.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=4cm]{assets/images/gosund.png}
+	\caption{Gosund SP1 Smart Power Socket}
+\end{figure}
+The open source project tasmota \cite{tasmotawebsite} which is licensed under \gls{gpl3} is an alternative firmware for a huge amount of different \gls{iot} devices like lights, switches, curtains or power sockets like needed in this case.
+With the version 8.5.1 which was released on 2nd October 2020 tasmota gets optional support for prometheus exports. 
+
+Connecting to the correct \gls{url} under $/metrics$ will then return a well formatted prometheus export ( see \ref{lst:exGosundExport} ).
+
+\begin{listing}[H]
+	\begin{minted}{text}
+		# TYPE energy_voltage_volts gauge
+		energy_voltage_volts 239
+		# TYPE energy_current_amperes gauge
+		energy_current_amperes 0.218
+		# TYPE energy_power_active_watts gauge
+		energy_power_active_watts 36
+	\end{minted}
+	\caption{Part of the Export of Gosund SP1 with Tasmota Firmware. Unimportant metrics are not shown.}
+	\label{lst:exGosundExport}
+\end{listing}
+
+These three metrics are the one which should be modeled in the cinco product. The metrics $energy\_voltage\_volts$, $energy\_current\_amperes$ and $energy\_power\_active\_watts$ has to be created using the metric node type. Additionally a new device definition is needed. In this case it will be named $tasmota\ ps$. Each of the created metrics needs than to be connected to the device definition.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=.7\linewidth]{assets/images/sensorLayer}
+	\caption{Modeled Sensor in the Sensor Layer}
+\end{figure}
+
+Based on this model the real world scenario will be created. It is not only important to know, that a sensor exist, it is also important to have some metadata of it. The position and ip are the needed ones here. Across two room four of these smart power sockets were placed. Two of them in the office and two more in the living room. Each of Bob and Alice computer is now monitored by such a smart socket. Additionally a \gls{hifi} audio system and the corresponding sub woofer in the living room are going to be observed. To make the handling easier a grouping is introduced. A group named $sound$ wields $hifi$ and $subwoofer$, group $computer$ has $bob$ and $alice$. The last group $all$ has each device connected to it. The floor plan was created in Sweet Home 3D is also open source and free to use. 
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{assets/images/floorLayer}
+	\caption{Modeled Floor in the Floor Layer}
+\end{figure}
+
+After completing the translation of the upper scenario into the model the next step is to form the \gls{promql} queries and define which query goes in which panel. Afterwards the panels has to be grouped into dashboards. The most work has to be done configuring the edges from the device nodes to the panels.
+
+From the floor layer the groups are included via prime references into the grafana layer as seen on the left hand side in figure \ref{fig:modelGrafanaLayer}. From the $all$ node following connections are done:
+
+\begin{itemize}
+	\item Sum of $energy\_power\_active\_watts$ to power panel
+	\item All $energy\_power\_active\_watts$ to power panel
+	\item All $energy\_current\_amperes$ to current panel
+ 	\item All $energy\_voltage\_volts$ to voltage panel
+\end{itemize}
+
+This result in every power consumption shown in the panel view. As an addition the sum of all these values will be drawn. The panels for current and voltage does not contain any accumulated values but only the raw measured metrics. All three panels are then merged in the dashboard called $all$.
+
+On the other side the group $sound$, combines the $hifi$ and $subwoofer$ device. The edges filters for each power, current and voltage. For a better overview for power and current the sum and for voltage the average will be calculated. 
+
+The $groups$ dashboard has the panels which show the values of the group $sound$ and $computer$. Both power panels are both displayed in the power dashboard.
+
+\begin{figure}[H]
+	\centering 
+	\includegraphics[width=\linewidth]{assets/images/grafanaLayer}
+	\caption{Modeled Grafana in the Grafana Layer}
+	\label{fig:modelGrafanaLayer}
+\end{figure}
+
+At the end the last layer for the project level is very minimal an just have one node with the name $Main$.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics{assets/images/projectLayer}
+	\caption{Modeled Project in the Project Layer}
+\end{figure}
+
+After generating this project the the deployment is very simple. The generated files can be found on page \pageref{label}
