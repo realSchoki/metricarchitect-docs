@@ -1,26 +1,26 @@
 % kapitel3.tex
 \chapter{Challenge and Approach}
 \label{chapter:bestandsaufnahme}
-To start a proper analysis and abstraction of the problem a starting example is needed. It's important to qualify the rules which describe how the system is build and realize the dependencies. Furthermore, because of the importance of \gls{promql} in this project it will be a big part of the analysis and model.
+To start a proper analysis and abstraction of the problem a starting example is needed. It is important to qualify the rules which describe how the system is build and realize the dependencies. Furthermore, because of the importance of \gls{promql} in this project it will be a big part of the analysis and model.
 \section{Examples}
 Because it is already known which software to use this section will be split into smaller sections for the sake of clarity. 
 
 \subsection{Real World Situation}
 In this section the properties of the system that are observable in the real world are considered closer. Sensors come in different shapes and varieties. For example single metric sensors, like thermometer, brightness sensors or power consumption. 
 
-Additionally there are also more complex ones. Multi metric sensors for example are digital weather stations, network components like a switch or router, server metrics and so on. A specific property, which only real world sensors can have, is a location. They can be in the living room or an office building. If the whole sensor network is between multiple cities with multiple building where on each floor in every room is a humidity sensor it will get pretty big.
+Additionally there are also more complex ones. Multi metric sensors for example are digital weather stations, network components like a switch or router, server metrics and so on. A specific property, which only real world sensors can have, is a location. They can be in the living room or an office building. If the whole sensor network is between multiple cities and multiple with a humidity sensor on each floor in every room it can become rather large in scale.
 
 Summarized it is a real world gadget which provide at least one metric and is somehow bound to a location.
 
 \subsection{Digital World}
 Because the sensors are more intelligent devices in this context they have to be accessible through network via \gls{IPv4} or \gls{IPv6} and expose the metrics in a predefined syntax ( see section \ref{subsec:Exportformat}, page \pageref{subsec:Exportformat} ). 
 
-This is the bridge to the consuming parts of the system. The next step is that Prometheus is configured to pull actively in a predefined frequency the exposed metrics of the sensors. There is the possibility, that the sensors push their metrics to Prometheus but it would cause that the sensors have to be configured knowing  Prometheus \gls{ip-address}. The way of pushing the data into Prometheus won't be examined further.
+This is the bridge to the consuming parts of the system. In the next step Prometheus is configured to actively pull the exposed metrics of the sensors in a predefined frequency. It is the possible for the sensors to push their metrics to Prometheus, but it would cause the sensors have to be configured knowing  Prometheus \gls{ip-address}. The way of pushing the data into Prometheus won't be examined further.
 
 Since Prometheus only acts as the database, Grafana is used as a visualization toolkit. Grafana connects directly to Prometheus and uses \gls{promql} to gather information from the database storage. The possibilities mentioned in \ref{sec:grafana} on page \pageref{sec:grafana} are configurable. 
 
 Both settings for Prometheus and Grafana can be delivered with a simple configuration file, meaning there is no need to go through the setup process. 
-In addition a Dockerfile will take care of the correct packaging and runtime accessibility of all needed files. Therefore this whole structure makes it possible to get a single output which is capable of running Prometheus and Grafana, configured in the predefined way and already knowing the set up sensor devices.
+In addition a Dockerfile will take care of the correct packaging and runtime accessibility of all needed files. Therefore this whole structure makes allows to get a single output which is capable of running Prometheus and Grafana, configured in the predefined way and already knowing the set up sensor devices.
 
 \begin{figure}
 	\centering
@@ -50,7 +50,7 @@ In the abstraction layer the same approach can be used. First the real world sit
 
 \subsection{Real World Abstraction}
 
-As already told a sensor can be anything and it is a physical device which measures all kind of metrics. A simple model can be visualized in the following way:
+As mentioned earlier a sensor can be anything and is a physical device which measures all kinds of metrics. A simple model can be visualized in the following way:
 
 \begin{figure}[h!]
 	\centering
@@ -86,13 +86,13 @@ The transition of the digital situation into a abstract model is very linear and
 \end{figure}
 \end{samepage}
 
-The simple abstraction above shows the technical dependency and the data flow but it does not consider every property which is configurable in Prometheus and Grafana. Furthermore it forgets about meta information coming from the real world setting.
+The simple abstraction above shows the technical dependency and the data flow. Yet it does not consider every property which is configurable in Prometheus and Grafana. Furthermore it overlooks the meta information coming from the real world setting.
 
 \subsection{Specification}
-The abstraction in \ref{sec:abstraction} on page \pageref{sec:abstraction} is a very basic an fundamental one. Because there are more variables to take care of the model has to be extended. Due to the variety of the sensors and no option of a central management all additional configurations are done in Prometheus or Grafana.
+The abstraction in \ref{sec:abstraction} on page \pageref{sec:abstraction} is very basic and fundamental. Since there are more variables to take care of the model has to be extended. Due to the variety of the sensors and no option of a central management all additional configurations are done in Prometheus or Grafana.
 
 \subsubsection{Location}
-A location information is missing. Technically it can be added in each entry of the sensor in the Prometheus configuration as a additional label which will we then added as a keyword in the exported metrics. 
+A location information is missing. Technically it can be added in each entry of the sensor in the Prometheus configuration as an additional label which will then be added as a keyword in the exported metrics. 
 
 \begin{listing}[H]
 	\begin{minted}[mathescape,linenos,numbersep=5pt,gobble=0,frame=lines,tabsize=4,breaklines,framesep=2mm]{yaml}
@@ -124,24 +124,24 @@ To have a better management experience a grouping for the sensors should be intr
 
 
 \subsubsection{Prometheus Query Language}
-Because a goal of this thesis is to create an abstract model of all needed configurations in Prometheus and Grafana \gls{promql} is one big thing to be considered. Modeling a \gls{promql} query should also be possible. Vector aggregation, set operations and so on are features to be covered. 
+Since one goal of this thesis is to create an abstract model of all needed configurations in Prometheus and Grafana, \gls{promql} is one important thing to be considered. Modeling a \gls{promql} query should also be possible. Vector aggregation, set operations and so on are features to be covered. 
 
 
 \section{Model}
 
-Building a \gls{dsl} on top of the previous considerations leads to a well designed model. The explanation start bottom-up which equals the development process for the user of the created \gls{dsl}. For a better overview a separation of all informational layers is needed.
+Building a \gls{dsl} on top of the previous considerations leads to a well designed model. The explanations start bottom-up which equals the development process for the user of the created \gls{dsl}. For a better overview a separation of all informational layers is needed.
 
-The elemental components are the measurable metrics. They have a simple name and a optional unit like \gls{w}, \gls{degreeC} or \gls{percent}. A subset of the defined metrics are part of a sensor.
+The elemental components are the measurable metrics. They have a simple name and an optional unit like \gls{w}, \gls{degreeC} or \gls{percent}. A subset of the defined metrics are part of a sensor.
 
-In the next layer the sensors are now instantiated, connected with a location and combined with a handful of properties. A name and a \gls{url} of the sensor is essential. This information is needed for the configuration generation for the Prometheus service allowing it to pull the sensor date frequently and save it in the internal database. On top, allowing an easier management SensorGroups are introduced, combining multiple sensors into one node. This layer therefore serves the spatial allocation. 
+In the next layer the sensors are instantiated, connected with a location and combined with a handful of properties. A name and a \gls{url} of the sensor is essential. This information is needed for the configuration generation for the Prometheus service, allowing it to pull the sensor date frequently and save it in the internal database. On top, allowing an easier management sensor groups are introduced, combining multiple sensors into one node. Therefore this layer serves the spatial allocation. 
 
-After modeling the real world situation the next layer models the Grafana service. The available sensors and sensor groups can now be used in a \gls{promql} GraphQuery node. This node form the base data set for additional query selections. Technically \gls{promql} allows us a high variety of different queries but for the sake of less complexity a single application of a aggregation function is allowed. Additionally other \gls{promql} feature informations for features like resolution, time window or offset. 
+After modeling the real world situation the next layer models the Grafana service. The available sensors and sensor groups can now be used in a \gls{promql} GraphQuery node. This node form the base data set for additional query selections. Technically \gls{promql} allows a high variety of different queries but for the sake of less complexity a single application of a aggregation function is allowed. Additionally \gls{promql} queries can take information for features like resolution, time window or offset. 
 
-The defined queries can now be bundled in different Grafana panels allowing to share these queries between panel. A panel has a visualization type and matching settings for example for highest value of an axis, linear or logarithmic grid, colors or special rules for single values. No matter the type every panel has a width, height, x- and y- position based on the Grafana \gls{ui} system. This information allows to manage the panels inside a dashboard, which is the last node type of the Grafana layer. It consists of a name and a unique short string identifier which is needed for Grafana. 
+The defined queries can now be bundled in different Grafana panels allowing to share these queries between panels. A panel has a visualization type and matching settings for example for highest value of an axis, linear or logarithmic grid, colors or special rules for single values. No matter the type every panel has a width, height, x- and y- position based on the Grafana \gls{ui} system. This information allows to manage the panels inside a dashboard, which is the last node type of the Grafana layer. It consists of a name and a unique short string identifier which is needed for Grafana. 
 
 Last but not least the project layer is more of the business and controlling view. The only node existing here is the project node. It can contain different meta variables welding useful information for further execution of the project like address, company name, deployment type or important \glspl{IP} addresses. 
 
-In retrospective the model is mostly linear, leaving a straight forward way of working with the \gls{dsl} implementing this model. The separation into the four layers help the developer or engineer to think in well defined domains. They symbolize the steps of defining the used sensors, placing and grouping them in the real world and setting up the visualization for grafana. Like already said the last layer is only used for meta data concerning the project itself.
+In retrospective the model is mostly linear, leaving a straight forward way of working with the \gls{dsl} implementing this model. The separation into the four layers help the developer or engineer to think in well defined domains. They symbolize the steps of defining the used sensors, placing and grouping them in the real world and setting up the visualization for Grafana. Like already said the last layer is only used for meta data concerning the project itself.
 
 \begin{figure}[!tb]
 	\centering
@@ -192,7 +192,7 @@ In retrospective the model is mostly linear, leaving a straight forward way of w
 \todo{add cardinalities in fig.}
 
 \subsection{Model Validation}
-For the replenishment of the model some constraints has to be added separately. Many of them are already fulfilled under regard of the annotated cardinality in the model. Iterating through layers and nodes the needed conditions will be explained. 
+For the replenishment of the model some constraints have to be added separately. Many of them are already fulfilled under regard of the annotated cardinality in the model. Iterating through layers and nodes the needed conditions will be explained. 
 
 The first constraint is that a sensor can only have a bunch of metrics where they have unique names in the connected subset, because otherwise data collected for that metric label can not be allocated unambiguous therefor leading to incorrect and unusable data. 
 
