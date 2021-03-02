@@ -152,7 +152,7 @@ To wrap everything up and show how the different layers work with each other an 
 	\includegraphics[width=4cm]{assets/images/gosund.png}
 	\caption{Gosund SP1 Smart Power Socket}
 \end{figure}
-The open source project tasmota \cite{tasmotawebsite} which is licensed under \gls{gpl3} is an alternative firmware for a huge amount of different \gls{iot} devices like lights, switches, curtains or power sockets like needed in this case.
+The open source project Tasmota \cite{tasmotawebsite} which is licensed under \gls{gpl3} is an alternative firmware for a huge amount of different \gls{iot} devices like lights, switches, curtains or power sockets like needed in this case.
 With the version 8.5.1 which was released on 2nd October 2020 Tasmota gets optional support for Prometheus exports. 
 
 Connecting to the correct \gls{url} under $/metrics$ will then return a well formatted Prometheus export ( see \ref{lst:exGosundExport} ).
@@ -220,4 +220,7 @@ At the end the last layer for the project level is very minimal an just have one
 
 After generating this project the  deployment is very simple. Different configuration files are getting generated. For Prometheus the $prometheus.yml$ file is created. It has all information inside which are needed to listen to the sensors and grab their values for further processing. Therefor, Grafana need some more files. A file for the data source definition having all needed parameters for a valid connection between Prometheus and Grafana, a file $dashboards_config.yml$ has the meta information like organization name but also describes where Grafana can find the generated dashboard definitions. These definitions are also the last of the three components being generated. Panels used across multiple dashboards can not be created once and shared but they have to be generated multiple time and saved in each dashboard definition file.
 
-For all of this Xtend and the templating features were used. 
+For this the template functions of Xtend was heavily used as skeleton configuration files were extended using this feature. Simple tree traversing through the different layers of nodes was used to collect all needed data to finalize the configuration files. Additionally some helper functions were written for formatting and composing the gathered information. 
+
+To make testing easier a $docker-compose.yml$ was created. It utilizes Docker and the Docker Compose~\cite{poulton2019docker} feature.  This allows a very fast startup and test of the generated project.
+
