@@ -218,4 +218,6 @@ At the end the last layer for the project level is very minimal an just have one
 	\caption{Modeled Project in the Project Layer}
 \end{figure}
 
-After generating this project the the deployment is very simple. The generated files can be found on page \pageref{label}
+After generating this project the  deployment is very simple. Different configuration files are getting generated. For Prometheus the $prometheus.yml$ file is created. It has all information inside which are needed to listen to the sensors and grab their values for further processing. Therefor, Grafana need some more files. A file for the data source definition having all needed parameters for a valid connection between Prometheus and Grafana, a file $dashboards_config.yml$ has the meta information like organization name but also describes where Grafana can find the generated dashboard definitions. These definitions are also the last of the three components being generated. Panels used across multiple dashboards can not be created once and shared but they have to be generated multiple time and saved in each dashboard definition file.
+
+For all of this Xtend and the templating features were used. 

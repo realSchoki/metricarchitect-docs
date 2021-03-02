@@ -1,7 +1,7 @@
 % kapitel2.tex
 \chapter{Preliminaries}
 \label{chapter:grundlagen}
-Since the thesis covers many different systems each of them has to be introduced at least at a decent level. Modern and best of breed solution are being used here. Grafana and Prometheus are software products which can be used as a optional additional setup in cluster systems like kubernetes to monitor their technical values. As a little bonus and for easier developing process docker and docker compose will be used but in a very simple way. The technologies form the target of the \gls{dsl} designed in this thesis. For the realization of the \gls{dsl} and compiler Cinco a meta modeling tool will be used.
+Since the thesis covers many different systems each of them has to be introduced at least at a decent level. Modern and best of breed solution are being used here. Grafana and Prometheus are software products which can be used as a optional additional setup in cluster systems like Kubernetes to monitor their technical values. As a little bonus and for easier developing process docker and Docker compose will be used but in a very simple way. The technologies form the target of the \gls{dsl} designed in this thesis. For the realization of the \gls{dsl} and compiler Cinco a meta modeling tool will be used.
  
 \section{Smart Home}
 In the course of digitalization and simplification of the procurement of sensor technology in everyday life, smart home has arrived as an affordable concept for the consumer. In the most general case it is a base station with any number of actuators and sensors. This station is used to process and store the data from the sensory elements of the network and the actuators act on the basis of decision tables, for example. 
@@ -67,7 +67,7 @@ A histogram is a concept consisting of so-called buckets. These are initially de
 	node[pos=0.66] {$B_{le=``1''}$}%
 	node[pos=1] {$B_{le=``+Inf''}$};
 	\end{tikzpicture}
-	\caption{Relation of Bucket in a Histogram}
+	\caption{Relation of Buckets in a Histogram}
 \end{figure}
 A histogram represents, in addition to the buckets, a total number of measured values, which is like a bucket with \promcode{le="+Inf"} and a value for the sum of all values.
 \begin{figure}[H]
@@ -156,7 +156,7 @@ In the following lines you can see a more complex example. This is a histogram. 
 
 \subsection{Prometheus Query Language}
 \label{subsec:promql}
-As mentioned before, the collected data is stored in an internal Time Series database which can be searched by the so-called \gls{promql}.
+As mentioned before, the collected data is stored in an internal time series database which can be searched by the using \gls{promql} queries.
 
 There are four different subtypes for this:
 \subsubsection{Instant vector}
@@ -213,6 +213,10 @@ Nowadays complex world abstraction is indispensable and helps to create models i
 Abstraction is the fundamental technique of model-driven development. Additionally it utilizes different tools and standards for visualization, notation and the development process. A very common and popular notation is the \gls{uml}~\cite{Cook2017}. Powerful tooling and development assist can be found with \gls{emf}. This framework gives the ability to model in a well defined way using the meta model Ecore. As it is meta, it allows to describe other models~\cite[section 2.3.1]{steinberg2008emf}. The focus is on creating a perfect model, defining all constraints and dependencies. From here the implementation is just following the abstract model, since the work of discussing and committing to a mutual objective is already done.
 
 \gls{emf} not only contains the Ecore model, but also a generator for example for code, custom files or an customized Eclipse \gls{ide} providing support for the model.
+
+In the context of generating code different functions and feature were missed in Java~7. To fill this gap the language Xtend~\cite{xtendhp} was developed. It added the possibility of using lambda functions,  template expression and more. Right now Java 15+ filled many of these gaps making Xtend not as important as it was in earlier days. This development resulted in changing the default Xtend generators back to Java. This was announced 2019 in the changelog. Since Xtend does not got fully replaced by Java there are still good reasons to continue to use Xtend.
+
+\say{Also the resources we have no longer allow us to keep the head start against Java. And learning Xtend still is a burden for new Xtext users. To reflect this changed situation we have decided to make Java the default in the wizard again (except e.g. the Generator and a few other APIs).}~\cite{xtendToJava}
 
 
 \section{Cinco}
@@ -295,4 +299,4 @@ The custom datatypes can either be enumerations or user defined types which are 
 
 \subsection{Meta Style Language}
 
-The three of the four introduced possible elements of the \gls{mgl} are usable in the visual editor of the generated eclipse \gls{ide}. To give the model a better optical appearance it is necessary to specify the look of the components. The \gls{msl} allows to do exactly this. There are many different options of manipulating the representation of nodes, edges and containers in the editor. There is no default appearance, therefor it is necessary to set up at least a very basic style definition for the used elements. Further more it is possible to set text to show values from properties, polygons or other geometrical shapes. To get better in touch with this settings it is recommended to take a look on the xtext definition of the \gls{msl} to understand the syntax of this language. Using images as a static resource or altering the colors of text and shapes is also possible without great effort.
+The three of the four introduced possible elements of the \gls{mgl} are usable in the visual editor of the generated eclipse \gls{ide}. To give the model a better optical appearance it is necessary to specify the look of the components. The \gls{msl} allows to do exactly this. There are many different options of manipulating the representation of nodes, edges and containers in the editor. There is no default appearance, therefor it is necessary to set up at least a very basic style definition for the used elements. Further more it is possible to set text to show values from properties, polygons or other geometrical shapes. To get better in touch with this settings it is recommended to take a look on the Xtext definition of the \gls{msl} to understand the syntax of this language. Using images as a static resource or altering the colors of text and shapes is also possible without great effort.
