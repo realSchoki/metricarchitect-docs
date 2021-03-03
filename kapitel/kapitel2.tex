@@ -102,7 +102,7 @@ Labels can be used to break down metrics with the same name into different origi
 	\end{minted}
 	\caption{General Concept of Labels}
 \end{figure}
-\subsection{Exportformat}
+\subsection{Export Format}
 \label{subsec:Exportformat}
 The export format of Prometheus can be described well by means of an example. For this purpose, we draw a part from the official documentation~\cite{PrometheusExpositionFormatBeispiel}.\\
 \par
@@ -157,11 +157,17 @@ In the following lines you can see a more complex example. This is a histogram. 
 \subsection{Prometheus Query Language}
 \label{subsec:promql}
 As mentioned before, the collected data is stored in an internal time series database which can be searched by the using \gls{promql} queries.
+The syntax of the queries is appended as \gls{ebnf} and can be look up in \autoref{lst:promql_vector}.
+There are two different subtypes for this:
+\subsubsection{Instant Vector}
+To access the collected data the instant vector has to be used. The instant vector query resolves in exactly one value for every stored metric.
+\subsubsection{Range Vector}
+A range vector is similar to an instant vector. The main difference is an additional parameter describing how big the observed time segment should be returning a amount of values per metric. Using this it would be possible to calculate a delta or a rate of change.
+\subsubsection{Operators}
+Since the vectors are sets of values or value arrays it is obvious that set operations are defined. Common operators like intersection, union and complement exist, but also operators like grouping with other vectors or ignoring labels. There is also the option of using aggregation operators like sum or count reducing the result set to less values.
+\subsubsection{Functions}
+Functions act on every metric value itself. Known functions like ceiling, floor or round can be used or even more uncommon functions like year, returning the year of the metric value or changes return how often the value of the metric changed.
 
-There are four different subtypes for this:
-\subsubsection{Instant vector}
-Instant vector selectors allow the selection of a set of time series and a single sample value for each at a given timestamp (instant). In the simplest form, only a metric name is specified. This results in an instant vector containing elements for all time series that have this metric name. \todo{semantik der typen beschreiben}
-\todo{all mising}
 \section{Grafana}
 \label{sec:grafana}
 For the visualization of the data collected by Prometheus, Grafana~\citep{GrafanaHomepage} can be used. It is a versatile and extensible system to display data from various data sources. For example databases like Cassandra, MariaDB or PostgreSQL but also regular \gls{http} requests against external interfaces or static \gls{json} objects are possible~\cite{GrafanaDataSources}. Furthermore, Grafana also provides different types of diagrams.

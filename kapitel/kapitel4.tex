@@ -100,7 +100,7 @@ edge GraphQueryToPanel {
 
 The $FilterValueProvider$ class (page \pageref{lst:classFilterValueProvider}, listing \ref{lst:classFilterValueProvider}) has to take into consideration that there are $GraphQueryByGroup$ and $GraphQueryByGroup$. This is done by a simple type checking in runtime with the java $instanceof$ keyword. Using this way a drop down menu will only allow valid metrics to be used.
 
-Lastly an aggregation function has to be selected. The default is $none$. This is not a function implemented by \gls{promql} but it is used as a keyword in this project for doing nothing, meaning there will not be a function around the generated query. The original \gls{promql} has many different functions and as already said, for this project only some of them are implemented. 
+Lastly an aggregation operator has to be selected. The default is $none$. This is not a function implemented by \gls{promql} but it is used as a keyword in this project for doing nothing, meaning there will not be a function around the generated query. The original \gls{promql} has many different functions and as already said, for this project only some of them are implemented. 
 
 \begin{center}
 	none | sum | min | max | avg | group | stddev | stdvar | count | count\_values | bottomk | topk  | quantile
