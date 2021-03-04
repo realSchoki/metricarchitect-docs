@@ -7,6 +7,7 @@ The smart home is a topic accessible for everybody without being an \gls{it} pro
 For managing and observing those networks many tools can be used. Most of the smart home sensor devices have proprietary interfaces allowing to only work in a closed system from one manufacturer. Fortunately this does not apply to every device allowing to interconnect different devices from various manufacturers. 
 
 \section{Motivation and Background}
-The complexity 
+Since the complexity rises with the size of the sensor network it is advising to abstract these network and try to create a structure with could help to keep track of it. Not only measuring a handful of devices but every power socket or thermostat in a building and using their values in a reasonable manner is difficult to achieve. It is not only the size of the network but using various different devices and all their varying metrics is also a challenge to master. Reducing the complexity through a well designed tool making non computer scientist able to create such network. Architect or other experts in room design and live quality could then easily create sensor systems without coding.
 
 \section{Structure of the Work}
+As the work is based on Prometheus, Grafana and Cinco a brief introduction in each topic will be given. Afterwards the first ideas of an abstraction from a real world scenario will be created. A model and all needed constraints will be developed. Using the results from the previous steps a implementation in Cinco was done and modifying the model were it was needed to get the implementation work the right way. On top an example will show how working with the generated \gls{ide} looks like. In the \autoref{chapter:conclusion} problems, summary and an outlook will be added.
