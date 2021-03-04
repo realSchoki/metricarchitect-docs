@@ -3,24 +3,24 @@
 \label{chapter:conclusion}
 Sensor network and their processing is very useful as it allows to calculate and visualize data in a way where important information is better apparent. Selecting a technological stack of best of breed software products formed the base of this work. Cinco then allowed to create the abstraction and tooling needed for the results.
 
-The thesis shows that it is possible to abstract and simplify the process of creating sensor networks. Combined with modern technologies and software products like Docker, Prometheus and Grafana it takes a small amount of time to create a working software solution. 
+This thesis shows that it is possible to abstract and simplify the process of creating sensor networks. Combined with modern technologies and software products like Docker, Prometheus and Grafana it takes a small amount of time to create a working software solution. 
 
-The key problem with this technique is that the used sensors has to speak the Prometheus export syntax. Tasmota gave the opportunity to do exactly this. Still, even if this export format would not be supported it would be possible through other interfaces like \gls{mqtt} to export data and serve it in the right format manually. 
+The key problem with this technique is that the used sensors has to speak the Prometheus export syntax. Tasmota gave the opportunity to do exactly this. Yet, even if this export format would not be supported it would be possible through other interfaces. For example \gls{mqtt} can be used to export data and serve it in the right format manually. 
 
 \section{Summary}
-In sum analyzing and abstracting the process of creating sensor networks using modern software was done. It was possible using Cinco to create a model and implement several generators reflecting these abstraction resulting in a product assisting architect and non developers in the process of setting up complex sensor networks. The amount of features provided by Prometheus and Grafana lead to the decision of reducing the amount of features to implement. 
+To summarize, analyzing and abstracting the process of creating sensor networks using modern software was performed. It was possible using Cinco to create a model and implement several generators reflecting these abstraction. This results in a product assisting architects and non developers in the process of setting up complex sensor networks. The amount of features provided by Prometheus and Grafana lead to the decision of reducing the amount of features to implement. 
 
-Despite the fact that this project does not cover every possibility it shows its abilities as it is still a working proof of concept. The process of transferring the real world scenario into four abstract layers has created structure and overview in a complex problem. The four layers have their task in device definition, device instantiation and positioning, graph definition and the project layer. 
+Despite the fact that this thesis does not cover every possibility, it shows its abilities as it is still a working proof of concept. The process of transferring the real world scenario into four abstract layers has created structure and overview in a complex problem. The four layers have their task in device definition, device instantiation and positioning, graph definition and the project layer. 
 
 Based on this separation experts outside the computer science field can use the generated \gls{ide} to create systems underlying the abstract model beneath it. A modeled scenario can than be converted into a runnable deployment using Docker Compose resulting in a fast deploy chain.
 
 \section{Outlook}
 
-Though Prometheus and Grafana are feature rich applications and this work only utilizing a small set of the possibilities one improvement would be to improve it, so it would be equal powerful. 
+While Prometheus and Grafana are feature rich applications and this work only utilizes a small set of the possibilities an enhancement would be to cover more of its original functionality.
 
-This means the selectable aggregation function has to be extended. Another point in the perspective of being feature complete is the missing ability to create nested \gls{promql} queries. Also different setting options could be set via the generators like pull frequency for the values from the sensors, additional labeling and all the other possible settings. The risk is that additional configuration options would blow up the model resulting in a bloat process of defining everything without need.
+As a result the selectable aggregation function has to be extended. Another missing part before being feature complete is the ability to create nested \gls{promql} queries. Additionally different setting options could be set via the generators like pull frequency for the values from the sensors or additional labeling. The risk with additional configuration options would be that it bloats up the model unnecessarily by defining everything without need.
 
-The same thought can be made in adding all features missed from Grafana. Using different graph types, setting up the layout or consider using the alerting system of Grafana. Since this is also accompanied with the risk of creating a poorly maintainable system because of its increasing size and possibilities it has to be done carefully.
+The same thought can be made in adding all features missed from Grafana. Using different graph types, setting up the layout or using the alerting system of Grafana are potential functions to be implemented. This is also accompanied with the risk of creating a poorly maintainable system because of its increasing size and possibilities it has to be done thoughtfully.
 
 Since this project was done from a developers perspective non developer experts should be asked what they rely on and which point of this application can be improved.
 

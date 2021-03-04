@@ -146,13 +146,13 @@ Like already mentioned, this layer is the beginning for the generation process. 
 \end{listing}
 
 \section{Example}
-To wrap everything up and show how the different layers work with each other an example project will be set up. Multiple smart power sockets were used for this. In this case the Gosund SP1 will be used with a flashed firmware.
+To wrap everything up and show how the different layers work with each other an example project will be set up. Multiple smart power sockets were used for this. In this case the Gosund SP1 with a flashed firmware.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=4cm]{assets/images/gosund.png}
 	\caption{Gosund SP1 Smart Power Socket}
 \end{figure}
-The open source project Tasmota \cite{tasmotawebsite} which is licensed under \gls{gpl3} is an alternative firmware for a huge amount of different \gls{iot} devices like lights, switches, curtains or power sockets like needed in this case.
+The open source project Tasmota \cite{tasmotawebsite} which is licensed under \gls{gpl3} is an alternative firmware for a huge amount of different \gls{iot} devices such as lights, switches, curtains or power sockets like the ones used in this example.
 With the version 8.5.1 which was released on 2nd October 2020 Tasmota gets optional support for Prometheus exports. 
 
 Connecting to the correct \gls{url} under $/metrics$ will then return a well formatted Prometheus export ( see \ref{lst:exGosundExport} ).
@@ -178,7 +178,7 @@ These three metrics are the one which should be modeled in the Cinco product. Th
 	\caption{Modeled Sensor in the Sensor Layer}
 \end{figure}
 
-Based on this model the real world scenario will be created. It is not only important to know, that a sensor exist, it is also important to have some metadata of it. The position and ip are the needed ones here. Across two room four of these smart power sockets were placed. Two of them in the office and two more in the living room. Each of Bob and Alice computer is now monitored by such a smart socket. Additionally a \gls{hifi} audio system and the corresponding sub woofer in the living room are going to be observed. To make the handling easier a grouping is introduced. A group named $sound$ wields $hifi$ and $subwoofer$, group $computer$ has $bob$ and $alice$. The last group $all$ has each device connected to it. The floor plan was created in Sweet Home 3D is also open source and free to use. 
+Based on this model the real world scenario will be created. It is not only important to know that a sensor exist, but also to have some metadata of it. The position and ip are the needed data here. Across two rooms four of the smart power sockets were placed. Two of them in the office and two more in the living room. Each of Bob's and Alice's computer is now monitored by such a smart socket. Additionally a \gls{hifi} audio system and the corresponding sub woofer in the living room are going to be observed. To make the handling easier a grouping is introduced. A group named $sound$ wields $hifi$ and $subwoofer$, group $computer$ has $bob$ and $alice$. The last group $all$ has each device connected to it. The floor plan was created in Sweet Home 3D is also open source and free to use. 
 
 \begin{figure}[H]
 	\centering
@@ -197,7 +197,7 @@ From the floor layer the groups are included via prime references into the Grafa
  	\item All $energy\_voltage\_volts$ to voltage panel
 \end{itemize}
 
-This result in every power consumption shown in the panel view. As an addition the sum of all these values will be drawn. The panels for current and voltage does not contain any accumulated values but only the raw measured metrics. All three panels are then merged in the dashboard called $all$.
+This results in every power consumption shown in the panel view. As an addition the sum of all these values will be drawn. The panels for current and voltage do not contain any accumulated values but only the raw measured metrics. All three panels are then merged in the dashboard called $all$.
 
 On the other side the group $sound$, combines the $hifi$ and $subwoofer$ device. The edges filters for each power, current and voltage. For a better overview for power and current the sum and for voltage the average will be calculated. 
 
@@ -210,7 +210,7 @@ The $groups$ dashboard has the panels which show the values of the group $sound$
 	\label{fig:modelGrafanaLayer}
 \end{figure}
 
-At the end the last layer for the project level is very minimal an just have one node with the name $Main$.
+The last layer for the project level is very minimal an just has one node with the name $Main$.
 
 \begin{figure}[H]
 	\centering
@@ -218,9 +218,9 @@ At the end the last layer for the project level is very minimal an just have one
 	\caption{Modeled Project in the Project Layer}
 \end{figure}
 
-After generating this project the  deployment is very simple. Different configuration files are getting generated. For Prometheus the $prometheus.yml$ file is created. It has all information inside which are needed to listen to the sensors and grab their values for further processing. Therefor, Grafana need some more files. A file for the data source definition having all needed parameters for a valid connection between Prometheus and Grafana, a file $dashboards_config.yml$ has the meta information like organization name but also describes where Grafana can find the generated dashboard definitions. These definitions are also the last of the three components being generated. Panels used across multiple dashboards can not be created once and shared but they have to be generated multiple time and saved in each dashboard definition file.
+After generating this project the  deployment is simple. Different configuration files are getting generated. For Prometheus the $prometheus.yml$ file is created. It has all information inside which are needed to listen to the sensors and grab their values for further processing. Unlike Prometheus, Grafana needs more information. A file for the data source definition having all needed parameters for a valid connection between Prometheus and Grafana and a file $dashboards\_config.yml$. The later contains meta information, like the organizations name, but also describs where Grafana can find the generated dashboard definitions. These definitions are also the last of the three components being generated. Panels used across multiple dashboards can not be created once and shared but have to be generated multiple times and saved in each dashboard definition file.
 
-For this the template functions of Xtend was heavily used as skeleton configuration files were extended using this feature. Simple tree traversing through the different layers of nodes was used to collect all needed data to finalize the configuration files. Additionally some helper functions were written for formatting and composing the gathered information. 
+For this the template functions of Xtend was heavily used. Skeleton configuration files were extended using the template function feature. To collect all needed data to finalize the configuration files simple tree traversing through the different layers of nodes was used. Additionally some helper functions were written for formatting and composing the gathered information. 
 
 To make testing easier a $docker-compose.yml$ was created. It utilizes Docker and the Docker Compose~\cite{poulton2019docker} feature.  This allows a very fast startup and test of the generated project.
 
