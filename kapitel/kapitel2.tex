@@ -156,17 +156,17 @@ In the following lines you can see a more complex example. This is a histogram. 
 
 \subsection{Prometheus Query Language}
 \label{subsec:promql}
-As mentioned before, the collected data is stored in an internal time series database which can be searched by the using \gls{promql} queries.
-The syntax of the queries is appended as \gls{ebnf} and can be look up in \autoref{lst:promql_vector}.
-There are two different subtypes for this:
+As mentioned before, the collected data is stored in an internal time series database which can be searched by using \gls{promql} queries.
+The syntax of the queries is appended as \gls{ebnf} and can be looked up in \autoref{lst:promql_vector}.
+There are various elements queries can be build from.
 \subsubsection{Instant Vector}
 To access the collected data the instant vector has to be used. The instant vector query resolves in exactly one value for every stored metric.
 \subsubsection{Range Vector}
-A range vector is similar to an instant vector. The main difference is an additional parameter describing how big the observed time segment should be returning a amount of values per metric. Using this it would be possible to calculate a delta or a rate of change.
+A range vector is similar to an instant vector. The main difference is an additional parameter describing how big the observed time segment should be.This time segment returns an amount of values per metric. Using this it would be possible to calculate a delta or a rate of change.
 \subsubsection{Operators}
-Since the vectors are sets of values or value arrays it is obvious that set operations are defined. Common operators like intersection, union and complement exist, but also operators like grouping with other vectors or ignoring labels. There is also the option of using aggregation operators like sum or count reducing the result set to less values.
+Since the vectors are sets of values or value arrays it is obvious that set operations are defined. Common operators like intersection, union and complement exist. Furthermore complex operators like grouping with other vectors or ignoring labels exists. There is also the option of using aggregation operators like sum or count, which reduce the result set to less values.
 \subsubsection{Functions}
-Functions act on every metric value itself. Known functions like ceiling, floor or round can be used or even more uncommon functions like year, returning the year of the metric value or changes return how often the value of the metric changed.
+Functions act on every metric value itself. Known functions like ceiling, floor or round can be used. Furthermore uncommon functions like year, returning the year of the metric value or changes return how often the value of the metric has changed.
 
 \section{Grafana}
 \label{sec:grafana}
@@ -220,7 +220,7 @@ Abstraction is the fundamental technique of model-driven development. Additional
 
 \gls{emf} not only contains the Ecore model, but also a generator for example for code, custom files or an customized Eclipse \gls{ide} providing support for the model.
 
-In the context of generating code different functions and feature were missed in Java~7. To fill this gap the language Xtend~\cite{xtendhp} was developed. It added the possibility of using lambda functions,  template expression and more. Right now Java 15+ filled many of these gaps making Xtend not as important as it was in earlier days. This development resulted in changing the default Xtend generators back to Java. This was announced 2019 in the changelog. Since Xtend does not got fully replaced by Java there are still good reasons to continue to use Xtend.
+In the context of generating code different functions and feature were missed in Java~7. To fill this gap the language Xtend~\cite{xtendhp} was developed. It adds the possibility of using lambda functions,  template expression and more. Right now Java 15+ fills many of these gaps making Xtend not as important as it was in earlier days. This development resulted in changing the default Xtend generators back to Java, which was announced in the changelog in 2019. Since Xtend did not get fully replaced by Java there are still good reasons to continue to use Xtend.
 
 \say{Also the resources we have no longer allow us to keep the head start against Java. And learning Xtend still is a burden for new Xtext users. To reflect this changed situation we have decided to make Java the default in the wizard again (except e.g. the Generator and a few other APIs).}~\cite{xtendToJava}
 
