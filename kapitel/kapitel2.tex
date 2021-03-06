@@ -46,6 +46,8 @@ Prometheus is an open source solution that is used for metrics monitoring and al
 
 To simplify this process, there are several libraries for different programming languages that are configurable to export such a format. At the time of writing GO, Scala/Java, Python and Ruby are officially supported, but for many other languages there are unofficial third party libraries which are advertised on the Prometheus website. 
 
+Since Prometheus exports are not supported by every device there are possibilities to create adapters for the information flow from sensor to Prometheus. \gls{mqtt} is a technique of frequently pushing messages to a message broker. A adapter reads messages from the broker and provide the values in Prometheus export format. Creating adapters is out of scope and will not be covered.
+
 In case the selected language is not supported, it is also possible to create the output yourself. For this, the definition of the output format has been well documented.
 \subsection{Metric Types}
 Prometheus distinguishes between different types of metrics. In the following, all possibilities are briefly explained. In \autoref{subsec:Exportformat} a few examples listed and for better understanding.
