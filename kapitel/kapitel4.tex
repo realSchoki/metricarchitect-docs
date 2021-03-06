@@ -125,7 +125,7 @@ With the non specific edge $PanelToDashboard$ a connection to the last node in t
 	\label{lst:nodeDashboard}
 \end{listing}
 \subsection{Project}
-The Project layer was added to have a better overview. It can contain different information which can be possibly needed for better management. Extensions like adding options for the docker deployment or specific settings for Grafana and Prometheus could be added here in future work. Furthermore it is used as an entrypoint for the generators. 
+The Project layer was added to have a better overview. It can contain different information which can be possibly needed for better management. Extensions like adding options for the Docker deployment or specific settings for Grafana and Prometheus could be added here in future work. Furthermore it is used as an entrypoint for the generators. 
 
 The one and only node in this layer is the $GrafanaModel$ node which has a prime reference to a whole Grafana layer model file. It is possible to add multiple nodes.
 
@@ -222,5 +222,5 @@ After generating this project the  deployment is simple. Different configuration
 
 For this the template functions of Xtend was heavily used. Skeleton configuration files were extended using the template function feature. To collect all needed data to finalize the configuration files simple tree traversing through the different layers of nodes was used. Additionally some helper functions were written for formatting and composing the gathered information. 
 
-To make testing easier a $docker-compose.yml$ was created. It utilizes Docker and the Docker Compose~\cite{poulton2019docker} feature.  This allows a very fast startup and test of the generated project.
+To make testing easier a $docker\-compose.yml$ was created. It utilizes Docker and the Docker Compose~\cite{poulton2019docker} feature.  This allows a very fast startup and test of the generated project.
 
