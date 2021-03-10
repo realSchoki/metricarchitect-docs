@@ -167,31 +167,31 @@ In retrospective the model is mostly linear, leaving a straight forward way of w
 		\node[state, below=of a6] (a7) {Panel};
 		\node[state, below=of a7] (a8) {Dashboard};
 		\node[state, below=of b4] (a9) {Project};
-		\path[] 
-			(a1) edge[] node[pos=.3, left] {n} node[pos=.7, right] {m} (a2)
-			(a2) edge (a3)
-			(aa3) edge (a3)
-			(a3) edge (a4)
-			(a5) edge (a6)
-			(a6) edge (a7)
-			(a7) edge (a8)
-			;
-		\draw[] (a3) -- ++(1.8, 0) |- (a5);
-		\draw[] (a4) -- ++(2, 0) |- (a5);
-		\draw[] (a8) -- ++(2, 0) |- (a9);
 		\coordinate (c1) at ($(b1) ! .5 ! (a1)$);
 		\coordinate (c2) at ($(b4) ! .5 ! (a9)$);
 		\path (c1) ++(-1,0) coordinate (c3);
 		\path (c2) ++(1,0) coordinate (c4);
-		\path (c3) edge (c4);
-		\path ($(b1)!.5!(b2)$) ++(0,0.5) coordinate (c5) edge[gray] ++(0,-8);
-		\path ($(b2)!.5!(b3)$) ++(0,0.5) coordinate (c6) edge[gray] ++(0,-8);
-		\path ($(b3)!.5!(b4)$) ++(0,0.5) coordinate (c7) edge[gray] ++(0,-8);
+		\path (c3) edge[lightgray] (c4);
+		\path ($(b1)!.5!(b2)$) ++(0,0.5) coordinate (c5) edge[lightgray] ++(0,-8);
+		\path ($(b2)!.5!(b3)$) ++(0,0.5) coordinate (c6) edge[lightgray] ++(0,-8);
+		\path ($(b3)!.5!(b4)$) ++(0,0.5) coordinate (c7) edge[lightgray] ++(0,-8);
+		
+		\path[] 
+		(a1) edge[<-] node[midway, right] {$0\dots n$} (a2)
+		(a2) edge[<-] node[midway, below] {$1$} (a3)
+		(aa3) edge[<-] node[midway, right] {$1$} (a3)
+		(a3) edge[<-] node[midway, right] {$1$} (a4)
+		(a5) edge[<-] node[midway, right] {$1$} (a6)
+		(a6) edge[<-] node[midway, right] {$0\dots 1$} (a7)
+		(a7) edge[<-] node[midway, right] {$0\dots 1$} (a8)
+		;
+		\draw[<-] (a3) -- node[midway, below] {$0\dots 1$} ++(2.0, 0) |- (a5);
+		\draw[<-] (a4) -- node[midway, below] {$0\dots 1$} ++(2.1, 0) |- (a5);
+		\draw[<-] (a8) -- node[midway, below] {$0\dots n$} ++(2.5, 0) |- (a9);
 	\end{tikzpicture}
 	\caption{Dependency of Model Layers}
 	\label{fig:ModelLayers}
 \end{figure}
-\todo{add cardinalities in fig.}
 
 \subsection{Model Validation}
 For the replenishment of the model some constraints have to be added separately. Many of them are already fulfilled under regard of the annotated cardinality in the model. Iterating through layers and nodes the needed conditions will be explained. 

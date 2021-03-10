@@ -423,7 +423,7 @@ After generating this project the  deployment is simple. Different configuration
 
 For this the template functions of Xtend was heavily used. Skeleton configuration files were extended using the template function feature. To collect all needed data to finalize the configuration files simple tree traversing through the different layers of nodes was used. Additionally some helper functions were written for formatting and composing the gathered information. 
 
-The generated Prometheus Configuration has all placed sensors devices from the model. Every sensor having its own \glossary{ip} address and name is mentioned in the file. \cref{lst:generated_prometheus_yaml} shows four entries from the sensor devices placed in the office and living room with their defined names.
+The generated Prometheus Configuration has all placed sensors devices from the model. Every sensor having its own \gls{ip-address} and name is mentioned in the file. \cref{lst:generated_prometheus_yaml} shows four entries from the sensor devices placed in the office and living room with their defined names.
 
 \begin{listing}[!ht]
 	\begin{minted}{yaml}
@@ -483,7 +483,7 @@ A data source for Grafana has to be defined. Grafana need the right setting and 
 	\label{lst:generated_data_source}
 \end{listing}
 
-To make testing and deployment easier a $docker\text{-}compose.yml$ was created. It utilizes Docker and the Docker Compose~\cite{poulton2019docker} feature.  This allows a very fast startup and test of the generated project. The content of the generated file is shown in \cref{lst:generated_docker_compose}. Line 3 and 14 are both pods which should be deployed. The first one is responsible for Grafana. Publishing the port but more important mounting all configuration files from the model. The deployments set up for Prometheus looks similar. For the purpose of simplicity two volumes are being created. This is the place where Grafana and Prometheus can store their data.
+To make testing and deployment easier a $docker\text{-}compose.yml$ was created. It utilizes Docker and the Docker Compose~\cite{poulton2019docker} feature.  This allows a very fast startup and test of the generated project. The content of the generated file is shown in \cref{lst:generated_docker_compose}. Line 3 and 14 are both docker container which should be deployed. The first one is responsible for Grafana. Publishing the port but more important mounting all configuration files from the model. The deployments set up for Prometheus looks similar. For the purpose of simplicity two volumes are being created. This is the place where Grafana and Prometheus can store their data.
 
 \begin{listing}[!ht]
 	\begin{minted}{yaml}
@@ -518,36 +518,16 @@ volumes:
 \end{listing}
 
 \subsection{Deployment}
+As the generated file create a ready to deploy configuration it can be run as it is. Both services are started in parallel. The command $docker\text{-}compose ps$ (\cref{fig:deployment}) displays the running container created by starting the deployment with $docker\text{-}compose up -d$. The default behavior of the deployment command is to stay in an interactive environment and block the shell. To start it in the background \say{$-d$} has to be appended. It detaches the shell after successfully starting the container for Grafana and Prometheus. 
 
-As the generated file create a ready to deploy configuration a example start up is visible in \cref{fig:deployment}. Both services are started in parallel. In the terminal only the Grafana log is visible because it has a bit slower start up. Also visible are the environment variables getting  overwritten by the settings done in the $docker\text{-}compose.yml$ file.
 
-%\begin{listing}
-%	\begin{minted}{text}
-%Starting src-gen_prometheus_1 ... done
-%Starting src-gen_grafana_1    ... done
-%Attaching to src-gen_prometheus_1, src-gen_grafana_1
-%...
-%prometheus_1  | level=info ts=2021-03-09T23:51:23.628Z caller=main.go:802 msg="TSDB started"
-%prometheus_1  | level=info ts=2021-03-09T23:51:23.628Z caller=main.go:928 msg="Loading configuration file" filename=/etc/prometheus/prometheus.yml
-%prometheus_1  | level=info ts=2021-03-09T23:51:23.629Z caller=main.go:959 msg="Completed loading of configuration file" filename=/etc/prometheus/prometheus.yml totalDuration=651.023µs remote_storage=1.563µs web_handler=305ns query_engine=704ns scrape=196.415µs scrape_sd=88.901µs notify=24.5µs notify_sd=13.811µs rules=1.493µs
-%prometheus_1  | level=info ts=2021-03-09T23:51:23.629Z caller=main.go:751 msg="Server is ready to receive web requests."
-%...
-%grafana_1     | t=2021-03-09T23:51:24+0000 lvl=info msg="Config overridden from Environment variable" logger=settings var="GF_PATHS_DATA=/var/lib/grafana"
-%grafana_1     | t=2021-03-09T23:51:24+0000 lvl=info msg="Config overridden from Environment variable" logger=settings var="GF_PATHS_LOGS=/var/log/grafana"
-%grafana_1     | t=2021-03-09T23:51:24+0000 lvl=info msg="Config overridden from Environment variable" logger=settings var="GF_PATHS_PLUGINS=/var/lib/grafana/plugins"
-%grafana_1     | t=2021-03-09T23:51:24+0000 lvl=info msg="Config overridden from Environment variable" logger=settings var="GF_PATHS_PROVISIONING=/etc/grafana/provisioning"
-%...
-%grafana_1     | t=2021-03-09T23:51:24+0000 lvl=info msg="HTTP Server Listen" logger=http.server address=[::]:3000 protocol=http subUrl= socket=
-%	\end{minted}
-%\end{listing}
+\cref{fig:deployment} presents deployment information in a tabular view. For every created docker container the name, executed command, state and published ports are listed. The name is a combination of the directory name where the $docker\text{-}compose$ file lies within, the service name and a index. A docker container has a process in foreground. Which one is defined by the command. Since container can crash a state is also shown. The last property show which port are published. In this case the port 3000 for Grafana and port 9090 for Prometheus. This allows to connect to the web for \gls{ui} via \gls{http}.
 
 \begin{figure}[!ht]
-	\includegraphics[width=\linewidth]{assets/images/terminal}
+	\includegraphics[width=\linewidth]{assets/images/terminal2}
 	\caption{Deployment with Docker Compose}
 	\label{fig:deployment}
 \end{figure}
-
-Since everything started without problems the Prometheus and Grafana \gls{ui} can be tested. First of all the accessible sensor devices by Prometheus can be listed. \cref{fig:prometheus} visualizes all sensors. How long a scrap took and when the last scrap was. The state of all devices is up signaling a working connection. 
 
 \begin{figure}[!ht]
 	\includegraphics[width=\linewidth]{assets/images/prometheus}
@@ -555,8 +535,22 @@ Since everything started without problems the Prometheus and Grafana \gls{ui} ca
 	\label{fig:prometheus}
 \end{figure}
 
+Since everything started without problems the Prometheus and Grafana \gls{ui} can be tested. First of all the accessible sensor devices by Prometheus can be listed. \cref{fig:prometheus} visualizes all sensors. Some technical information are visible. 
 
-Taking a look on the $all$ dashboard the 3 modeled panels can be found (\cref{fig:grafana}). The panel $power$, $voltage$ and $current$ show the raw information for each sensor device. Additionally a sum of the power consumption is visible in the $power$ panel. Since there is no opportunity to define the panels in size right now all panels have the same size.  
+For example, how long a scrap took and when the last scrap was. A scrap is a pull of data from the connected sensor devices. The state of all devices is up signaling a working connection. 
+
+Additionally a sensor $prometheus$ is shown. It is an internal sensor of Prometheus for metrics like memory consumption, \gls{cpu} usage or the amount of scraps done. All connected sensors are up and got an additional label $job$. The value for this label is from the Prometheus configuration and the name of the sensor is used here.
+
+
+Taking a look on the $all$ dashboard the 3 modeled panels can be found (\cref{fig:grafana}). The panel $power$, $voltage$ and $current$ show the raw information for each sensor device. Additionally a sum of the power consumption is visible in the $power$ panel. Since there is no opportunity to define the panels in size right now all panels have the same size. 
+
+Different conclusion can be made from the diagrams. The power panel shows growing consumption shortly before 8am. This is the point where red line grows. The green line above is the sum of all power consumption values. 
+
+Another observation ca be done. In the $current$ panel direct correlation to values of the $power$ panel can be spotted. This is nothing special since formula is:
+\begin{equation*}
+power = volatage * current
+\end{equation*}
+But having this kind cohesion in data is good as it reduces the risk of having false data. 
 
 
 \begin{figure}[!ht]
