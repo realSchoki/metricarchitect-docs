@@ -98,7 +98,7 @@ A histogram (\cref{fig:concept_histogramm}) is a concept consisting of so-called
 
 A histogram represents, in addition to the buckets, a total number of measured values, which is like a bucket with \promcode{le="+Inf"} and a value for the sum of all values.
 
-\begin{figure}[H]
+\begin{figure}[!ht]
 	\begin{minted}{text}
 	# TYPE <basename> histogram
 	<basename>_bucket{le="<upper inclusive bound>"} <value>
