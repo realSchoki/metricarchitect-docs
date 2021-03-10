@@ -17,7 +17,7 @@ Because the sensors are more intelligent devices in this context they have to be
 
 This is the bridge to the consuming parts of the system. In the next step Prometheus is configured to actively pull the exposed metrics of the sensors in a predefined frequency. It is the possible for the sensors to push their metrics to Prometheus, but it would cause the sensors have to be configured knowing  Prometheus \gls{ip-address}. The way of pushing the data into Prometheus won't be examined further.
 
-Since Prometheus only acts as the database, Grafana is used as a visualization toolkit. Grafana connects directly to Prometheus and uses \gls{promql} to gather information from the database storage. The possibilities mentioned in \autoref{sec:grafana} are configurable. 
+Since Prometheus only acts as the database, Grafana is used as a visualization toolkit. Grafana connects directly to Prometheus and uses \gls{promql} to gather information from the database storage. The possibilities mentioned in \cref{sec:grafana} are configurable. 
 
 Both settings for Prometheus and Grafana can be delivered with a simple configuration file, meaning there is no need to go through the setup process. 
 In addition a Dockerfile will take care of the correct packaging and runtime accessibility of all needed files. Therefore this whole structure makes allows to get a single output which is capable of running Prometheus and Grafana, configured in the predefined way and already knowing the set up sensor devices.
@@ -50,7 +50,7 @@ In the abstraction layer the same approach can be used. First the real world sit
 
 \subsection{Real World Abstraction}
 
-As mentioned earlier a sensor can be anything and is a physical device which measures all kinds of metrics. A simple model can be visualized in the following way:
+As mentioned earlier a sensor can be anything and is a physical device which measures all kinds of metrics. \cref{fig:abstract_sensor} shows a simple model of sensors. A sensor can have 1\dots n metrics.
 
 \begin{figure}[h!]
 	\centering
@@ -60,11 +60,10 @@ As mentioned earlier a sensor can be anything and is a physical device which mea
 		\path [] 
 		(S1) edge node[above, pos=0.85] {1..n} node[above, pos=0.15] {1..n} (M1);
 	\end{tikzpicture}
-	\caption{Abstract Model of a Sensordevice}
+	\caption{Abstract Model of a Sensor}
+	\label{fig:abstract_sensor}
 \end{figure}
 \end{samepage}
-\noindent
-As shown a sensor can have 1\dots n metrics.
 
 \subsection{Digital World Abstraction}
 
@@ -83,16 +82,17 @@ The transition of the digital situation into a abstract model is very linear and
 			;
 	\end{tikzpicture}
 	\caption{Abstract Model of the Digital Components}
+	\label{fig:abstract_digital}
 \end{figure}
 \end{samepage}
 
-The simple abstraction above shows the technical dependency and the data flow. Yet it does not consider every property which is configurable in Prometheus and Grafana. Furthermore it overlooks the meta information coming from the real world setting.
+The simple abstraction above (\cref{fig:abstract_digital}) shows the technical dependency and the data flow. Yet it does not consider every property which is configurable in Prometheus and Grafana. Furthermore it overlooks the meta information coming from the real world setting.
 
 \subsection{Specification}
-The abstraction in \autoref{sec:abstraction} is very basic and fundamental. Since there are more variables to take care of the model has to be extended. Due to the variety of the sensors and no option of a central management all additional configurations are done in Prometheus or Grafana.
+The abstraction in \cref{sec:abstraction} is very basic and fundamental. Since there are more variables to take care of the model has to be extended. Due to the variety of the sensors and no option of a central management all additional configurations are done in Prometheus or Grafana.
 
 \subsubsection{Location}
-A location information is missing. Technically it can be added in each entry of the sensor in the Prometheus configuration as an additional label which will then be added as a keyword in the exported metrics. 
+A location information is missing. Technically it can be added in each entry of the sensor in the Prometheus configuration as an additional label which will then be added as a keyword in the exported metrics. This could look like \cref{fig:generic_sensor_config} shows.
 
 \begin{listing}[H]
 	\begin{minted}[mathescape,linenos,numbersep=5pt,gobble=0,frame=lines,tabsize=4,breaklines,framesep=2mm]{yaml}
@@ -103,10 +103,11 @@ A location information is missing. Technically it can be added in each entry of 
       location: '«sensor.location»'
 	\end{minted}
 	\caption{Generic Sensor Configuration for Prometheus~\cite{PrometheusExpositionFormatBeispiel}}
+	\label{fig:generic_sensor_config}
 \end{listing}
 
 \subsubsection{Grouping of sensors}
-To have a better management experience a grouping for the sensors should be introduced. It would be possible to group them via labels or metric name but this could lead to a not fully understandable networking. 
+To have a better management experience a grouping for the sensors should be introduced. It would be possible to group them via labels or metric name but this could lead to a not fully understandable networking. Therefor an additional node type is created. (\cref{fig:abstrac_sensor_grouping})
 
 \begin{samepage}
 	\begin{figure}[h!]
@@ -119,6 +120,7 @@ To have a better management experience a grouping for the sensors should be intr
 			;
 		\end{tikzpicture}
 		\caption{Abstract Model of Sensor Grouping}
+		\label{fig:abstrac_sensor_grouping}
 	\end{figure}
 \end{samepage}
 
@@ -145,7 +147,7 @@ In retrospective the model is mostly linear, leaving a straight forward way of w
 
 \begin{figure}[!tb]
 	\centering
-	\begin{tikzpicture}[ state/.style={draw,minimum height=\ht\strutbox+\dp\strutbox, inner ysep=0pt}, label/.style={minimum height=\ht\strutbox+\dp\strutbox, inner ysep=0pt}]
+	\begin{tikzpicture}[ state/.style={draw,minimum height=\ht\strutbox+\dp\strutbox, inner ysep=2pt}, label/.style={minimum height=\ht\strutbox+\dp\strutbox, inner ysep=0pt}]
 		
 		\node[] (bb1) {$\textbf{Layers:}$};
 		\node[below=of bb1] (bb2) {$\textbf{Submodel:}$};
@@ -158,25 +160,25 @@ In retrospective the model is mostly linear, leaving a straight forward way of w
 		\node[state, below=of b1] (a1) {Metrics};
 		\node[state, below=of a1] (a2) {Sensor};
 		\node[state, below=of b2] (aa3) {Location};
-		\node[state, below=of aa3] (a3) {SensorInstance};
-		\node[state, below=of a3] (a4) {SensorGroup};
+		\path (a2 -| aa3) node[state, align=center] (a3) {Sensor\\Instance};
+		\node[state, below=of a3, align=center] (a4) {Sensor\\Group};
 		\node[state, below=of b3] (a5) {GraphQuery};
-		\node[state, below=of a5] (a6) {QueryParameters};
+		\path (a2 -| a5) node[state, align=center] (a6) {Query\\Parameters};
 		\node[state, below=of a6] (a7) {Panel};
 		\node[state, below=of a7] (a8) {Dashboard};
 		\node[state, below=of b4] (a9) {Project};
 		\path[] 
-			(a1) edge (a2)
+			(a1) edge[] node[pos=.3, left] {n} node[pos=.7, right] {m} (a2)
 			(a2) edge (a3)
 			(aa3) edge (a3)
 			(a3) edge (a4)
-			(a3) edge (a5)
-			(a4) edge (a5)
 			(a5) edge (a6)
 			(a6) edge (a7)
 			(a7) edge (a8)
-			(a8) edge (a9)
 			;
+		\draw[] (a3) -- ++(1.8, 0) |- (a5);
+		\draw[] (a4) -- ++(2, 0) |- (a5);
+		\draw[] (a8) -- ++(2, 0) |- (a9);
 		\coordinate (c1) at ($(b1) ! .5 ! (a1)$);
 		\coordinate (c2) at ($(b4) ! .5 ! (a9)$);
 		\path (c1) ++(-1,0) coordinate (c3);

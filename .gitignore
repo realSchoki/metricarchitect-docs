@@ -277,3 +277,5 @@ TSWLatexianTemp*
 
 #generated pdfs
 /*.pdf
+
+/src-gen

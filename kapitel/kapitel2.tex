@@ -1,77 +1,103 @@
 % kapitel2.tex
 \chapter{Preliminaries}
 \label{chapter:grundlagen}
-Since the thesis covers many different systems each of them has to be introduced at least at a decent level. Modern and best of breed solution are being used here. Grafana and Prometheus are software products which can be used as a optional additional setup in cluster systems like Kubernetes to monitor their technical values. As a little bonus and for easier developing process Docker and Docker Compose will be used but in a very simple way. The technologies form the target of the \gls{dsl} designed in this thesis. For the realization of the \gls{dsl} and compiler Cinco a meta modeling tool will be used.
+
+Since the thesis covers many different systems each of them has to be introduced at least at a decent level. Modern and best of breed solution are being used here. Grafana and Prometheus are software products which can be used as an optional additional setup in cluster systems like Kubernetes to monitor their state. As a little bonus and for easier developing process Docker and Docker Compose will be used but in a very simple way. The technologies form the target of the \gls{dsl} designed in this thesis. For the realization of the \gls{dsl} and compiler Cinco a meta modeling tool will be used.
  
 \section{Smart Home}
-In the course of digitalization and simplification of the procurement of sensor technology in everyday life, smart home has arrived as an affordable concept for the consumer. In the most general case it is a base station with any number of actuators and sensors. This station is used to process and store the data from the sensory elements of the network and the actuators act on the basis of decision tables, for example. 
+
+In the course of digitalization and simplification of the procurement of sensor technology in everyday life, smart home has arrived as an affordable concept for the consumer. In the most general case it is a base station with any number of actuators and sensors (\cref{fig:abstract_smart_home}). This station is used to process and store the data from the sensory elements of the network and the actuators act on the basis of decision tables, for example. 
 
 As a simple scenario, one can imagine a living room lamp that is switched on when the brightness sensor outside signals darkness. However, a system does not necessarily has to have sensors and actuators. A network of sensors would only monitor and one of actuators can only act. Examples would be a central power consumption monitoring per socket or a remote light control.
 
 Here it is worth mentioning that there are also crossover devices. A heating thermostat usually has a built-in thermometer and is thus both actuator and sensor.
 
-\begin{figure}[!h]
+\begin{figure}[H]
 	\centering
 	\begin{tikzpicture}[every text node part/.style={align=center}]
 	\node[] (A) {\includegraphics[width=50px]{./assets/images/plug-solid}\\sensor};
-	\node[right= 3cm of A] (B) {\includegraphics[width=50px]{./assets/images/chalkboard-solid}\\base station};
-	\node[right= 3cm of B] (C) {\includegraphics[width=50px]{./assets/images/lightbulb-solid}\\actuator};
+	\node[right= 3cm of A] (B) {\includegraphics[width=51px]{./assets/images/chalkboard-solid}\\base station};
+	\node[right= 3cm of B] (C) {\includegraphics[width=51px]{./assets/images/lightbulb-solid}\\actuator};
 	\draw[-{Stealth[scale=1.3,angle'=90]},semithick] (B) -- node[above] {0..N} (A) ;
 	\draw[-{Stealth[scale=1.3,angle'=90]},semithick] (B) -- node[above] {0..M} (C) ;
 	\end{tikzpicture}
-	\caption{Abstract Smart Home Network}
+	\caption[Abstract Smart Home Network]{Abstract Smart Home Network, Symbols from \url{https://fontawesome.com/}}
+	\label{fig:abstract_smart_home}
 \end{figure}
-\todo{add source of images}
+
 \section{Basic Terms}
+
 In the context of Prometheus and this thesis, a few potentially ambiguous terms need to be defined.
+
 \subsection{Metric}
+
 A property which is observed and measured.
+
 \begin{Beispiel}
 	Temperature, rain amount, brightness, transfer rate, amount of printed documents
 \end{Beispiel}
+
 \begin{Definition}
 	A metric is a single property to be measured.
 \end{Definition}
+
 \subsection{Sensor}
+
 A sensor is a real device, a unit which is used in the real world. This can capture multiple metrics and make them available via an interface.
+
 \begin{Beispiel}
 	Weather station, network switch, heating thermostat
 \end{Beispiel}
+
 \begin{Definition}
-	A metric is a single property to be measured.
+	A sensor is a physical device making metrics available through some kind of interface.
 \end{Definition}
 
 \section{Prometheus}
+
 Prometheus is an open source solution that is used for metrics monitoring and alerting. There is the possibility to pass data actively or alternatively to configure Prometheus to fetch data from different data sources. For the latter variant, the system to be monitored must provide an \gls{http} interface on which the data is delivered in a predefined manner. Finally the collected data is persisted on the internal time series database.
 
-To simplify this process, there are several libraries for different programming languages that are configurable to export such a format. At the time of writing GO, Scala/Java, Python and Ruby are officially supported, but for many other languages there are unofficial third party libraries which are advertised on the Prometheus website. 
+To simplify this process, there are several libraries for different programming languages that are configurable to export such a format. At the time of writing GO, Scala/Java, Python and Ruby are officially supported \footnote{\url{https://prometheus.io/docs/instrumenting/clientlibs/}}, but for many other languages there are unofficial third party libraries which are advertised on the Prometheus website. 
 
-Since Prometheus exports are not supported by every device there are possibilities to create adapters for the information flow from sensor to Prometheus. \gls{mqtt} is a technique of frequently pushing messages to a message broker. A adapter reads messages from the broker and provide the values in Prometheus export format. Creating adapters is out of scope and will not be covered.
+Since Prometheus exports are not supported by every device there are possibilities to create adapters for the information flow from sensor to Prometheus. \gls{mqtt} is a technique of frequently pushing messages to a message broker. An adapter reads messages from the broker and provide the values in Prometheus export format. Creating adapters is out of scope and will not be covered.
 
-In case the selected language is not supported, it is also possible to create the output yourself. For this, the definition of the output format has been well documented.
+In case the selected language is not supported, it is also possible to create the output yourself. For this, the definition of the output format has been well documented \footnote{\url{https://prometheus.io/docs/instrumenting/writing_clientlibs/}}.
+
 \subsection{Metric Types}
-Prometheus distinguishes between different types of metrics. In the following, all possibilities are briefly explained. In \autoref{subsec:Exportformat} a few examples listed and for better understanding.
+
+Prometheus distinguishes between different types of metrics. In the following, all possibilities are briefly explained. In \cref{subsec:Exportformat} a few examples listed and for better understanding.
+
 \subsubsection{Counter}
+
 The counter describes a metric type which can only be incremented and reset. It represents a monotonically growing function. 
+
 \subsubsection{Gauge}
+
 This type symbolizes a speedometer. The values can rise and fall.
+
 \subsubsection{Histogram}
-A histogram is a concept consisting of so-called buckets. These are initially defined for a metric. With the help of this definition, values of $]-\infty,+\infty[$ are sorted into said buckets. Each next higher bucket also contains the measured values of the lower bucket. Therefore, it is a subset relation where the subsets are determined by the set limit. The \promcode{le} in the index can be interpreted as \textquote{Less Equal}. This parameter is also noted like this in the export.
+
+A histogram (\cref{fig:concept_histogramm}) is a concept consisting of so-called buckets. These are initially defined for a metric. With the help of this definition, values of $]-\infty,+\infty[$ are sorted into said buckets. Each next higher bucket also contains the measured values of the lower bucket (\cref{fig:relations_histogramm}). Therefore, it is a subset relation where the subsets are determined by the set limit. The \promcode{le} in the index can be interpreted as \textquote{Less Equal}. This parameter is also noted like this in the export.
+
 \begin{figure}[H]
+	\centering
 	\begin{tikzpicture}
-	\draw (0,0) ellipse (2cm and .7cm);
-	\draw (2,0) ellipse (4cm and 1cm);
-	\draw (4,0) ellipse (6cm and 1.3cm);
-	\draw (6,0) ellipse (8cm and 1.5cm);
-	\path (0,0) -- (12,0)%
+	\draw (0,0) ellipse (1.5cm and .7cm);
+	\draw (1.5,0) ellipse (3cm and 1cm);
+	\draw (3,0) ellipse (4.5cm and 1.3cm);
+	\draw (4.5,0) ellipse (6cm and 1.5cm);
+	\path (0,0) -- (9,0)%
 	node[pos=0] {$B_{le=``0.1''}$}%
 	node[pos=0.33] {$B_{le=``0.5''}$}%
 	node[pos=0.66] {$B_{le=``1''}$}%
 	node[pos=1] {$B_{le=``+Inf''}$};
 	\end{tikzpicture}
 	\caption{Relation of Buckets in a Histogram}
+	\label{fig:relations_histogramm}
 \end{figure}
+
 A histogram represents, in addition to the buckets, a total number of measured values, which is like a bucket with \promcode{le="+Inf"} and a value for the sum of all values.
+
 \begin{figure}[H]
 	\begin{minted}{text}
 	# TYPE <basename> histogram
@@ -80,11 +106,16 @@ A histogram represents, in addition to the buckets, a total number of measured v
 	<basename>_count <value>
 	\end{minted}
 	\caption{General Concept of a Histogram Export}
+	\label{fig:concept_histogramm}
 \end{figure}
+
 Line 2 can occur multiple times as each entry hat its own limit value. Lines 3 and 4 are the additional values as already mentioned.
+
 \subsubsection{Summary}
-A summary is similar to a histogram, however here buckets are not filled by the value of the measurement but the measured values are divided into $\varphi$-quantiles ($0 \le \varphi \le 1)$ and the maximum value of the quantile.
-\begin{figure}[H]
+
+A summary (\cref{fig:concept_summary}) is similar to a histogram, however here buckets are not filled by the value of the measurement but the measured values are divided into $\varphi$-quantiles ($0 \le \varphi \le 1)$ and the maximum value of the quantile.
+
+\begin{figure}[!ht]
 	\begin{minted}{text}
 		# TYPE <basename> histogram
 		<basename>{quantile="<φ>"} <value>
@@ -92,23 +123,32 @@ A summary is similar to a histogram, however here buckets are not filled by the 
 		<basename>_count <value>
 	\end{minted}
 	\caption{General Concept of a Summary Export}
+	\label{fig:concept_summary}
 \end{figure}
+
 \subsubsection{Untyped}
+
 In this case a value is assigned to the metric without following any special rules. This is a safe default setting and it is inevitable not to use this type.
 \Needspace{9\baselineskip}
+
 \subsection{Labels}
-Labels can be used to break down metrics with the same name into different origins. 
+
+Labels (\cref{fig:concept_label}) can be used to break down metrics with the same name into different origins. 
+
 \begin{figure}[!ht]
 	\begin{minted}{text}
 	<basename>{key="<value>",key2="<value2>",...} <value>
 	\end{minted}
 	\caption{General Concept of Labels}
+	\label{fig:concept_label}
 \end{figure}
+
 \subsection{Export Format}
 \label{subsec:Exportformat}
-The export format of Prometheus can be described well by means of an example. For this purpose, we draw a part from the official documentation~\cite{PrometheusExpositionFormatBeispiel}.\\
-\par
-\begin{listing}[H]
+
+The export format of Prometheus can be described well by means of an example (\cref{lst:prometheus_export}). For this purpose, we discuss an example of the official documentation~\cite{PrometheusExpositionFormatBeispiel}.
+
+\begin{listing}[!ht]
 	\begin{minted}[mathescape,linenos,numbersep=5pt,gobble=0,frame=lines,linenos,tabsize=4,breaklines,framesep=2mm]{text}
 	# HELP http_requests_total The total number of HTTP requests.
 	# TYPE http_requests_total counter
@@ -119,13 +159,16 @@ The export format of Prometheus can be described well by means of an example. Fo
 	metric_without_timestamp_and_labels 12.47
 	\end{minted}
 	\caption{Partial Example from the Official Prometheus Documentation~\cite{PrometheusExpositionFormatBeispiel}}
+	\label{lst:prometheus_export}
 \end{listing}
-Between lines 1-4 we find the first exported metric in this example. The first line contains \promcode{# HELP <name of metric>} after the token, an optional short description. The next line specifies the type with \linebreak \promcode{# TYPE <name of metric> <type of metric>}. The choices regarding the type coincide with the metric types already described: \promcode{counter}, \promcode{gauge}, \promcode{histogram}, \promcode{summary}, \promcode{untyped}.
+
+Between lines 1-4 we find the first exported metric in this example. The first line contains \promcode{# HELP <name of metric>} after the token, an optional short description. The next line specifies the type with \promcode{# TYPE <name of metric> <type of metric>}. The choices regarding the type coincide with the metric types already described: \promcode{counter}, \promcode{gauge}, \promcode{histogram}, \promcode{summary}, \promcode{untyped}.
 
 All lines starting with \promcode{#} but not continued with \promcode{TYPE} or \promcode{HELP} are comment lines and are therefore not interpreted.
 
 Lines 3-4 show the measured values broken down by their labels. Lines that symbolize the measured values consist of three columns. The first in the format \promcode{<name of metric>} followed by optional labels in curly brackets. The example here breaks down all \gls{http} requests by method and \gls{http} return value. The next column contains the measured value for the metric, taking into account the optional grouping available. The last column is again non-mandatory and contains the timestamp at which the value was measured. 
 In addition, a small example in line 7 can be found. Due to the lack of type specification, the type is \promcode{untyped}. The \gls{ebnf} to this type of line is as follows:
+
 \begin{listing}[H]
 	\begin{samepage}
 		\begin{minted}{ebnf}
@@ -141,7 +184,8 @@ In addition, a small example in line 7 can be found. Due to the lack of type spe
 \end{listing}
 
 In the following lines you can see a more complex example. This is a histogram. The values measured internally in the exporter are divided into so-called buckets. You can see the four preconfigured buckets with the limits \promcode{0.05}, \promcode{0.2}, \promcode{1} and \promcode{+Inf}. 
-\begin{listing}[H]
+
+\begin{listing}[!ht]
 	\begin{minted}{text}
 	# HELP http_request_duration_seconds A histogram of the request duration
 	# TYPE http_request_duration_seconds histogram
@@ -154,59 +198,61 @@ In the following lines you can see a more complex example. This is a histogram. 
 	\end{minted}
 	\caption{Histogram Export Example from the Official Prometheus Documentation~\cite{PrometheusExpositionFormatBeispiel}}
 \end{listing}
-\todo{mention summary?}
 
 \subsection{Prometheus Query Language}
 \label{subsec:promql}
+
 As mentioned before, the collected data is stored in an internal time series database which can be searched by using \gls{promql} queries.
-The syntax of the queries is appended as \gls{ebnf} and can be looked up in \autoref{lst:promql_vector}.
+The syntax of the queries is appended as \gls{ebnf} and can be looked up in \cref{lst:promql_vector}.
 There are various elements queries can be build from.
+
 \subsubsection{Instant Vector}
+
 To access the collected data the instant vector has to be used. The instant vector query resolves in exactly one value for every stored metric.
+
 \subsubsection{Range Vector}
+
 A range vector is similar to an instant vector. The main difference is an additional parameter describing how big the observed time segment should be.This time segment returns an amount of values per metric. Using this it would be possible to calculate a delta or a rate of change.
+
 \subsubsection{Operators}
+
 Since the vectors are sets of values or value arrays it is obvious that set operations are defined. Common operators like intersection, union and complement exist. Furthermore complex operators like grouping with other vectors or ignoring labels exists. There is also the option of using aggregation operators like sum or count, which reduce the result set to less values.
+
 \subsubsection{Functions}
+
 Functions act on every metric value itself. Known functions like ceiling, floor or round can be used. Furthermore uncommon functions like year, returning the year of the metric value or changes return how often the value of the metric has changed.
 
 \section{Grafana}
 \label{sec:grafana}
-For the visualization of the data collected by Prometheus, Grafana~\citep{GrafanaHomepage} can be used. It is a versatile and extensible system to display data from various data sources. For example databases like Cassandra, MariaDB or PostgreSQL but also regular \gls{http} requests against external interfaces or static \gls{json} objects are possible~\cite{GrafanaDataSources}. Furthermore, Grafana also provides different types of diagrams.
-\todo{better layout, following fig.}
-\begin{figure}[ht]
-	\begin{subfigure}{.25\textwidth}
-		\centering
-		\includegraphics[width=.8\linewidth]{assets/screenshots/Screenshot_2020-12-08 1 - New Features in v7 0 - Grafana.png}
-		\captionsetup{justification=centering}
-		\caption{Single Metric\\with Graph}
-		\label{fig:sfig1}
-	\end{subfigure}%
-	\begin{subfigure}{.25\textwidth}
-		\centering
-		\includegraphics[width=.8\linewidth]{assets/screenshots/Screenshot_2020-12-08 Website trends - Grafana.png}
-		\captionsetup{justification=centering}
-		\caption{Single Metric\\as Gauge}
-		\label{fig:sfig2}
-	\end{subfigure}%
-	\begin{subfigure}{.5\textwidth}
-		\centering
-		\includegraphics[width=.8\linewidth]{assets/screenshots/Screenshot_2020-12-08 Grafana Play Home - Grafana(2).png}
-		\captionsetup{justification=centering}
-		\caption{Multimetric plot}
-		\label{fig:sfig2}
-	\end{subfigure}
-	\caption{Example Diagram Types in Grafana}
-	\label{fig:fig}
-\end{figure}
-Additionally there are simple table formats, honeycomb patterns, bar charts and many more. These, like the data sources, are extensible through plug-ins. Thanks to the source code openness of the project, custom plug-ins can be written if needed.
 
-In this case to fill the diagrams with data from Prometheus a \gls{promql} query must be stored in each diagram, which is executed regularly. Such a diagram is part of a so-called panel. Thus a panel has exactly one diagram and vice-versa. These are now combined into dashboards, which then provide an overview. With this feature it is possible to define a lot of panels for getting displayed at the same time.
+For the visualization of the data collected by Prometheus, Grafana~\citep{GrafanaHomepage} can be used. It is a versatile and extensible system to display data from various data sources. For example databases like Cassandra, MariaDB or PostgreSQL but also regular \gls{http} requests against external interfaces or static \gls{json} objects are possible~\cite{GrafanaDataSources}. Furthermore, Grafana also provides different types of diagrams. A small example is shown in \cref{fig:example_grafana_graph}.
+
+\begin{figure}[!ht]
+	\subcaptionbox{Single Metric\\with Graph}[.30\textwidth]{%
+		\centering
+		\includegraphics[height=3cm]{assets/screenshots/Screenshot_2020-12-08 1 - New Features in v7 0 - Grafana.png}
+	}%
+	\subcaptionbox{Single Metric\\as Gauge}[.30\textwidth]{%
+		\centering
+		\includegraphics[height=3cm]{assets/screenshots/Screenshot_2020-12-08 Website trends - Grafana.png}
+	}%
+	\subcaptionbox{Multimetric plot}[.40\textwidth]{%
+		\centering
+		\includegraphics[height=3cm]{assets/screenshots/Screenshot_2020-12-08 Grafana Play Home - Grafana(2).png}
+	}%
+	\caption{Example Diagram Types in Grafana}
+	\label{fig:example_grafana_graph}
+\end{figure}
+
+Additionally there are simple table formats, honeycomb patterns, bar charts and many more. These, like the data sources, are extensible through plug-ins. Since this project is open source, custom plug-ins can be written if needed.
+
+To fill the diagrams with data from Prometheus a \gls{promql} query must be stored in each diagram, which is executed regularly. Such a diagram is part of a so-called panel. Thus a panel has exactly one diagram and vice-versa. These are now combined into dashboards, which then provide an overview. With this feature it is possible to define a lot of panels for getting displayed at the same time.
 
 It should also be said that there are higher order structures such as organizations or you can summarize dashboards in playlists and / or groups. However there features are not specified in this work.
 
 \subsection{Panels}
-Since panels have many settings and thus allow many individualization, these are briefly explained here.
+
+Since panels have many settings and thus allow various individualization, these are briefly explained here.
 
 Each panel has primarily a name, description, diagram type, settings for the layout and value reference of cumulative functions and behavior with zero values. Depending on the selected chart type, different configurations are possible like axis labeling, legend, limits for symbolic coloring and other specific settings.
 
@@ -216,19 +262,22 @@ Alternatively to the grouping of metrics, which is possible by keywords, it is a
 
 Generalization, classification and aggregation form the most important technique in software development called abstraction~\cite{Brambilla_2017}. Software development cannot exist without it, as it gives the developer the ability to ignore not important properties of a real world situation. Therefore, it helps breaking down the observed scene into essential parts leading to a simpler description of the given situation. As a synonym modeling instead of abstraction is frequently used. Based on this model, which is acquired by abstraction, a developer can now realize and implement a software which fulfills all needs and constraints expressed by the model. 
 
-Nowadays complex world abstraction is indispensable and helps to create models in everyday life. It is a tool to eradicate unnecessary information or properties which can not be understood or it is not necessary to do so. A good example for a well known abstraction is playing billiard. Bank shots can be abstracted with the rule, that the angle of incidence equals the angle of reflection. This can be true for most of the shots, but taking the spin of the white ball under consideration the abstraction will not longer work. The next physical property which could be included into the model would be the elasticity of the cushions or traction on the bed. Every time information is ignored a abstraction layer is created.
+Nowadays complex world abstraction is indispensable and helps to create models in everyday life. It is a tool to eradicate unnecessary information or properties which can not be understood or it is not necessary to do so. 
+%A good example for a well known abstraction is playing billiard. Bank shots can be abstracted with the rule, that the angle of incidence equals the angle of reflection. This can be true for most of the shots, but taking the spin of the white ball under consideration the abstraction will not longer work. The next physical property which could be included into the model would be the elasticity of the cushions or traction on the bed. Every time information is ignored a abstraction layer is created.
+A good example for a well know abstraction is 
 
 Abstraction is the fundamental technique of model-driven development. Additionally it utilizes different tools and standards for visualization, notation and the development process. A very common and popular notation is the \gls{uml}~\cite{Cook2017}. Powerful tooling and development assist can be found with \gls{emf}. This framework gives the ability to model in a well defined way using the meta model Ecore. As it is meta, it allows to describe other models~\cite[section 2.3.1]{steinberg2008emf}. The focus is on creating a perfect model, defining all constraints and dependencies. From here the implementation is just following the abstract model, since the work of discussing and committing to a mutual objective is already done.
 
 \gls{emf} not only contains the Ecore model, but also a generator for example for code, custom files or an customized Eclipse \gls{ide} providing support for the model.
 
-In the context of generating code different functions and feature were missed in Java~7. To fill this gap the language Xtend~\cite{xtendhp} was developed. It adds the possibility of using lambda functions,  template expression and more. Right now Java 15+ fills many of these gaps making Xtend not as important as it was in earlier days. This development resulted in changing the default Xtend generators back to Java, which was announced in the changelog in 2019. Since Xtend did not get fully replaced by Java there are still good reasons to continue to use Xtend.
+In the context of generating code different functions and feature were missed in Java~7. To fill this gap the language Xtend~\cite{xtendhp} was developed. It adds the possibility of using lambda functions,  template expression and more. Right now Java 15+ fills many of these gaps making Xtend not as important as it was in earlier days. This development resulted in changing the default Xtend generators back to Java, which was announced in the changelog in 2019. Since Xtend did not get fully replaced by Java there are still good reasons to continue to use Xtend. 
 
 \say{Also the resources we have no longer allow us to keep the head start against Java. And learning Xtend still is a burden for new Xtext users. To reflect this changed situation we have decided to make Java the default in the wizard again (except e.g. the Generator and a few other APIs).}~\cite{xtendToJava}
 
 
 \section{Cinco}
-Everything above are necessary base technologies where on top of them the model-driven solution  is build: the domain specific language. For this task the meta modeling tool Cinco~\cite{CincoHomepage} will be used. The full name is \say{CINCO SCCE Meta Tooling Framework} and it utilizes the \gls{emf} and Graphiti Graphical Tooling Infrastructure. It is in active development of the chair for programming systems of the \gls{tudortmund}.
+
+All technologies above are the base technologies used to create a model-driven solution. Since a \gls{dsl} has to be designed in this thesis the meta modeling tool Cinco~\cite{CincoHomepage} will be used. The full name is \say{CINCO SCCE Meta Tooling Framework} and it utilizes the \gls{emf} and Graphiti Graphical Tooling Infrastructure. It is in active development of the chair for programming systems of the \gls{tudortmund}.
 
 The \gls{mgl} allows the user to design a custom \gls{dsl} and generate a working \gls{ide} with features like auto complete or code generation like \gls{emf} already does. Additionally visual editing in the generated \gls{ide} is possible. Since modeling a \gls{dsl} which can be used in a visual editor lowers the threshold to get started with using this \gls{dsl} for non computer scientists essentially. 
 
@@ -274,14 +323,14 @@ With Cinco being a meta modeling tool generating graphical \glspl{ide} it is als
 		\draw [-{Triangle}] (cincod1.north) -- (ecore);
 		\draw [-{Triangle}] (cincod2.north) -- (ecore);
 	\end{tikzpicture}
-	\caption{Generation of an automaton modeling tool by an abstract tool specification with the
-Cinco framework~\cite[figure 4]{cincoimage}}
-	\label{layeringCinco}
+	\caption{Generation of an automaton modeling tool by an abstract tool specification with the Cinco framework~\cite[Figure 4]{cincoimage}}
+	\label{fig:layeringCinco}
 \end{figure}
 
-From figure \ref{layeringCinco} it is apparent that there is a clearly separated layering between different models in Cinco. The \gls{emf} as a framework for eclipse serves as the foundation for Cinco. It allows to build via a \gls{dsl} named XText to define other model. This is the point were Cinco starts. The \gls{msl} and \gls{mgl} are two of many definitions taking advantage of \gls{emf} to implement the needed features in Cinco. With this information an Ecore modal can be generated which is needed for Cinco to work. As a Cinco developer it is possible to define a meta-model. In this case a sensor definition problem is used as an example. From this point on a user who works with the generated \gls{ide} for the sensor development can model the real world problems.
+From figure \ref{fig:layeringCinco} it is apparent that there is a clearly separated layering between different models in Cinco. The \gls{emf} as a framework for eclipse serves as the foundation for Cinco. Utilizing a \gls{dsl} called Xtext the \gls{emf} allows to define custom models. This is the point were Cinco starts. The \gls{msl} and \gls{mgl} are two of many definitions taking advantage of \gls{emf} to implement the needed features in Cinco. With this information an Ecore modal can be generated which is needed for Cinco to work. As a Cinco developer it is possible to define a meta-model. In this case a sensor definition problem is used as an example. From this point on a user who works with the generated \gls{ide} for the sensor development can model the real world problems.
 
 \subsection{Meta Graph Language}
+
 Cinco uses four different elements for modeling a \gls{dsl} inside of it. The \gls{mgl} which is used for the modeling task defines nodes, edges, container and type elements. Having the ability of being enhanced with fields or dependencies between them they give the developer the opportunity designing a very powerful language. In other words, the \gls{mgl} is like a graph with nodes and edges expanded with optional containers where a subset of the nodes and edges elements can be stored. The type node adds the ability of defining other needed types. In general there is also the feature of extending already defined types, so little adaptions can be done a a bigger level of abstraction can be implemented.
 
 \subsubsection{Node}
@@ -290,12 +339,15 @@ A node is an unit which can have incoming and outgoing edges. It also can have d
 Further the last token \promcode{prime} is used for adding a prime reference to the node. It needs the referencing type and a name to be set up correctly.
 
 \subsubsection{Edge}
+
 Simpler constructs are edges. They are introduced using \promcode{edge} and can only contain attributes and a style. Like in the node definition annotations, abstraction flag or inheritance can be used without making cuts.
 
 \subsubsection{Container}
+
 Container heavily rely on the possibilities of a node. It is capable of all features of a node but being extended by the keyword \promcode{containableElements}. Thus it is possible to allow a specific object to be embedded inside of this container.
 
 \subsubsection{Type}
+
 Attributes can have different types. Therefore Cinco has the following build-in datatypes:
 
 \begin{center}
