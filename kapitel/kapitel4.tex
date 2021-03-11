@@ -25,64 +25,64 @@ As shown a metric has a label describing its function like power or humidity. It
 
 Senors combine these metrics (line 4, figure \ref{fig:CodeSensorDevice}) into a group of exportable data. This step is done and needed for modeling real world sensor devices. This sensor devices can be reused everywhere in the project since it is an abstract and not a concrete instance of the sensor holding configuration. 
 
-Attributes like a name and a specific icon  can also be edited. The names for the sensors are used to keep them apart. For a better \gls{ui} experience it is possible to select a symbol from a preselected set of icons to show up in the node. This makes it easier to get a faster coordination in bigger networks. This feature gets enabled by the $SensorIconValueProvider$ class linked with the $@possibleValuesProvider$ annotation (listing \ref{lst:classSensorIconValueProvider}).
+Attributes like a name and a specific icon  can also be edited. The names for the sensors are used to keep them apart. For a better \gls{ui} experience it is possible to select a symbol from a preselected set of icons to show up in the node. This makes it easier to get a faster coordination in bigger networks. This feature gets enabled by the \promcode{SensorIconValueProvider} class linked with the \promcode{@possibleValuesProvider} annotation (listing \ref{lst:classSensorIconValueProvider}).
 \begin{listing}[H]
 	\begin{minted}{\mgllexer}
-	@style(sensorDevice, "${name}")
-	@palette("DeviceDefinition")
-	node DeviceDefinition {
-		incomingEdges (ContainedBy)
-		attr EString as name := ""
-		@possibleValuesProvider("dev.schoki.metricarchitect.provider .SensorIconValueProvider")
-		attr EString as icon
-	}	
+@style(sensorDevice, "${name}")
+@palette("SensorDefinition")
+node SensorDefinition {
+	incomingEdges (ContainedBy)
+	attr EString as name := ""
+	@possibleValuesProvider("dev.schoki.metricarchitect.provider .SensorIconValueProvider")
+	attr EString as icon
+}		
 	\end{minted}
-	\caption{Impl. of DeviceDefinition Node}
+	\caption{Impl. of SensorDefinition Node}
 	\label{fig:CodeSensorDevice}
 \end{listing}
 For a faster access to the tooling some presets are implemented with a predefined icon.
 \subsection{Floor}
-The modeled sensor using the previous \gls{mgl} definition can now be instantiated and configured. This can be achieved using the node \promcode{Device}. Via prime reference a link to a \promcode{DeviceDefinition} is created (lines 4-6, \ref{fig:CodeSensorDeviceInstance}). Since the \promcode{Device} node is not a specific real world device a symbolic name and a \gls{url} has to be set. The name is only used for better readability and the \gls{url} is essential. It will be generated into the Prometheus configuration for the deployment. Every node of this type corresponds to a device observed by Prometheus. 
+The modeled sensor using the previous \gls{mgl} definition can now be instantiated and configured. This can be achieved using the node \promcode{Sensor}. Via prime reference a link to a \promcode{SensorDefinition} is created (lines 4-6, \ref{fig:CodeSensorDeviceInstance}). Since the \promcode{Sensor} node is not a specific real world device a symbolic name and a \gls{url} has to be set. The name is only used for better readability and the \gls{url} is essential. It will be generated into the Prometheus configuration for the deployment. Every node of this type corresponds to a sensor observed by Prometheus. 
 
-To create a improved overview and handling a simple grouping is also implemented. This can be done by using the \promcode{Filter} edges from the \promcode{Device} to a \promcode{DeviceGroup}. For example it is possible to combine all power sockets or lights to one node to make them better accessible in the later steps. 
+To create a improved overview and handling a simple grouping is also implemented. This can be done by using the \promcode{Filter} edges from the \promcode{Sensor} to a \promcode{SensorGroup}. For example it is possible to combine all power sockets or lights to one node to make them better accessible in the later steps. 
 
 \begin{listing}[H]
 	\begin{minted}{\mgllexer}
-	@style(sensorInFloorModel, "${name}")
-	@icon('src/main/resources/icons/bolt-solid.16.png')
-	node Device {
-		@pvLabel (name)
-		@pvFileExtension ("sensor")
-		prime SensorModel::DeviceDefinition as sensor
-		outgoingEdges (GroupBy)
-		attr EString as name := "DeviceName"
-		attr EString as url := "localhost:8080"
-	}	
+@style(sensorInFloorModel, "${name}")
+@icon('src/main/resources/icons/bolt-solid.16.png')
+node Sensor {
+	@pvLabel (name)
+	@pvFileExtension ("sensor")
+	prime SensorModel::SensorDefinition as sensor
+	outgoingEdges (GroupBy)
+	attr EString as name := "SensorName"
+	attr EString as url := "localhost:8080"
+}	
 	\end{minted}
-	\caption{Implementation of Device Node}
+	\caption{Implementation of Sensor Node}
 	\label{fig:CodeSensorDeviceInstance}
 \end{listing}
 
-The generators for the needed configurations will follow later (see \cref{sec:impl_generator}). For a better understanding where the devices are in the real world it is possible to use the \promcode{FloorImage} node. It has only one variable which can be set to the path of an image inside the project relative to the root. Preferably a floor plan is used. With this creating device instances without forgetting which node matches with which real world device can be easily achieved.
+The generators for the needed configurations will follow later (see \cref{sec:impl_generator}). For a better understanding where the sensors are in the real world it is possible to use the \promcode{FloorImage} node. It has only one variable which can be set to the path of an image inside the project relative to the root. Preferably a floor plan is used. With this creating sensor instances without forgetting which node matches with which real world device can be easily achieved.
 
 \subsection{Grafana}
 
-Using the previous devices and device groups it is not possible to model the Grafana configuration. Instead, it start by creating a new node via prime reference which is then embedded into a \promcode{GraphQueryForGroup} or for non groups \promcode{GraphQueryForDevice} node. Both wield the same information but it is necessary to distinguish between them because the generators act differently while processing these nodes. Since this node only works as a connection to the floor \gls{mgl} it does not contain more information. 
+Using the previous sensors and sensor groups it is not possible to model the Grafana configuration. Instead, it start by creating a new node via prime reference which is then embedded into a \promcode{GraphQueryForGroup} or for non groups \promcode{GraphQueryForSensor} node. Both wield the same information but it is necessary to distinguish between them because the generators act differently while processing these nodes. Since this node only works as a connection to the floor \gls{mgl} it does not contain more information. 
 
 \begin{listing}[H]
 	\begin{minted}{\mgllexer}
-		@style(graphQueryForGroup, "${deviceGroup.name}")
-		@icon('src/main/resources/icons/chart-line-solid.16.png')
-		node GraphQueryForGroup {
-			@pvLabel (name)
-			@pvFileExtension ("floor")
-			prime FloorModel::DeviceGroup as deviceGroup
-			outgoingEdges (GraphQueryToPanel)
-		}
+@style(graphQueryForGroup, "${sensorGroup.name}")
+@icon('src/main/resources/icons/chart-line-solid.16.png')
+node GraphQueryForGroup {
+	@pvLabel (name)
+	@pvFileExtension ("floor")
+	prime FloorModel::SensorGroup as sensorGroup
+	outgoingEdges (GraphQueryToPanel)
+}
 	\end{minted}
 \end{listing}
 
-Due to this layer covering the Grafana configuration \gls{promql} queries are an essential part of it. The outgoing edge \promcode{GraphQueryToPanel} covers a rich set of possible queries but not the overall features. It is the part of the model which describes the derived \gls{promql} query the most. Like already mentioned in subsection \ref{subsec:promql} there are different parameters to set. It is necessary to keep up to the right syntax, because the values for the variables are unchecked strings. The fields \promcode{timespan}, \promcode{timeresolution} and \promcode{offset} (line 6-8, listing \ref{lst:GraphQueryToPanel}) has to follow the roles for duration notation (page \pageref{lst:promql_vector}, figure \ref{lst:promql_vector}). All connected devices either connect via device groups or can directly have many different metrics. Since it does not make sense to show not compatible metrics in the same graph, like power and humidity, a value provider filters all common metrics of the devices. 
+Due to this layer covering the Grafana configuration \gls{promql} queries are an essential part of it. The outgoing edge \promcode{GraphQueryToPanel} covers a rich set of possible queries but not the overall features. It is the part of the model which describes the derived \gls{promql} query the most. Like already mentioned in subsection \ref{subsec:promql} there are different parameters to set. It is necessary to keep up to the right syntax, because the values for the variables are unchecked strings. The fields \promcode{timespan}, \promcode{timeresolution} and \promcode{offset} (line 6-8, listing \ref{lst:GraphQueryToPanel}) has to follow the roles for duration notation (page \pageref{lst:promql_vector}, figure \ref{lst:promql_vector}). All connected sensors either connect via sensor groups or can directly have many different metrics. Since it does not make sense to show not compatible metrics in the same graph, like power and humidity, a value provider filters all common metrics of the sensors. 
 
 \begin{listing}[H]
 	\begin{minted}{\mgllexer}
@@ -96,11 +96,11 @@ edge GraphQueryToPanel {
 	attr EString as timeresolution
 }
 	\end{minted}
-	\caption{Implementation of the Edge connecting GraphQueryByGroup/GraphQueryByDevice to a Panel symbolizing a PromQL Query}
+	\caption{Implementation of the Edge connecting GraphQueryByGroup/GraphQueryBySensor to a Panel symbolizing a PromQL Query}
 	\label{lst:GraphQueryToPanel}
 \end{listing}
 
-The \promcode{FilterValueProvider} class (page \pageref{lst:classFilterValueProvider}, listing \ref{lst:classFilterValueProvider}) has to take into consideration that there are \promcode{GraphQueryByGroup} and \promcode{GraphQueryByDevice}. This is done by a simple type checking in runtime with the Java \promcode{instanceof} keyword. Using this way a drop down menu will only allow valid metrics to be used.
+The \promcode{FilterValueProvider} class (page \pageref{lst:classFilterValueProvider}, listing \ref{lst:classFilterValueProvider}) has to take into consideration that there are \promcode{GraphQueryByGroup} and \promcode{GraphQueryBySensor}. This is done by a simple type checking in runtime with the Java \promcode{instanceof} keyword. Using this way a drop down menu will only allow valid metrics to be used.
 
 Lastly an aggregation operator has to be selected. The default is \promcode{none}. This is not a function implemented by \gls{promql} but it is used as a keyword in this project for doing nothing, meaning there will not be a function around the generated query. The original \gls{promql} has many different functions and as already said, for this project only some of them are implemented. 
 
@@ -153,7 +153,7 @@ Generating the needed files for deployment is done by the \promcode{ProjectGener
 
 \begin{listing}
 	\begin{minted}{xtend}
-		«FOR s : devices.stream.filter(Utils.distinctByKey([ x | x.name])).collect(Collectors.toList())»
+		«FOR s : sensors.stream.filter(Utils.distinctByKey([ x | x.name])).collect(Collectors.toList())»
 		- job_name: '«s.name»'
 		static_configs:
 		- targets: ['«s.url»']
@@ -193,7 +193,7 @@ To better understand the example the notation will be introduced.
 \end{minipage}
 
 
-\subsubsection{Device Definition}
+\subsubsection{Sensor Definition}
 \noindent\begin{minipage}{0.15\textwidth}%
 	\includegraphics[width=\linewidth]{assets/images/sensor7}
 \end{minipage}%
@@ -228,26 +228,26 @@ To better understand the example the notation will be introduced.
 \end{figure}
 
 \noindent
-The versions of the node can be used to give hints what the technical device is measuring.
+The versions of the node can be used to give hints what the technical sensor is measuring.
 
 \subsection{Floor Layer}
 
-\subsubsection{Device}
+\subsubsection{Sensor}
 \noindent\begin{minipage}{0.15\textwidth}% adapt widths of minipages to your needs
 	\includegraphics[width=\linewidth]{assets/images/sensor}
 \end{minipage}%
 \hfill%
 \begin{minipage}{0.8\textwidth}
-	Concrete Devices are mapped by these nodes. This node can be created by using prime references. Therefore \promcode{DeviceDefinition} nodes has to be pulled into the modeling screen. The icon is inherited from the referenced node.
+	Concrete sensors are mapped by these nodes. This node can be created by using prime references. Therefore \promcode{SensorDefinition} nodes has to be pulled into the modeling screen. The icon is inherited from the referenced node.
 \end{minipage}
 
-\subsubsection{Device Group}
+\subsubsection{Sensor Group}
 \noindent\begin{minipage}{0.15\textwidth}%
 	\includegraphics[width=\linewidth]{assets/images/group}
 \end{minipage}%
 \hfill%
 \begin{minipage}{0.8\textwidth}
-	This node can be used to sum up a number of Device nodes in one superordinate node. This act like a group. In contrast to the other nodes it is round to be distinguishable in the floor layer.
+	This node can be used to sum up a number of Sensor nodes in one superordinate node. This act like a group. In contrast to the other nodes it is round to be distinguishable in the floor layer.
 \end{minipage}
 
 \subsubsection{Floor Image}
@@ -256,19 +256,19 @@ The versions of the node can be used to give hints what the technical device is 
 \end{minipage}%
 \hfill%
 \begin{minipage}{0.8\textwidth}
-A background can be set in the floor layer to create a better overview about the positioning of the devices. Since this node is optional a dummy image showing a diagonal bar is set as default.
+A background can be set in the floor layer to create a better overview about the positioning of the sensors. Since this node is optional a dummy image showing a diagonal bar is set as default.
 \end{minipage}
 
 
 \subsection{Grafana Layer}
 
-\subsubsection{Graph Query For Device}
+\subsubsection{Graph Query For Sensor}
 \noindent\begin{minipage}{0.15\textwidth}%
 	\includegraphics[width=\linewidth]{assets/images/sensor}
 \end{minipage}%
 \hfill%
 \begin{minipage}{0.8\textwidth}
-	In the Grafana Layer this node can be used to reference an already defined device from the floor layer by prime reference. The icon is inherited from the referenced node.
+	In the Grafana Layer this node can be used to reference an already defined sensor from the floor layer by prime reference. The icon is inherited from the referenced node.
 \end{minipage}
 
 \subsubsection{Graph Query For Group}
@@ -277,7 +277,7 @@ A background can be set in the floor layer to create a better overview about the
 \end{minipage}%
 \hfill%
 \begin{minipage}{0.8\textwidth}
-In the Grafana Layer this node can be used to reference an already defined device group from the floor layer by prime reference. Since technically it does not make a difference if this is a single device or a group it has the same appearance as the \promcode{GraphQueryForDevice} node. The icon is inherited from the referenced node.
+In the Grafana Layer this node can be used to reference an already defined sensor group from the floor layer by prime reference. Since technically it does not make a difference if this is a single sensor or a group it has the same appearance as the \promcode{GraphQueryForSensor} node. The icon is inherited from the referenced node.
 \end{minipage}
 
 
@@ -318,7 +318,7 @@ The first thing to do is to create a new $MetricArchitectTool$ Project. In gener
 
 An example project will be set up to wrap everything up and show how the different layers work with each other. Multiple smart power sockets were used for this. In this case the Gosund SP1 (\cref{fig:gosund_sp1}) with a flashed firmware. 
 
-The open source project Tasmota \cite{tasmotawebsite} which is licensed under \gls{gpl3} is an alternative firmware for a huge amount of different \gls{iot} devices such as lights, switches, curtains or power sockets like the ones used in this example.
+The open source project Tasmota \cite{tasmotawebsite} which is licensed under \gls{gpl3} is an alternative firmware for a huge amount of different \gls{iot} sensors such as lights, switches, curtains or power sockets like the ones used in this example.
 With the version 8.5.1 which was released on 2nd October 2020 Tasmota gets optional support for Prometheus exports. 
 
 \begin{figure}[!ht]
@@ -351,7 +351,7 @@ These three metrics are the ones which should be modeled in the Cinco product. T
 	\item $energy\_power\_active\_watts$ 
 \end{itemize}
 
-Additionally a new device definition is needed. In this case it will be named $tasmota\ ps$. Each of the created metrics need to be connected to the device definition (\cref{fig:modeled_sensor_layer}).
+Additionally a new sensor definition is needed. In this case it will be named $tasmota\ ps$. Each of the created metrics need to be connected to the sensor definition (\cref{fig:modeled_sensor_layer}).
 
 \begin{figure}[!ht]
 	\centering
@@ -360,7 +360,7 @@ Additionally a new device definition is needed. In this case it will be named $t
 	\label{fig:modeled_sensor_layer}
 \end{figure}
 
-Based on this model the real world scenario will be created. It is not only important to know that a sensor exist, but also to have some metadata of it. The position and ip are the needed data here. Across two rooms (\cref{fig:modeled_floor_layer}) four of the smart power sockets were placed. Two of them in the office and two more in the living room. Each of Bob's and Alice's computer is now monitored by such a smart socket. Additionally a \gls{hifi} audio system and the corresponding sub woofer in the living room are going to be observed. To make the handling easier a grouping is introduced. A group named $sound$ wields $hifi$ and $subwoofer$, group $computer$ has $bob$ and $alice$. The last group $all$ has each device connected to it. The floor plan was created in Sweet Home 3D which is also open source and free to use~\footnote{\url{http://www.sweethome3d.com/}}. 
+Based on this model the real world scenario will be created. It is not only important to know that a sensor exist, but also to have some metadata of it. The position and ip are the needed data here. Across two rooms (\cref{fig:modeled_floor_layer}) four of the smart power sockets were placed. Two of them in the office and two more in the living room. Each of Bob's and Alice's computer is now monitored by such a smart socket. Additionally a \gls{hifi} audio system and the corresponding sub woofer in the living room are going to be observed. To make the handling easier a grouping is introduced. A group named $sound$ wields $hifi$ and $subwoofer$, group $computer$ has $bob$ and $alice$. The last group $all$ has each sensor connected to it. The floor plan was created in Sweet Home 3D which is also open source and free to use~\footnote{\url{http://www.sweethome3d.com/}}. 
 
 \begin{figure}[!ht]
 	\centering
@@ -369,7 +369,7 @@ Based on this model the real world scenario will be created. It is not only impo
 	\label{fig:modeled_floor_layer}
 \end{figure}
 
-After completing the translation of the upper scenario into the model the next step is to form the \gls{promql} queries and define which query goes in which panel. Afterwards the panels have to be grouped into dashboards. The most work has to be done configuring the edges from the device nodes to the panels.
+After completing the translation of the upper scenario into the model the next step is to form the \gls{promql} queries and define which query goes in which panel. Afterwards the panels have to be grouped into dashboards. The most work has to be done configuring the edges from the sensor nodes to the panels.
 
 From the floor layer the groups are included via prime references into the Grafana layer as seen on the left hand side in figure \ref{fig:modelGrafanaLayer}. From the $all$ node following connections are done:
 
@@ -382,7 +382,7 @@ From the floor layer the groups are included via prime references into the Grafa
 
 This results in every power consumption shown in the panel view. As an addition the sum of all these values will be drawn. The panels for current and voltage do not contain any accumulated values but only the raw measured metrics. All three panels are then merged in the dashboard called $all$.
 
-On the other side the group $sound$, combines the $hifi$ and $subwoofer$ device. The edges filters for each power, current and voltage. For a better overview for power and current the sum and for voltage the average will be calculated. 
+On the other side the group $sound$, combines the $hifi$ and $subwoofer$ sensor. The edges filters for each power, current and voltage. For a better overview for power and current the sum and for voltage the average will be calculated. 
 
 The $groups$ dashboard has the panels which show the values of the group $sound$ and $computer$. Both power panels are displayed in the power dashboard.
 
