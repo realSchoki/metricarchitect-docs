@@ -2,13 +2,13 @@
 \chapter{Preliminaries}
 \label{chapter:grundlagen}
 
-Since the thesis covers many different systems each of them has to be introduced at least at a decent level. Modern and best of breed solution are being used here. Grafana and Prometheus are software products which can be used as an optional additional setup in cluster systems like Kubernetes to monitor their state. As a little bonus and for easier developing process Docker and Docker Compose will be used but in a very simple way. The technologies form the target of the \gls{dsl} designed in this thesis. The meta modeling tool Cinco will be used for the realization of the \gls{dsl} and necessary generators.
+Since the thesis covers many different systems each of them has to be introduced at least at a decent level. Modern and best of breed solution are being used here. Grafana and Prometheus are software products which can be used as an optional additional setup in cluster systems like Kubernetes to monitor their state. As a little bonus and for easier developing process Docker and Docker Compose are used but in a very simple way. The technologies form the target of the \gls{dsl} designed in this thesis. The meta modeling tool Cinco is used for the realization of the \gls{dsl} and necessary generators.
  
 \section{Smart Home}
 
 In the course of digitalization and simplification of the procurement of sensor technology in everyday life, smart home has arrived as an affordable concept for the consumer. In the most general case it is a base station with any number of actuators and sensors (\cref{fig:abstract_smart_home}). This station is used to process and store the data from the sensory elements of the network and the actuators act on the basis of decision tables, for example. 
 
-As a simple scenario, one can imagine a living room lamp that is switched on when the brightness sensor outside signals darkness. However, a system does not necessarily has to have sensors and actuators. A network of sensors would only monitor and one of actuators can only act. Examples would be a central power consumption monitoring per socket or a remote light control.
+As a simple scenario, one can imagine a living room lamp that is switched on when the brightness sensor outside signals darkness. However, a system does not necessarily has to have sensors and actuators. A network of sensors would only monitor and one of the actuators can only act. Examples would be a central power consumption monitoring per socket or a remote light control.
 
 Here it is worth mentioning that there are also crossover devices. A heating thermostat usually has a built-in thermometer and is thus both actuator and sensor.
 
@@ -57,11 +57,11 @@ A sensor is a real device, a unit which is used in the real world. This can capt
 
 \section{Prometheus}
 
-Prometheus is an open source solution that is used for metrics monitoring and alerting. There is the possibility to pass data actively or alternatively to configure Prometheus to fetch data from different data sources. For the latter variant, the system to be monitored must provide an \gls{http} interface on which the data is delivered in a predefined manner. Finally the collected data is persisted on the internal time series database.
+Prometheus is an open source solution that is used for metrics monitoring and alerting. There is the possibility to pass data actively or alternatively to configure Prometheus to fetch data from different data sources. For the latter variant, the system to be monitored must provide a \gls{http} interface on which the data is delivered in a predefined manner. Finally the collected data is persisted on the internal time series database.
 
 To simplify this process, there are several libraries for different programming languages that are configurable to export such a format. At the time of writing GO, Scala/Java, Python and Ruby are officially supported \footnote{\url{https://prometheus.io/docs/instrumenting/clientlibs/}}, but for many other languages there are unofficial third party libraries which are advertised on the Prometheus website. 
 
-Since Prometheus exports are not supported by every device there are possibilities to create adapters for the information flow from sensor to Prometheus. \gls{mqtt} is a technique of frequently pushing messages to a message broker. An adapter reads messages from the broker and provide the values in Prometheus export format. Creating adapters is out of scope and will not be covered.
+Since Prometheus exports are not supported by every sensor there are possibilities to create adapters for the information flow from sensor to Prometheus. \gls{mqtt} is a technique of frequently pushing messages to a message broker. An adapter reads messages from the broker and provides the values in Prometheus export format. Creating adapters is out of scope and will not be covered.
 
 In case the selected language is not supported, it is also possible to create the output yourself. For this, the definition of the output format has been well documented \footnote{\url{https://prometheus.io/docs/instrumenting/writing_clientlibs/}}.
 
@@ -130,7 +130,7 @@ A summary (\cref{lst:concept_summary}) is similar to a histogram, however these 
 
 \subsubsection{Untyped}
 
-In this case a value is assigned to the metric without following any special rules. This is a the default type if not otherwise specified.
+In this case a value is assigned to the metric without following any special rules. This is the default type if not otherwise specified.
 \Needspace{9\baselineskip}
 
 \subsection{Labels}
@@ -168,7 +168,7 @@ Between lines 1-4 the first exported metric can be found. The first line starts 
 
 All lines starting with \promcode{#} but not continued with \promcode{TYPE} or \promcode{HELP} are comment lines and are therefore not interpreted.
 
-Lines 3-4 show the measured values split by their labels. Lines that symbolize the measured values consist of three columns. The first in the format \promcode{<name of metric>} followed by optional labels in curly brackets. The example here breaks down all \gls{http} requests by \gls{http} method and \gls{http} return value. The next column contains the measured value for the metric, taking into account the different labels. The last column is again non-mandatory and contains the timestamp at which the value was measured. 
+Lines 3-4 show the measured values split by their labels. Lines that symbolize the measured values consist of three columns. The first is in the format \promcode{<name of metric>} followed by optional labels in curly brackets. The example here breaks down all \gls{http} requests by \gls{http} method and \gls{http} return value. The next column contains the measured value for the metric, taking into account the different labels. The last column is again non-mandatory and contains the timestamp at which the value was measured. 
 In addition, a small example in line 7 can be found. Due to the lack of type specification, the type is \promcode{untyped}. The \gls{ebnf} to the type of line holding values is shown in \cref{lst:ebnf_metric_export}.
 
 \begin{listing}[!ht]
@@ -184,7 +184,7 @@ In addition, a small example in line 7 can be found. Due to the lack of type spe
 	\label{lst:ebnf_metric_export}
 \end{listing}
 
-In the \cref{lst:export_histogramm} a complex example is shown. A histogram export with multiple buckets. Four preconfigured buckets with the limits \promcode{0.05}, \promcode{0.2}, \promcode{1} and \promcode{+Inf} are listed. Additionally the sum and the count of all values is appended. 
+In \cref{lst:export_histogramm} a complex example is shown. A histogram export with multiple buckets. Four preconfigured buckets with the limits \promcode{0.05}, \promcode{0.2}, \promcode{1} and \promcode{+Inf} are listed. Additionally the sum and the count of all values is appended. 
 
 \begin{listing}[!ht]
 	\begin{minted}{text}
@@ -250,23 +250,23 @@ Additionally there are simple table formats, honeycomb patterns, bar charts and 
 
 To fill the diagrams with data from Prometheus a \gls{promql} query must be stored in each diagram, which is executed regularly. Such a diagram is part of a so-called panel. Thus a panel has exactly one diagram and vice-versa. These are now combined into dashboards, which then provide an overview. With this feature it is possible to define a lot of panels for getting displayed at the same time.
 
-It should also be said that there are higher order structures such as organizations or grouping dashboard into playlists. However, this features are out of scope and will not be covered.
+It should also be said that there are higher order structures such as organizations or grouping dashboard into playlists. However, these features are out of scope and will not be covered.
 
 \subsection{Panels}
 
 Panels have many different settings and various individualizations. 
 
-Each panel has primarily a name, description, diagram type, settings for the layout. Cumulative functions and behavior with zero values can also be specified. Depending on the selected chart type, different configurations are possible like axis labeling, legend, limits for symbolic coloring and other specific settings.
+Each panel has primarily a name, description, diagram type and settings for the layout. Cumulative functions and behavior with zero values can also be specified. Depending on the selected chart type, different configurations are possible like axis labeling, legend, limits for symbolic coloring and other specific settings.
 
 Alternatively to the grouping of metrics, which is possible by keywords, it is an option to display several metrics in one diagram by specifying multiple \gls{promql} queries. More can be found in \citetitle{Salituro2020} Chapter 6: Visualization Panels In Grafana of~\cite{Salituro2020}.
 
 \section{Model-Driven Development}
 
-Generalization, classification and aggregation form the most important technique in software development called abstraction~\cite{Brambilla_2017}. Software development cannot exist without it, as it gives the developer the ability to ignore not important properties of a real world situation. Therefore, it helps breaking down the observed scene into essential parts leading to a simpler description of the given situation. As a synonym modeling instead of abstraction is frequently used. Based on this model, which is acquired by abstraction, a developer can now realize and implement a software which fulfills all needs and constraints expressed by the model. 
+Generalization, classification and aggregation form the most important technique in software development is called abstraction~\cite{Brambilla_2017}. Software development cannot exist without it, as it gives the developer the ability to ignore not important properties of a real world situation. Therefore, it helps breaking down the observed scene into essential parts leading to a simpler description of the given situation. As a synonym modeling instead of abstraction is frequently used. Based on this model, which is acquired by abstraction, a developer can now realize and implement a software which fulfills all needs and constraints expressed by the model. 
 
 Nowadays complex world abstraction is indispensable and helps to create models in everyday life. It is a tool to eradicate unnecessary information or properties which can not be understood or it is not necessary to do so. 
 
-A good example for a well know abstraction is an escape plan of buildings. The fundamental function of such plans is to guide people in case of an emergency out of the building in the most efficient and safe way. Since in an emergency time is key it is important to show only essential information. Data like the material of a door or wall thickness could be shown but would not match the purpose of the exit plan. Unnecessary data makes a plan complex. Instead information like one way doors, unopenable windows or emergency exits should be marked. 
+A good example for a well know abstraction is an escape plan of buildings. The fundamental function of such plans is to guide people in case of an emergency out of the building in the most efficient and safe way. Since time is key in an emergency situation it is important to show only essential information. Data like the material of a door or wall thickness could be shown but would not match the purpose of the exit plan. Unnecessary data makes a plan complex. Instead, information like one way doors, unopenable windows or emergency exits should be marked. 
 
 Abstraction is the fundamental technique of model-driven development. Additionally it utilizes different tools and standards for visualization, notation and the development process. A very common and popular notation is the \gls{uml}~\cite{Cook2017}. Powerful tooling and development assist can be found with \gls{emf}. This framework gives the ability to model in a well defined way using the meta model Ecore. As it is meta, it allows to describe other models~\cite[section 2.3.1]{steinberg2008emf}. The focus is on creating a perfect model, defining all constraints and dependencies. From here the implementation is just following the abstract model, since the work of discussing and committing to a mutual objective is already done.
 
@@ -276,12 +276,12 @@ In the context of generating code different functions and feature were missed in
 
 \say{Also the resources we have no longer allow us to keep the head start against Java. And learning Xtend still is a burden for new Xtext users. To reflect this changed situation we have decided to make Java the default in the wizard again (except e.g. the Generator and a few other APIs).}~\cite{xtendToJava}
 
-Since Xtend did not get fully replaced by Java there are still reasons to continue to use Xtend. For example, the template functions makes constructing files easier through possibilities using loops, multiline strings or function calls.
+Since Xtend did not get fully replaced by Java there are still reasons to continue to use Xtend. For example, the template functions make constructing files easier through possibilities using loops, multiline strings or function calls.
 
 
 \section{Cinco}
 
-All technologies above are the base technologies used to create a model-driven solution. Since a \gls{dsl} has to be designed in this thesis the meta modeling tool Cinco~\cite{CincoHomepage} will be used. The full name is \say{CINCO SCCE Meta Tooling Framework} and it utilizes the \gls{emf} and Graphiti Graphical Tooling Infrastructure. It is in active development of the chair for programming systems of the \gls{tudortmund}.
+All technologies above are the base technologies used to create a model-driven solution. Since a \gls{dsl} has to be designed in this thesis the meta modeling tool Cinco~\cite{CincoHomepage} is used. The full name is \say{CINCO SCCE Meta Tooling Framework} and it utilizes the \gls{emf} and Graphiti Graphical Tooling Infrastructure. It is in active development of the chair for programming systems of the \gls{tudortmund}.
 
 The \gls{mgl} allows the user to design a custom \gls{dsl} and generate a working \gls{ide} with features like auto complete or code generation like \gls{emf} already does. Additionally visual editing in the generated \gls{ide} is possible. Since modeling a \gls{dsl} which can be used in a visual editor lowers the threshold to get started with using this \gls{dsl} for non computer scientists essentially. 
 
@@ -339,7 +339,7 @@ Cinco uses four different elements for modeling a \gls{dsl} inside of it. The \g
 
 \subsubsection{Node}
 
-A node is an unit which can have incoming and outgoing edges. It also can have different attributes and a so-called prime reference. A prime reference is a pointer to any other node, edge or container. This allows to make connections between different models in different files. Because Cinco is based on the \gls{emf} it is also possible to reference any other object defined in external sources. To declare a node the first token to use is \promcode{node} preceded by optional annotations and a optional \promcode{abstract} keyword. Followed by the name of the node and a declaring body wrapped in curly brackets. The body can contain definitions for various attributes. Declaration of which edge types are incoming and which outgoing with optional constraints like quantities, a style option for correct visualization and a already described prime reference are common. An attribute starts with the keyword \promcode{attr}, preceded by optional prefixes like \promcode{final} and \promcode{unique}. A type and a name are appended, optional value limits and a default value can be set. For the edges \promcode{incomingEdges} or \promcode{outgoingEdges} can be used with the possibility restricting the allowed edges and adding a cardinality to this declaration. Styles can be applied to the node by using the \promcode{style} keyword with a style identifier.
+A node is an unit which can have incoming and outgoing edges. It can also have different attributes and a so-called prime reference. A prime reference is a pointer to any other node, edge or container. This allows to make connections between different models in different files. Because Cinco is based on the \gls{emf} it is also possible to reference any other object defined in external sources. To declare a node, the first token to use is \promcode{node} preceded by optional annotations and an optional \promcode{abstract} keyword, followed by the name of the node and a declaring body wrapped in curly brackets. The body can contain definitions for various attributes. Declaration of which edge types are incoming and which outgoing with optional constraints like quantities, a style option for correct visualization and a already described prime reference are common. An attribute starts with the keyword \promcode{attr}, preceded by optional prefixes like \promcode{final} and \promcode{unique}. A type and a name are appended, optional value limits and a default value can be set. For the edges \promcode{incomingEdges} or \promcode{outgoingEdges} can be used with the possibility restricting the allowed edges and adding a cardinality to this declaration. Styles can be applied to the node by using the \promcode{style} keyword with a style identifier.
 Further the last token \promcode{prime} is used for adding a prime reference to the node. To be set up correctly the prime reference needs the type of the referenced element and a name.
 
 \subsubsection{Edge}
