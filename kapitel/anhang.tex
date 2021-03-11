@@ -25,7 +25,7 @@
 					      | "A" | "B" | "C" | "D" | "E" | "F"
 					      | "a" | "b" | "c" | "d" | "e" | "f";
 		\end{minted}
-		\caption{EBNF following ISO/IEC 14977 of a Metric}
+		\caption{EBNF for String Elements in PromQL}
 	\end{samepage}
 \end{listing}
 
@@ -42,7 +42,7 @@
 				| "A" | "B" | "C" | "D" | "E" | "F"
 				| "a" | "b" | "c" | "d" | "e" | "f";
 		\end{minted}
-		\caption{EBNF following ISO/IEC 14977 of a Metric}
+		\caption{EBNF for Floats in PromQL}
 	\end{samepage}
 \end{listing}
 
@@ -50,6 +50,7 @@
 \begin{listing}[H]
 \begin{samepage}
 \begin{minted}{ebnf}
+	label = ? string identifier, one word ?
 	vector = label, [ "{", [ param, { ",", param } ], "}" ]
 	       | "{", [ param-not-empty, { ",", param } ], "}"
 	instant-vector = vector, [ " ", "offset", " ", duration ];
@@ -67,23 +68,10 @@
 	int = digit, { digit };
 	digit = ? 0 ... 9 ?
 \end{minted}
-\caption{EBNF following ISO/IEC 14977 of a Metric}
+\caption{EBNF for Vectors in PromQL}
 \label{lst:promql_vector}
 \end{samepage}
 \end{listing}
-
-%
-%[-+]?
-%(
-%	[0-9]*\.?[0-9]+
-%	
-%	([eE][-+]?[0-9]+)?
-%	| 0[xX][0-9a-fA-F]+
-%	| [nN][aA][nN]
-%	| [iI][nN][fF]
-%)
-%https://prometheus.io/docs/prometheus/latest/querying/operators/
-%https://github.com/prometheus/prometheus/blob/master/promql/parser/ast.go
 
 \subsection{Operators}
 
@@ -109,24 +97,23 @@
 			set-op = "and" | "or" | "unless";
 			instant-vector = instant-vector, " ", set-op, " ", instant-vector
 		\end{minted}
-		\caption{EBNF following ISO/IEC 14977 of a Metric}
+		\caption{EBNF for Simple Operations in PromQL}
 	\end{samepage}
 \end{listing}
 
 
-\subsection{Vector Matching}
+\subsection{Aggregation Operators}
 
 \begin{listing}[H]
 	\begin{samepage}
 		\begin{minted}{ebnf}
-			instant-vector = instant-vector, " ", set-op, " ", "ignoring(", label-list} ")", instant-vector
-			label-list = label, { ",", label };
+		parameter = float
+		aggr-op = "sum" | "min" | "max" | "avg" | "group" | "stddev" | "stdvar" | "count" | "count_values" | "bottomk" | "topk" | "quantile"
+		aggregation = aggr-op, [ ( "without" | "by" ), label, { ",", label }], "(", { parameter }, instant-vector, ")"
 		\end{minted}
-		\caption{EBNF following ISO/IEC 14977 of a Metric}
+		\caption{EBNF for Aggregation Operators}
 	\end{samepage}
 \end{listing}
-
-\todo{do the rest of the ebnf for promql}
 
 \clearpage
 \section{Implementation}
@@ -143,14 +130,14 @@
 		import de.jabc.cinco.meta.runtime.provider.CincoValuesProvider;
 		import dev.schoki.metricarchitect.model.sensor.sensormodel.Bolt;
 		import dev.schoki.metricarchitect.model.sensor.sensormodel.Broadcast;
-		import dev.schoki.metricarchitect.model.sensor.sensormodel.DeviceDefinition;
+		import dev.schoki.metricarchitect.model.sensor.sensormodel.SensorDefinition;
 		import dev.schoki.metricarchitect.model.sensor.sensormodel.Fan;
 		import dev.schoki.metricarchitect.model.sensor.sensormodel.Faucet;
 		import dev.schoki.metricarchitect.model.sensor.sensormodel.Light;
 		import dev.schoki.metricarchitect.model.sensor.sensormodel.Plug;
 		import dev.schoki.metricarchitect.model.sensor.sensormodel.Wind;
 		
-		public class SensorIconValueProvider extends CincoValuesProvider<DeviceDefinition, String> {
+		public class SensorIconValueProvider extends CincoValuesProvider<SensorDefinition, String> {
 			
 			public static enum Icon {
 				Bolt("src/main/resources/icons/bolt-solid.png"),
@@ -179,7 +166,7 @@
 			}
 			
 			@Override
-			public Map<String, String> getPossibleValues(DeviceDefinition sensor) {
+			public Map<String, String> getPossibleValues(SensorDefinition sensor) {
 				
 				if (sensor instanceof Plug) {
 					return Arrays.asList(Icon.Plug).stream().collect(Collectors .toMap(Icon::getPath, Icon::name));
@@ -209,47 +196,47 @@
 \subsection{FilterValueProvider}
 \begin{longlisting}
 	\begin{minted}{java}
-		package dev.schoki.metricarchitect.provider;
+	package dev.schoki.metricarchitect.provider;
+	
+	import java.util.Map;
+	import java.util.stream.Collectors;
+	
+	import org.eclipse.emf.common.util.ECollections;
+	import org.eclipse.emf.common.util.EList;
+	
+	import com.google.common.base.Functions;
+	
+	import de.jabc.cinco.meta.runtime.provider.CincoValuesProvider;
+	import dev.schoki.metricarchitect.model.floor.floormodel.Sensor;
+	import dev.schoki.metricarchitect.model.grafana.grafanamodel .GraphQueryForGroup;
+	import dev.schoki.metricarchitect.model.grafana.grafanamodel .GraphQueryForSensor;
+	import dev.schoki.metricarchitect.model.grafana.grafanamodel .GraphQueryToPanel;
+	import dev.schoki.metricarchitect.model.sensor.sensormodel .Metric;
+	
+	public class FilterValueProvider extends CincoValuesProvider<GraphQueryToPanel, String> {
 		
-		import java.util.Map;
-		import java.util.stream.Collectors;
-		
-		import org.eclipse.emf.common.util.ECollections;
-		import org.eclipse.emf.common.util.EList;
-		
-		import com.google.common.base.Functions;
-		
-		import de.jabc.cinco.meta.runtime.provider.CincoValuesProvider;
-		import dev.schoki.metricarchitect.model.floor.floormodel.Device;
-		import dev.schoki.metricarchitect.model.grafana.grafanamodel .GraphQueryForDevice;
-		import dev.schoki.metricarchitect.model.grafana.grafanamodel .GraphQueryForGroup;
-		import dev.schoki.metricarchitect.model.grafana.grafanamodel .GraphQueryToPanel;
-		import dev.schoki.metricarchitect.model.sensor.sensormodel.Metric;
-		
-		public class FilterValueProvider extends CincoValuesProvider<GraphQueryToPanel, String> {
-			
-			@Override
-			public Map<String, String> getPossibleValues(GraphQueryToPanel arg0) {
-				EList<Device> f = ECollections.emptyEList();
-				if(arg0.getSourceElement() instanceof GraphQueryForGroup) {
-					f = ((GraphQueryForGroup) arg0.getSourceElement()) .getDeviceGroup().getDevicePredecessors();
-				} else if ( arg0.getSourceElement() instanceof GraphQueryForDevice) {
-					f = ECollections.asEList(((GraphQueryForDevice) arg0.getSourceElement()).getDevice());
-				} else {
-					throw new RuntimeException("Unknown node type: " + arg0.getSourceElement().getClass().toString());
-				}
-				
-				return f.stream()
-					.flatMap( d -> d
-					.getSensor()
-					.getMetricPredecessors()
-					.stream()
-					.map(Metric::getLabel)
-				)
-				.distinct()
-				.collect(Collectors.toMap(Functions.identity(), Functions.identity()));
+		@Override
+		public Map<String, String> getPossibleValues(GraphQueryToPanel arg0) {
+			EList<Sensor> f = ECollections.emptyEList();
+			if(arg0.getSourceElement() instanceof GraphQueryForGroup) {
+				f = ((GraphQueryForGroup) arg0.getSourceElement()).getSensorGroup() .getSensorPredecessors();
+			} else if ( arg0.getSourceElement() instanceof GraphQueryForSensor) {
+				f = ECollections.asEList(((GraphQueryForSensor) arg0.getSourceElement()).getSensor());
+			} else {
+				throw new RuntimeException("Unknown node type: " + arg0.getSourceElement().getClass().toString());
 			}
+			
+			return f.stream()
+			.flatMap( d -> d
+			.getSensor()
+			.getMetricPredecessors()
+			.stream()
+			.map(Metric::getLabel)
+			)
+			.distinct()
+			.collect(Collectors.toMap(Functions.identity(), Functions.identity()));
 		}
+	}
 	\end{minted}
 	\caption{Code of FilterValueProvider Class}
 	\label{lst:classFilterValueProvider}
