@@ -11,6 +11,8 @@
 \usepackage{unicode-math}
 \usepackage{luacode}
 
+\usepackage{pdfpages}
+
 \usepackage{fontawesome}
 
 %\setromanfont{Cambria}
@@ -23,7 +25,7 @@
 %
 \usepackage{graphicx}
 \usepackage{xcolor}
-\definecolor{lg}{RGB}{211, 211, 211}
+\definecolor{lg}{RGB}{238, 238, 238}
 %
 %\usepackage{amsmath,amssymb,subcaption}%,subfigure
 
@@ -77,7 +79,13 @@
 \usepackage[textwidth=1.8cm,textsize=tiny]{todonotes}
 %\setuptodonotes{fancyline}
 %
-\newmintinline[promcode]{text}{fontsize=\scriptsize, bgcolor=lg}
+\newcommand{\promcode}[1]{%
+	\colorbox{lg}{%
+		\parbox[c][0.8em]{\widthof{\promcodewbg{#1}}}{\promcodewbg{#1}}%
+	}%
+}
+
+\newmintinline[promcodewbg]{text}{}
 \def\mgllexer{mgl.py:MGLLexer -x}
 %
 %
@@ -121,7 +129,7 @@ natbib=true,
 %}
 
 
-\usepackage{refcheck}
+\usepackage[norefs, nocites]{refcheck}
 %
 %% URLs
 %\usepackage{url}

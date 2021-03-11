@@ -6,7 +6,7 @@ Now, that a basic abstract model is designed a implementation in Cinco can be ma
 \section{MGL}
 \label{sec:mgl}
 Even though the style definitions using \gls{msl} are very minimal in this case the focus is set on the model \gls{mgl} files.
-First of all the sensor layer should be described as the rest of the model is based on this step.
+First of all the sensor layer should be described, as the rest of the model is based on this step.
 \subsection{Sensor}
 The one and only node without any child nodes is called metric (\cref{lst:nodeMetric}) and describes a metric like introduced in \cref{chapter:grundlagen}. 
 \begin{listing}[H]
@@ -23,7 +23,7 @@ The one and only node without any child nodes is called metric (\cref{lst:nodeMe
 \end{listing}
 As shown a metric has a label describing its function like power or humidity. It has to represent the names of the metrics which are exported through the Prometheus interface. A metric can have multiple connections to different sensors but not more than one connection to a sensor.
 
-Senors combine these metrics (line 4, figure \ref{fig:CodeSensorDevice}) into a group of exportable data. This step is done and needed for modeling real world sensor devices. This devices can be reused everywhere in the project since it is an abstract and not a concrete instance of the device holding configuration or being used. 
+Senors combine these metrics (line 4, figure \ref{fig:CodeSensorDevice}) into a group of exportable data. This step is done and needed for modeling real world sensor devices. This sensor devices can be reused everywhere in the project since it is an abstract and not a concrete instance of the sensor holding configuration. 
 
 Attributes like a name and a specific icon  can also be edited. The names for the sensors are used to keep them apart. For a better \gls{ui} experience it is possible to select a symbol from a preselected set of icons to show up in the node. This makes it easier to get a faster coordination in bigger networks. This feature gets enabled by the $SensorIconValueProvider$ class linked with the $@possibleValuesProvider$ annotation (listing \ref{lst:classSensorIconValueProvider}).
 \begin{listing}[H]
@@ -40,11 +40,11 @@ Attributes like a name and a specific icon  can also be edited. The names for th
 	\caption{Impl. of DeviceDefinition Node}
 	\label{fig:CodeSensorDevice}
 \end{listing}
-For a faster access to the tooling some presets are implemented setting a predefined icon.
+For a faster access to the tooling some presets are implemented with a predefined icon.
 \subsection{Floor}
-The modeled sensor using the previous \gls{mgl} definition can now be instantiated and configured. This can be achieved using the node $Device$. Via prime reference a link to a $DeviceDefinition$ is created (lines 4-6, \ref{fig:CodeSensorDeviceInstance}). Since it is not a specific real world device a symbolic name and a \gls{url} has to be set. The name is only used for better readability and the \gls{url} is essential. It will be generated into the Prometheus configuration for the deployment. Every node of this type corresponds to a device observed by Prometheus. 
+The modeled sensor using the previous \gls{mgl} definition can now be instantiated and configured. This can be achieved using the node \promcode{Device}. Via prime reference a link to a \promcode{DeviceDefinition} is created (lines 4-6, \ref{fig:CodeSensorDeviceInstance}). Since the \promcode{Device} node is not a specific real world device a symbolic name and a \gls{url} has to be set. The name is only used for better readability and the \gls{url} is essential. It will be generated into the Prometheus configuration for the deployment. Every node of this type corresponds to a device observed by Prometheus. 
 
-To create a improved overview and handling a simple grouping is also implemented. This can be done by using the $Filter$ edges from the $Device$ to a $DeviceGroup$. For example it is possible to combine all power sockets or lights to one node to make them better accessible in the later steps. 
+To create a improved overview and handling a simple grouping is also implemented. This can be done by using the \promcode{Filter} edges from the \promcode{Device} to a \promcode{DeviceGroup}. For example it is possible to combine all power sockets or lights to one node to make them better accessible in the later steps. 
 
 \begin{listing}[H]
 	\begin{minted}{\mgllexer}
@@ -63,11 +63,11 @@ To create a improved overview and handling a simple grouping is also implemented
 	\label{fig:CodeSensorDeviceInstance}
 \end{listing}
 
-The generators for the needed configurations will follow later (see \cref{sec:impl_generator}). For a better understanding where the devices are in the real world it is possible to use the $FloorImage$ node. It has only one variable which can be set to the path of an image inside the project relative to the root. Preferably a floor plan is used. With this creating device instances without forgetting which node matches with which real world device can be easily achieved.
+The generators for the needed configurations will follow later (see \cref{sec:impl_generator}). For a better understanding where the devices are in the real world it is possible to use the \promcode{FloorImage} node. It has only one variable which can be set to the path of an image inside the project relative to the root. Preferably a floor plan is used. With this creating device instances without forgetting which node matches with which real world device can be easily achieved.
 
 \subsection{Grafana}
 
-Using the previous devices and device groups it is not possible to model the Grafana configuration. Instead, it start by creating a new node via prime reference which is than embedded into a $GraphQueryForGroup$ or for non groups $GraphQueryForDevice$ node. Both wield the same information but it is necessary to distinguish between them because the generators act differently while processing these nodes. Since this node only works as a connection to the floor \gls{mgl} it does not contain more information. 
+Using the previous devices and device groups it is not possible to model the Grafana configuration. Instead, it start by creating a new node via prime reference which is then embedded into a \promcode{GraphQueryForGroup} or for non groups \promcode{GraphQueryForDevice} node. Both wield the same information but it is necessary to distinguish between them because the generators act differently while processing these nodes. Since this node only works as a connection to the floor \gls{mgl} it does not contain more information. 
 
 \begin{listing}[H]
 	\begin{minted}{\mgllexer}
@@ -82,7 +82,7 @@ Using the previous devices and device groups it is not possible to model the Gra
 	\end{minted}
 \end{listing}
 
-Due to this layer covering the Grafana configuration \gls{promql} queries are an essential part of it. The outgoing edge $GraphQueryToPanel$ covers a rich set of possible queries but not the overall features. It is the part of the model which describes the derived \gls{promql} query the most. Like already mentioned in subsection \ref{subsec:promql} there are different parameters to set. It is necessary to keep up to the right syntax, because the values for the variables are unchecked strings. The fields $timespan$, $timeresolution$ and $offset$ (line 6-8, listing \ref{lst:GraphQueryToPanel}) has to follow the roles for duration notation (page \pageref{lst:promql_vector}, figure \ref{lst:promql_vector}). All connected devices either connect via device groups or can directly have many different metrics. Since it does not make sense to show not compatible metrics in the same graph, like power and humidity, a value provider filters all common metrics of the devices. 
+Due to this layer covering the Grafana configuration \gls{promql} queries are an essential part of it. The outgoing edge \promcode{GraphQueryToPanel} covers a rich set of possible queries but not the overall features. It is the part of the model which describes the derived \gls{promql} query the most. Like already mentioned in subsection \ref{subsec:promql} there are different parameters to set. It is necessary to keep up to the right syntax, because the values for the variables are unchecked strings. The fields \promcode{timespan}, \promcode{timeresolution} and \promcode{offset} (line 6-8, listing \ref{lst:GraphQueryToPanel}) has to follow the roles for duration notation (page \pageref{lst:promql_vector}, figure \ref{lst:promql_vector}). All connected devices either connect via device groups or can directly have many different metrics. Since it does not make sense to show not compatible metrics in the same graph, like power and humidity, a value provider filters all common metrics of the devices. 
 
 \begin{listing}[H]
 	\begin{minted}{\mgllexer}
@@ -100,17 +100,17 @@ edge GraphQueryToPanel {
 	\label{lst:GraphQueryToPanel}
 \end{listing}
 
-The $FilterValueProvider$ class (page \pageref{lst:classFilterValueProvider}, listing \ref{lst:classFilterValueProvider}) has to take into consideration that there are $GraphQueryByGroup$ and $GraphQueryByGroup$. This is done by a simple type checking in runtime with the java $instanceof$ keyword. Using this way a drop down menu will only allow valid metrics to be used.
+The \promcode{FilterValueProvider} class (page \pageref{lst:classFilterValueProvider}, listing \ref{lst:classFilterValueProvider}) has to take into consideration that there are \promcode{GraphQueryByGroup} and \promcode{GraphQueryByDevice}. This is done by a simple type checking in runtime with the Java \promcode{instanceof} keyword. Using this way a drop down menu will only allow valid metrics to be used.
 
-Lastly an aggregation operator has to be selected. The default is $none$. This is not a function implemented by \gls{promql} but it is used as a keyword in this project for doing nothing, meaning there will not be a function around the generated query. The original \gls{promql} has many different functions and as already said, for this project only some of them are implemented. 
+Lastly an aggregation operator has to be selected. The default is \promcode{none}. This is not a function implemented by \gls{promql} but it is used as a keyword in this project for doing nothing, meaning there will not be a function around the generated query. The original \gls{promql} has many different functions and as already said, for this project only some of them are implemented. 
 
 \begin{center}
 	none | sum | min | max | avg | group | stddev | stdvar | count | count\_values | bottomk | topk  | quantile
 \end{center}
 
-It can be easily expanded but for a simple proof of concept the set is sufficient. These edges can than be merged to a $Panel$ node. At this state it does not have specific attributes. Yet, it can technically have all needed properties which can be used for setting up a Grafana panel. This could be width and height, position in x and y coordinates, graph style and so on.
+It can be easily expanded but for a simple proof of concept the set is sufficient. These edges can than be merged to a \promcode{Panel} node. At this state it does not have specific attributes. Yet, it can technically have all needed properties which can be used for setting up a Grafana panel. This could be width and height, position in x and y coordinates, graph style and so on.
 
-With the non specific edge $PanelToDashboard$ a connection to the last node in this \gls{mgl} file can be established. The final node is the $Dashboard$ node. It is not very interesting but it has a name which is used by Grafana as the shown identifier. Additionally a unique id has to be set to ensure the correct functionality of Grafana. This is done by using the $@postCreate$ annotation (line 3, listing \ref{lst:nodeDashboard}) and a proper class for it. The class $DashboardPostCreateSetUniqueId$ creates a random string which will be set as $internal\_id$. This value is nothing the developer has to take care of and plays only an important role for the generator.
+With the non specific edge \promcode{PanelToDashboard} a connection to the last node in this \gls{mgl} file can be established. The final node is the \promcode{Dashboard} node. It is not very interesting but it has a name which is used by Grafana as the shown identifier. Additionally a unique id has to be set to ensure the correct functionality of Grafana. This is done by using the \promcode{@postCreate} annotation (line 3, listing \ref{lst:nodeDashboard}) and a proper class for it. The class \promcode{DashboardPostCreateSetUniqueId} creates a random string which will be set as \promcode{internal\_id}. This value is nothing the developer has to take care of and plays only an important role for the generator.
 
 \begin{listing}[!ht]
 	\begin{minted}{\mgllexer}
@@ -129,9 +129,9 @@ With the non specific edge $PanelToDashboard$ a connection to the last node in t
 \subsection{Project}
 The Project layer was added to have a better overview. It can contain different information which can be possibly needed for better management. Extensions like adding options for the Docker deployment or specific settings for Grafana and Prometheus could be added here in future work. Furthermore it is used as an entry point for the generators. 
 
-The one and only node in this layer is the $GrafanaModel$ node which has a prime reference to a whole Grafana layer model file. It is possible to add multiple nodes.
+The one and only node in this layer is the \promcode{GrafanaModel} node which has a prime reference to a whole Grafana layer model file. It is possible to add multiple nodes.
 
-Like already mentioned, this layer is the beginning for the generation process. A generator is appended with a $@generatable$ ( line 3, \cref{lst:modelProjectModel}) annotation. The class $ProjectGenerator$ therefor does all necessary steps. 
+Like already mentioned, this layer is the beginning for the generation process. A generator is appended with a \promcode{@generatable} ( line 3, \cref{lst:modelProjectModel}) annotation. The class \promcode{ProjectGenerator} therefor does all necessary steps.
 
 \begin{listing}[!ht]
 	\begin{minted}{\mgllexer}
@@ -149,7 +149,7 @@ Like already mentioned, this layer is the beginning for the generation process. 
 \section{Generators}
 \label{sec:impl_generator}
 
-Generating the needed files for deployment is done by the $ProjectGenerator$ class. The class invokes generators for the three different products to be used. At first configuration files for Prometheus are getting created by $PrometheusConfigGenerator$ using the associated template file. All defined and used sensors are collected and the necessary entries are created in the configuration (\cref{lst:xtend_prom}).
+Generating the needed files for deployment is done by the \promcode{ProjectGenerator} class. The class invokes generators for the three different products to be used. At first configuration files for Prometheus are getting created by \promcode{PrometheusConfigGenerator} using the associated template file. All defined and used sensors are collected and the necessary entries are created in the configuration (\cref{lst:xtend_prom}).
 
 \begin{listing}
 	\begin{minted}{xtend}
@@ -163,9 +163,9 @@ Generating the needed files for deployment is done by the $ProjectGenerator$ cla
 	\label{lst:xtend_prom}
 \end{listing} 
 
-Grafana requires more files. The files worth mentioning are the dashboard definitions. They are created by traversing trough the tree of nodes while gathering all queries defined in each $GraphQueryToPanel$ edge. This leads to multiple panels with multiple queries in each dashboard. The responsible class is $GrafanaConfigGenerator$.
+Grafana requires more files. The files worth mentioning are the dashboard definitions. They are created by traversing trough the tree of nodes while gathering all queries defined in each \promcode{GraphQueryToPanel} edge. This leads to multiple panels with multiple queries in each dashboard. The responsible class is \promcode{GrafanaConfigGenerator}.
 
-Finally the $docker-compose.yml$ file is created by $DockerComposeGenerator$. In this file nothing is altered dynamically. In this generator parameters do not have an effect in generation. However, to still be able to develop a more complex deployment in further iterations of this project a template was created.
+Finally the \promcode{docker-compose.yml} file is created by \promcode{DockerComposeGenerator}. In this file nothing is altered dynamically. In this generator parameters do not have an effect in generation. However, to still be able to develop a more complex deployment in further iterations of this project a template was created.
 
 \section{Cinco Product}
 
@@ -177,7 +177,7 @@ In the Cinco Product generated by Cinco using the models described above in \cre
 	\label{fig:editor}
 \end{figure}
 
-The project structure is visible on the left hand side in \cref{fig:editor}. For each layer one file was created. The $img$ folder has the images used in the modeling process. In the center of the screen the modeling area is shown. Properties can be set if elements are selected in the lower section of the window.
+The project structure is visible on the left hand side in \cref{fig:editor}. For each layer one file was created. The \promcode{img} folder has the images used in the modeling process. In the center of the screen the modeling area is shown. Properties can be set if elements are selected in the lower section of the window.
 
 To better understand the example the notation will be introduced.
 
@@ -238,7 +238,7 @@ The versions of the node can be used to give hints what the technical device is 
 \end{minipage}%
 \hfill%
 \begin{minipage}{0.8\textwidth}
-	Concrete Devices are mapped by these nodes. This node can be created by using prime references. Therefore $DeviceDefinition$ nodes has to be pulled into the modeling screen. The icon is inherited from the referenced node.
+	Concrete Devices are mapped by these nodes. This node can be created by using prime references. Therefore \promcode{DeviceDefinition} nodes has to be pulled into the modeling screen. The icon is inherited from the referenced node.
 \end{minipage}
 
 \subsubsection{Device Group}
@@ -277,7 +277,7 @@ A background can be set in the floor layer to create a better overview about the
 \end{minipage}%
 \hfill%
 \begin{minipage}{0.8\textwidth}
-In the Grafana Layer this node can be used to reference an already defined device group from the floor layer by prime reference. Since technically it does not make a difference if this is a single device or a group it has the same appearance as the $GraphQueryForDevice$ node. The icon is inherited from the referenced node.
+In the Grafana Layer this node can be used to reference an already defined device group from the floor layer by prime reference. Since technically it does not make a difference if this is a single device or a group it has the same appearance as the \promcode{GraphQueryForDevice} node. The icon is inherited from the referenced node.
 \end{minipage}
 
 
@@ -328,7 +328,7 @@ With the version 8.5.1 which was released on 2nd October 2020 Tasmota gets optio
 	\label{fig:gosund_sp1}
 \end{figure}
 
-Connecting to the correct \gls{url} under $/metrics$ will then return a well formatted Prometheus export (\cref{lst:exGosundExport}).
+Connecting to the correct \gls{url} under \url{/metrics} will then return a well formatted Prometheus export (\cref{lst:exGosundExport}).
 
 \begin{listing}[!ht]
 	\begin{minted}{text}
@@ -444,7 +444,7 @@ The generated Prometheus Configuration has all placed sensors devices from the m
 	\label{lst:generated_prometheus_yaml}
 \end{listing}
 
-The dashboard definition files are long and cannot be shown here as they contain 300 lines. Therefore only important parts will be shown. The queries have more parameters then the expression but in this work only the expression is getting generated. \cref{lst:dashboard_expr} shows how the queries are stored in the dashboard definition. The $refId$ is auto generated since it is only needed for Grafana.
+The dashboard definition files are long and cannot be shown here as they contain 300 lines. Therefore only important parts will be shown. The queries have more parameters then the expression but in this work only the expression is getting generated. \cref{lst:dashboard_expr} shows how the queries are stored in the dashboard definition. The \promcode{refId} is auto generated since it is only needed for Grafana.
 
 \begin{listing}[!ht]
 	\begin{minted}{json}
@@ -519,7 +519,7 @@ volumes:
 \end{listing}
 
 \subsection{Deployment}
-As the generated file create a ready to deploy configuration it can be run as it is. Both services are started in parallel. The command \say{$docker\text{-}compose\text{ }ps$} (\cref{fig:deployment}) displays the running container created by starting the deployment with \say{$docker\text{-}compose\text{ }up\text{ -}d$}. The default behavior of the deployment command is to stay in an interactive environment and block the shell. To start it in the background \say{$-d$} has to be appended. It detaches the shell after successfully starting the container for Grafana and Prometheus. 
+As the generated file create a ready to deploy configuration it can be run as it is. Both services are started in parallel. The command \promcode{docker-compose ps} (\cref{fig:deployment}) displays the running container created by starting the deployment with \promcode{docker-compose up -d}. The default behavior of the deployment command is to stay in an interactive environment and block the shell. To start it in the background \promcode{-d} has to be appended. It detaches the shell after successfully starting the container for Grafana and Prometheus. 
 
 
 \cref{fig:deployment} presents deployment information in a tabular view. For every created docker container the name, executed command, state and published ports are listed. The name is a combination of the directory name where the $docker\text{-}compose$ file lies, the service name and a index. A docker container has a process in the foreground which is defined by the command. The state of the docker container is displayed. The last property shows which ports are published. In this case the port 3000 for Grafana and port 9090 for Prometheus are exposed. This allows to connect to the web for \gls{ui} via \gls{http}.

@@ -8,19 +8,19 @@ Because it is already known which software to use this section will be split int
 \subsection{Real World Situation}
 In this section the properties of the system that are observable in the real world are considered closer. Sensors come in different shapes and varieties. For example single metric sensors, like thermometer, brightness sensors or power consumption. 
 
-Additionally there are also more complex ones. Multi metric sensors for example are digital weather stations, network components like a switch or router, server metrics and so on. A specific property, which only real world sensors can have, is a location. They can be in the living room or an office building. If the whole sensor network is between multiple cities and multiple with a humidity sensor on each floor in every room it can become rather large in scale.
+Additionally there are also more complex ones. Multi metric sensors for example are digital weather stations, network components like a switch or router, server metrics and so on. A specific property of real world sensors is a location. They can be in the living room or an office building. If the whole sensor network is between multiple cities and multiple buildings with a humidity sensor on each floor in every room it can become rather large in scale.
 
 Summarized it is a real world gadget which provide at least one metric and is somehow bound to a location.
 
 \subsection{Digital World}
-Because the sensors are more intelligent devices in this context they have to be accessible through network via \gls{IPv4} or \gls{IPv6} and expose the metrics in a predefined syntax ( see section \ref{subsec:Exportformat}, page \pageref{subsec:Exportformat} ). 
+Because the sensors are more intelligent devices in this context they have to be accessible through network via \gls{IPv4} or \gls{IPv6} and provide the metrics in a predefined syntax ( see \cref{subsec:Exportformat}, page \pageref{subsec:Exportformat} ). 
 
-This is the bridge to the consuming parts of the system. In the next step Prometheus is configured to actively pull the exposed metrics of the sensors in a predefined frequency. It is the possible for the sensors to push their metrics to Prometheus, but it would cause the sensors have to be configured knowing  Prometheus \gls{ip-address}. The way of pushing the data into Prometheus won't be examined further.
+This is the bridge to the consuming parts of the system. In the next step Prometheus is configured to actively pull the provided metrics of the sensors in a predefined frequency. It is possible for the sensors to push their metrics to Prometheus, but it would cause the sensors to be configured knowing  Prometheus \gls{ip-address}. The way of pushing the data into Prometheus won't be examined further.
 
 Since Prometheus only acts as the database, Grafana is used as a visualization toolkit. Grafana connects directly to Prometheus and uses \gls{promql} to gather information from the database storage. The possibilities mentioned in \cref{sec:grafana} are configurable. 
 
-Both settings for Prometheus and Grafana can be delivered with a simple configuration file, meaning there is no need to go through the setup process. 
-In addition a Dockerfile will take care of the correct packaging and runtime accessibility of all needed files. Therefore this whole structure makes allows to get a single output which is capable of running Prometheus and Grafana, configured in the predefined way and already knowing the set up sensor devices. \cref{fig:system} shows an example set up.
+Both settings for Prometheus and Grafana can be delivered with some simple configuration files, meaning there is no need to go through the setup process. 
+In addition a Dockerfile will take care of the correct packaging and runtime accessibility of all needed files. Therefore this whole structure allows to get a single output which is capable of running Prometheus and Grafana, configured in the predefined way and already knowing the set up sensor devices. \cref{fig:system} shows an example set up.
 
 \begin{figure}[!ht]
 	\centering
@@ -86,10 +86,10 @@ The transition of the digital situation into a abstract model is very linear and
 \end{figure}
 \end{samepage}
 
-The simple abstraction above (\cref{fig:abstract_digital}) shows the technical dependency and the data flow. Yet it does not consider every property which is configurable in Prometheus and Grafana. Furthermore it overlooks the meta information coming from the real world setting.
+The simple abstraction above (\cref{fig:abstract_digital}) shows the technical dependency and the data flow. Yet, the model does not consider every property which is configurable in Prometheus and Grafana. Exactly one Prometheus service and one Grafana service has to be used. Multiple sensors can be connected 
 
 \subsection{Specification}
-The abstraction in \cref{sec:abstraction} is very basic and fundamental. Since there are more variables to take care of the model has to be extended. Due to the variety of the sensors and no option of a central management all additional configurations are done in Prometheus or Grafana.
+The abstraction in \cref{sec:abstraction} is very basic and fundamental. Since there are more variables to take care of, the model has to be extended. Due to the variety of the sensors and no option of a central management, all additional configurations are done in Prometheus or Grafana.
 
 \subsubsection{Location}
 A location information is missing. Technically it can be added in each entry of the sensor in the Prometheus configuration as an additional label which will then be added as a keyword in the exported metrics. This could look like \cref{fig:generic_sensor_config} shows.
@@ -170,8 +170,8 @@ Building a \gls{dsl} on top of the previous considerations leads to a well desig
 		(aa3) edge[<-] node[midway, right] {$1$} (a3)
 		(a3) edge[<-] node[midway, right] {$1$} (a4)
 		(a5) edge[<-] node[midway, right] {$1$} (a6)
-		(a6) edge[<-] node[midway, right] {$0\dots 1$} (a7)
-		(a7) edge[<-] node[midway, right] {$0\dots 1$} (a8)
+		(a6) edge[<-] node[midway, right] {$0\dots n$} (a7)
+		(a7) edge[<-] node[midway, right] {$0\dots n$} (a8)
 		;
 		\draw[<-] (a3) -- node[midway, below] {$0\dots 1$} ++(2.0, 0) |- (a5);
 		\draw[<-] (a4) -- node[midway, below] {$0\dots 1$} ++(2.1, 0) |- (a5);
@@ -185,11 +185,11 @@ The elemental components are the measurable metrics. They have a simple name and
 
 In the next layer the sensors are instantiated, connected with a location and combined with a handful of properties. A name and a \gls{url} of the sensor is essential. This information is needed for the configuration generation for the Prometheus service, allowing it to pull the sensor date frequently and save it in the internal database. On top, allowing an easier management sensor groups are introduced, combining multiple sensors into one node. Therefore this layer serves the spatial allocation. 
 
-After modeling the real world situation the next layer models the Grafana service. The available sensors and sensor groups can now be used in a \gls{promql} $GraphQuery$ node. This node form the base data set for additional query selections. Technically \gls{promql} allows a high variety of different queries but for the sake of less complexity a single application of a aggregation operator is allowed. Additionally \gls{promql} queries can take information for features like resolution, time window or offset. 
+After modeling the real world situation the next layer models the Grafana service. The available sensors and sensor groups can now be used in a \promcode{GraphQuery} node. This node form the base data set for additional query selections. Technically \gls{promql} allows a high variety of different queries but for the sake of less complexity a single application of an aggregation operator is allowed. Additionally \gls{promql} queries can take information for features like resolution, time window or offset. 
 
 The defined queries can now be bundled in different Grafana panels allowing to share these queries between panels. A panel has a visualization type and matching settings for example for highest value of an axis, linear or logarithmic grid, colors or special rules for single values. No matter the type every panel has a width, height, x- and y- position based on the Grafana \gls{ui} system. This information allows to manage the panels inside a dashboard, which is the last node type of the Grafana layer. It consists of a name and a unique short string identifier which is needed for Grafana. 
 
-Last but not least the project layer is more of the business and controlling view. The only node existing here is the project node. It can contain different meta variables welding useful information for further execution of the project like address, company name, deployment type or important \glspl{IP} addresses. 
+Last but not least the project layer is more of a business and controlling view. The only node existing here is the project node. It can contain different meta variables welding useful information for further execution of the project like address, company name, deployment type or important \glspl{IP} addresses. 
 
 In retrospective the model is mostly linear, leaving a straight forward way of working with the \gls{dsl} implementing this model. The separation into the four layers help the developer or engineer to think in well defined domains. They symbolize the steps of defining the used sensors, placing and grouping them in the real world and setting up the visualization for Grafana. Like already said the last layer is only used for meta data concerning the project itself.
 
@@ -199,13 +199,11 @@ For the replenishment of the model some constraints have to be added separately.
 
 The first constraint is that a sensor can only have a bunch of metrics where they have unique names in the connected subset, because otherwise data collected for that metric label can not be allocated unambiguous therefor leading to incorrect and unusable data. 
 
-Furthermore SensorGroups have the restriction of containing only SensorInstance based on the same Sensor. This will ensure that all data summarized in this node is still consistent and delivering the same information in a plot.
+Furthermore, \promcode{SensorGroups} have the restriction of containing only \promcode{SensorInstance} based on the same Sensor. This will ensure that all data summarized in this node is still consistent and delivering the same information in a plot.
 
-A similar restriction is also needed in the QueryParameters. As it get multiple GraphQuery nodes the same constraint for type uniformity has to be fulfilled.
+Panels combine the preceding queries where each query is one function drawn in the panels plot. Here it is necessary to ensure that the unit of measure is the same in all queries. Because this constraint can not enforce to use coherent data, for example, not mixing up temperature from casual living rooms that of an oven, the plausibility has to be maintained by the person designing a sensor network.
 
-Panels combine the preceding queries where each query is one function drawn in the panels plot. Here it is necessary to ensure that the unit of measure is the same in all queries. Because this constraint can not enforce to use coherent data, for example, not mixing up temperature from casual living rooms with the that of an oven the plausibility has to be maintained by the person designing a sensor network.
-
-As a organizing part a dashboard contains different panel. This model allows to share panels between dashboard which is not possible using the out of the box functionality of Grafana. The constraints here rely on the layout. The panels are not allowed to overlap or being not in the visible space of the dashboard. Additionally another constrained has to be respected. Every Dashboard has to own a unique identifier. Grafana uses them for internal purposes and multiple dashboards sharing the same id are not functional.
+As a organizing part a dashboard contains different panels. This model allows to share panels between dashboards which is not possible using the out of the box functionality of Grafana. The constraints here rely on the layout. The panels are not allowed to overlap or not being in the visible space of the dashboard. Additionally another constrained has to be respected. Every Dashboard has to own a unique identifier. Grafana uses them for internal purposes and multiple dashboards sharing the same id are not functional.
 
 
 

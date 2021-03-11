@@ -6,7 +6,6 @@
 	\blankpage
 	\pagenumbering{roman}
 	\tableofcontents
-	\todo{same look of captions and sec. titles, translation}
 	\cleardoublepage
 	\pagenumbering{arabic}
 	% Kapitel
@@ -18,10 +17,15 @@
 	\listoffigures
 	\addcontentsline{toc}{chapter}{List of Figures}
 	\cleardoublepage
-	% Algorithmenverzeichnis
-	\listofalgorithms
-	\addcontentsline{toc}{chapter}{List of Algorithms}
+	% Listingverzeichnis
+	\renewcommand\listoflistingscaption{List of Listings}
+	\listoflistings
+	\addcontentsline{toc}{chapter}{List of Listings}
 	\cleardoublepage
+	% Algorithmenverzeichnis
+	%\listofalgorithms
+	%\addcontentsline{toc}{chapter}{List of Algorithms}
+	%\cleardoublepage
 	% Literaturverzeichnis
 	%\bibliographystyle{gerplain}
 	%\bibliography{literatur/diplom}
@@ -30,8 +34,8 @@
 	% Erklaerung
 	\thispagestyle{myheadings}
 	\markboth{}{ERKLÄRUNG}
-	\addcontentsline{toc}{chapter}{Erklärung}
-	\include{kapitel/erklaerung}
+	\addcontentsline{toc}{chapter}{Affidavit}
+	\includepdf[pages=-]{assets/affidavit.pdf}
 	\cleardoublepage
 \end{document}
 
