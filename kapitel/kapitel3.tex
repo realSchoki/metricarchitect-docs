@@ -6,16 +6,16 @@ To start a proper analysis and abstraction of the problem a starting example is 
 Because it is already known which software to use this section will be split into smaller sections for the sake of clarity. 
 
 \subsection{Real World Situation}
-In this section the properties of the system that are observable in the real world are considered closer. Sensors come in different shapes and varieties. For example single metric sensors, like thermometer, brightness sensors or power consumption. 
+In this section the properties of the system that are observable in the real world are considered more closely. Sensors come in different shapes and varieties. For example single metric sensors, like thermometer, brightness sensors or power consumption. 
 
 Additionally there are also more complex ones. Multi metric sensors for example are digital weather stations, network components like a switch or router, server metrics and so on. A specific property of real world sensors is a location. They can be in the living room or an office building. If the whole sensor network is between multiple cities and multiple buildings with a humidity sensor on each floor in every room it can become rather large in scale.
 
-Summarized it is a real world gadget which provide at least one metric and is somehow bound to a location.
+Summarized, it is a real world gadget which provides at least one metric and is somehow bound to a location.
 
 \subsection{Digital World}
 Because the sensors are more intelligent devices in this context they have to be accessible through network via \gls{IPv4} or \gls{IPv6} and provide the metrics in a predefined syntax ( see \cref{subsec:Exportformat}, page \pageref{subsec:Exportformat} ). 
 
-This is the bridge to the consuming parts of the system. In the next step Prometheus is configured to actively pull the provided metrics of the sensors in a predefined frequency. It is possible for the sensors to push their metrics to Prometheus, but it would cause the sensors to be configured knowing  Prometheus \gls{ip-address}. The way of pushing the data into Prometheus won't be examined further.
+This is the bridge to the consuming parts of the system. In the next step Prometheus is configured to actively pull the provided metrics of the sensors in a predefined frequency. It is possible for the sensors to push their metrics to Prometheus, but it would cause the sensors to be configured knowing  Prometheus \gls{ip-address}. The way of pushing the data into Prometheus is not examined further.
 
 Since Prometheus only acts as the database, Grafana is used as a visualization toolkit. Grafana connects directly to Prometheus and uses \gls{promql} to gather information from the database storage. The possibilities mentioned in \cref{sec:grafana} are configurable. 
 
@@ -50,7 +50,7 @@ In the abstraction layer the same approach can be used. First the real world sit
 
 \subsection{Real World Abstraction}
 
-As mentioned earlier a sensor can be anything and is a physical device which measures all kinds of metrics. \cref{fig:abstract_sensor} shows a simple model of sensors. A sensor can have 1\dots n metrics.
+As mentioned earlier a sensor can be anything and is a physical device which measures all kinds of metrics. \cref{fig:abstract_sensor} shows a simple model of sensors. A sensor can have any number metrics but at least one.
 
 \begin{figure}[!ht]
 	\centering
@@ -92,7 +92,7 @@ The simple abstraction above (\cref{fig:abstract_digital}) shows the technical d
 The abstraction in \cref{sec:abstraction} is very basic and fundamental. Since there are more variables to take care of, the model has to be extended. Due to the variety of the sensors and no option of a central management, all additional configurations are done in Prometheus or Grafana.
 
 \subsubsection{Location}
-A location information is missing. Technically it can be added in each entry of the sensor in the Prometheus configuration as an additional label which will then be added as a keyword in the exported metrics. This could look like \cref{fig:generic_sensor_config} shows.
+A location information is missing. Technically it can be added in each entry of the sensor in the Prometheus configuration as an additional label which is then added as a keyword in the exported metrics. This could look like \cref{fig:generic_sensor_config} shows.
 
 \begin{listing}[!ht]
 	\begin{minted}[mathescape,linenos,numbersep=5pt,gobble=0,frame=lines,tabsize=4,breaklines,framesep=2mm]{yaml}
@@ -126,7 +126,7 @@ To have a better management experience a grouping for the sensors should be intr
 
 
 \subsubsection{Prometheus Query Language}
-Since one goal of this thesis is to create an abstract model of all needed configurations in Prometheus and Grafana, \gls{promql} is one important thing to be considered. Modeling a \gls{promql} query should also be possible. Vector aggregation, set operations and so on are features to be covered. 
+Since one goal of this thesis is to create an abstract model of all needed configurations in Prometheus and Grafana, \gls{promql} is one important thing to be considered. Modeling a \gls{promql} query should also be possible. Vector aggregation, set operations and et cetera are features to be covered. 
 
 
 \section{Model}
@@ -203,7 +203,7 @@ Furthermore, \promcode{SensorGroups} have the restriction of containing only \pr
 
 Panels combine the preceding queries where each query is one function drawn in the panels plot. Here it is necessary to ensure that the unit of measure is the same in all queries. Because this constraint can not enforce to use coherent data, for example, not mixing up temperature from casual living rooms that of an oven, the plausibility has to be maintained by the person designing a sensor network.
 
-As a organizing part a dashboard contains different panels. This model allows to share panels between dashboards which is not possible using the out of the box functionality of Grafana. The constraints here rely on the layout. The panels are not allowed to overlap or not being in the visible space of the dashboard. Additionally another constrained has to be respected. Every Dashboard has to own a unique identifier. Grafana uses them for internal purposes and multiple dashboards sharing the same id are not functional.
+As an organizing part a dashboard contains different panels. This model allows to share panels between dashboards which is not possible using the out of the box functionality of Grafana. The constraints here rely on the layout. The panels are not allowed to overlap or not being in the visible space of the dashboard. Additionally another constrained has to be respected. Every Dashboard has to own a unique identifier. Grafana uses them for internal purposes and multiple dashboards sharing the same id are not functional.
 
 
 
