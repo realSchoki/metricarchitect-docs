@@ -160,7 +160,7 @@ The export format of Prometheus can be described well by means of an example (\c
 	# Minimalistic line:
 	metric_without_timestamp_and_labels 12.47
 	\end{minted}
-	\caption{Partial Example from the Official Prometheus Documentation~\cite{PrometheusExpositionFormatBeispiel}}
+	\caption[Partial Example from the Official Prometheus Documentation]{Partial Example from the Official Prometheus Documentation~\cite{PrometheusExpositionFormatBeispiel}}
 	\label{lst:prometheus_export}
 \end{listing}
 
@@ -205,7 +205,7 @@ In \cref{lst:export_histogramm} a complex example is shown. A histogram export w
 \label{subsec:promql}
 
 As mentioned before, the collected data is stored in an internal time series database which can be searched by using \gls{promql} queries.
-The syntax of the queries is appended as \gls{ebnf} and can be looked up in \cref{lst:promql_vector}.
+The syntax of the queries is appended as \gls{ebnf} and can be looked up in \cref{lst:promql_vector}. Only the significant parts for this thesis are mentioned.
 Queries can be build from various elements with different functionalities.
 
 \subsubsection{Instant Vector}
@@ -327,11 +327,11 @@ With Cinco being a meta modeling tool generating graphical \glspl{ide} it is als
 		\draw [-{Triangle}] (cincod1.north) -- (ecore);
 		\draw [-{Triangle}] (cincod2.north) -- (ecore);
 	\end{tikzpicture}
-	\caption{Generation of an automaton modeling tool by an abstract tool specification with the Cinco framework~\cite[Figure 4]{cincoimage}}
+	\caption[Generation of an automaton modeling tool by an abstract tool specification with the Cinco framework]{Generation of an automaton modeling tool by an abstract tool specification with the Cinco framework~\cite[Figure 4]{cincoimage}}
 	\label{fig:layeringCinco}
 \end{figure}
 
-From \Cref{fig:layeringCinco} it is apparent that there is a clearly separated layering between different models in Cinco. The \gls{emf} as a framework for eclipse serves as the foundation for Cinco. Utilizing a \gls{dsl} called Xtext the \gls{emf} allows to define custom models. This is the point were Cinco starts. The \gls{msl} and \gls{mgl} are two of many definitions taking advantage of \gls{emf} to implement the needed features in Cinco. With this information an Ecore model can be generated which is needed for Cinco to work. As a Cinco developer it is possible to define a meta-model. In this case a sensor definition problem is used as an example. From this point on a user who works with the generated \gls{ide} for the sensor development can model the real world problems.
+From \cref{fig:layeringCinco} it is apparent that there is a clearly separated layering between different models in Cinco. The \gls{emf} as a framework for eclipse serves as the foundation for Cinco. Utilizing a \gls{dsl} called Xtext the \gls{emf} allows to define custom models. This is the point were Cinco starts. The \gls{msl} and \gls{mgl} are two of many definitions taking advantage of \gls{emf} to implement the needed features in Cinco. With this information an Ecore model can be generated which is needed for Cinco to work. As a Cinco developer it is possible to define a meta-model. In this case a sensor definition problem is used as an example. From this point on a user who works with the generated \gls{ide} for the sensor development can model the real world problems.
 
 \subsection{Meta Graph Language}
 

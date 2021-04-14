@@ -12,16 +12,16 @@ To summarize, the process of creating sensor networks was analyzed and abstracte
 
 Despite the fact that adapting every feature from Prometheus and Grafana was out of scope, the thesis shows the possibilities with the generated \gls{ide} as it is still a working proof of concept. The process of transferring the real world scenario into four abstract layers has created structure and overview in a complex problem. The four layers have their task in device definition, device instantiation and positioning, graph definition and the project layer. 
 
-Based on this separation domain experts like electricians or interior designer can use the generated \gls{ide} to create systems underlying the abstract model beneath it. They do not have to learn to code or learn how the used software products has to be deployed and configured. A modeled scenario can than be converted into a runnable deployment using Docker Compose resulting in a fast deploy chain.
+Based on this separation domain experts like electricians or interior designer could use the generated \gls{ide} to create systems underlying the abstract model beneath it. They do not have to learn to code or learn how the used software products have to be deployed and configured. A modeled scenario can then be converted into a runnable deployment using Docker Compose, resulting in a fast deploy chain.
 
 \section{Outlook}
 
-While Prometheus and Grafana are feature rich applications and this work only utilizes a small set of the possibilities an enhancement would be to cover more of its original functionality.
+While Prometheus and Grafana are feature rich applications and this work only utilizes a small set of the possibilities, one enhancement would be to cover more of its original functionality.
 
-As a result the selectable aggregation function has to be extended. Another missing part before being feature complete is the ability to create nested \gls{promql} queries. Additionally different setting options could be set via the generators like pull frequency for the values from the sensors or additional labeling. The risk with additional configuration options would be that it bloats up the model unnecessarily by defining everything without need.
+As a result the selectable aggregation function should be extended. Another missing part before being feature complete is the ability to create nested \gls{promql} queries. Additionally different setting options could be set via the generators like pull frequency for the values from the sensors or additional labeling. The risk with additional configuration options would be that it bloats up the model unnecessarily by defining everything without need.
 
-The same thought can be made in adding all features missed from Grafana. Using different graph types, setting up the layout or using the alerting system of Grafana are potential functions to be implemented. This is also accompanied with the risk of creating a poorly maintainable system because of its increasing size and possibilities it has to be done thoughtfully.
+The same thought can be made in adding all features missed from Grafana. Using different graph types, setting up the layout or using the alerting system of Grafana are potential functions to be implemented. This is also accompanied with the risk of creating a poorly maintainable system because of its increasing size and possibilities, so it has to be done thoughtfully.
 
-Since this project was done from a developers perspective non developer experts should be asked what they rely on and which point of this application can be improved.
+Since this project was done from a developers perspective non developer experts should be asked what they rely on and which part of this application can be improved.
 
 
